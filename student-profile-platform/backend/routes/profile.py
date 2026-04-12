@@ -1,0 +1,100 @@
+from fastapi import APIRouter, HTTPException, Depends
+from typing import List, Optional
+from database import supabase
+from models.schemas import ProfileBase, ProfileUpdate, UserBase
+import uuid
+
+router = APIRouter()
+
+@router.get("/{user_id}")
+async def get_profile(user_id: str):
+    try:
+        # Get user
+        user_res = supabase.table("users").select("*").eq("id", user_id).single().execute()
+        # Get profile
+        profile_res = supabase.table("profiles").select("*").eq("user_id", user_id).single().execute()
+        
+        return {
+            "user": user_res.data,
+            "profile": profile_res.data
+        }
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@router.get("/username/{username}")
+async def get_public_profile(username: str):
+    try:
+        # Fetch everything in a single query using relations
+        res = supabase.table("users").select(
+            "*, profiles(*), skills(*), projects(*), certificates(*)"
+        ).eq("username", username).single().execute()
+        
+        if not res.data:
+            raise HTTPException(status_code=404, detail="User not found")
+            
+        data = res.data
+        return {
+            "user": {
+                "id": data.get("id"),
+                "name": data.get("name"),
+                "username": data.get("username"),
+                "profile_photo": data.get("profile_photo"),
+                "email": data.get("email")
+            },
+            "profile": data.get("profiles"),
+            "skills": data.get("skills", []),
+            "projects": data.get("projects", []),
+            "certificates": data.get("certificates", [])
+        }
+    except Exception as e:
+        print(f"Profile error: {str(e)}")
+        raise HTTPException(status_code=404, detail="Profile not found")
+
+@router.put("/{user_id}")
+async def update_profile(user_id: str, data: ProfileUpdate):
+    try:
+        update_data = data.dict(exclude_unset=True)
+        
+        # Split data between users table and profiles table
+        user_fields = ["name", "username", "profile_photo"]
+        user_update = {k: v for k, v in update_data.items() if k in user_fields}
+        profile_update = {k: v for k, v in update_data.items() if k not in user_fields}
+        
+        if user_update:
+            supabase.table("users").update(user_update).eq("id", user_id).execute()
+        
+        if profile_update:
+            # Handle nested education if present
+            if "education" in profile_update and profile_update["education"]:
+                # If education is still a Pydantic model
+                if hasattr(profile_update["education"], "dict"):
+                    profile_update["education"] = profile_update["education"].dict()
+            
+            supabase.table("profiles").update(profile_update).eq("user_id", user_id).execute()
+            
+        return {"message": "Profile updated successfully"}
+    except Exception as e:
+        print(f"Update error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.post("/{username}/views")
+async def increment_views(username: str):
+    try:
+        # Use RPC for atomic increment (Best practice)
+        res = supabase.rpc("increment_view_count", {"profile_username": username}).execute()
+        return {"view_count": res.data}
+    except Exception as e:
+        # Fallback to manual update if RPC fails
+        try:
+            # Atomic-ish increment using fetch and update
+            profile_res = supabase.table("users").select("id, profiles(view_count)").eq("username", username).single().execute()
+            if not profile_res.data:
+                raise Exception("User not found")
+                
+            user_id = profile_res.data["id"]
+            current_count = profile_res.data["profiles"]["view_count"] or 0
+            
+            update_res = supabase.table("profiles").update({"view_count": current_count + 1}).eq("user_id", user_id).execute()
+            return {"view_count": current_count + 1}
+        except Exception as inner_e:
+             raise HTTPException(status_code=500, detail=f"Failed to increment views: {str(inner_e)}")
