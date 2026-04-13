@@ -104,10 +104,15 @@ BEGIN
     NEW.raw_user_meta_data->>'full_name',
     NEW.email,
     NEW.raw_user_meta_data->>'avatar_url'
-  );
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    name = EXCLUDED.name,
+    profile_photo = EXCLUDED.profile_photo,
+    email = EXCLUDED.email;
   
   INSERT INTO public.profiles (user_id)
-  VALUES (NEW.id);
+  VALUES (NEW.id)
+  ON CONFLICT (user_id) DO NOTHING;
   
   RETURN NEW;
 END;

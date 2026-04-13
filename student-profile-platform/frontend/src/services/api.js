@@ -1,5 +1,9 @@
 const API_BASE = import.meta.env.VITE_API_URL || '/api'
 
+if (import.meta.env.DEV) {
+  console.log('API Base URL:', API_BASE)
+}
+
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`
   const config = {

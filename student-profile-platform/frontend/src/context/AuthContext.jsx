@@ -20,13 +20,27 @@ export function AuthProvider({ children }) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setUser(session?.user ?? null)
-        if (session?.user) {
+      async (event, session) => {
+        console.log('🔔 Auth Event:', event)
+        if (session) {
+          console.log('👤 User Logged In:', session.user.id)
+          setUser(session.user)
           await fetchProfile(session.user.id)
         } else {
+          console.log('∅ No Session Found')
+          setUser(null)
           setProfile(null)
         }
+        
+        // Check for error in URL (from Supabase redirect)
+        const params = new URLSearchParams(window.location.hash.substring(1))
+        const errorMsg = params.get('error_description') || params.get('error')
+        if (errorMsg) {
+          console.error('❌ Auth Redirect Error:', errorMsg)
+          alert('Authentication Error: ' + errorMsg)
+        }
+        
+        setLoading(false)
       }
     )
 
@@ -50,13 +64,18 @@ export function AuthProvider({ children }) {
   }
 
   const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`
-      }
-    })
-    if (error) console.error('Login error:', error)
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
+      })
+      if (error) throw error
+    } catch (err) {
+      console.error('Login error:', err.message)
+      alert('Login failed: ' + err.message)
+    }
   }
 
   const signOut = async () => {

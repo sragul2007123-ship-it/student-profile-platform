@@ -33,7 +33,16 @@ export default function Dashboard() {
   const [newCert, setNewCert] = useState({ title: '', certificate_url: '' })
 
   useEffect(() => {
-    if (!loading && !user) navigate('/login')
+    // If not loading and no user, but the URL has an access token (from OAuth)
+    // don't redirect yet as Supabase might still be processing it
+    const hasHashSession = window.location.hash && (
+      window.location.hash.includes('access_token=') || 
+      window.location.hash.includes('error=')
+    )
+    
+    if (!loading && !user && !hasHashSession) {
+      navigate('/login')
+    }
   }, [user, loading, navigate])
 
   useEffect(() => {
@@ -182,10 +191,18 @@ export default function Dashboard() {
     { id: 'certificates', label: 'Certificates', icon: '📜' },
   ]
 
-  if (loading) {
+  if (loading || (!user && window.location.hash.includes('access_token='))) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 rounded-full border-4 border-primary-200 border-t-primary-500 animate-spin"></div>
+      <div className="min-h-screen flex flex-col items-center justify-center gradient-bg-subtle">
+        <div className="w-16 h-16 rounded-full border-4 border-primary-200 border-t-primary-500 animate-spin mb-4"></div>
+        <h2 className="text-xl font-display font-bold text-gray-700 dark:text-gray-300">
+          Syncing your profile...
+        </h2>
+        <p className="text-gray-500 dark:text-gray-400 mt-2">
+          {window.location.hash.includes('access_token=') 
+            ? 'Finishing login, please wait...' 
+            : 'Loading your dashboard...'}
+        </p>
       </div>
     )
   }
