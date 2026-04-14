@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function Navbar() {
   const { user, signOut } = useAuth()
@@ -118,23 +119,30 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu */}
-        {mobileOpen && (
-          <div className="md:hidden py-4 border-t border-gray-100 dark:border-surface-700 animate-fade-in">
-            <div className="flex flex-col gap-1">
-              <Link to="/" className="btn-ghost block" onClick={() => setMobileOpen(false)}>Home</Link>
-              <Link to="/leaderboard" className="btn-ghost block" onClick={() => setMobileOpen(false)}>Leaderboard</Link>
-              {user && <Link to="/dashboard" className="btn-ghost block" onClick={() => setMobileOpen(false)}>Dashboard</Link>}
-              {user ? (
-                <button onClick={() => { signOut(); setMobileOpen(false); }} className="btn-ghost text-left text-red-500">Logout</button>
-              ) : (
-                <>
-                  <Link to="/login" className="btn-ghost block" onClick={() => setMobileOpen(false)}>Login</Link>
-                  <Link to="/register" className="btn-primary block text-center mt-2" onClick={() => setMobileOpen(false)}>Register</Link>
-                </>
-              )}
-            </div>
-          </div>
-        )}
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div 
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="md:hidden py-4 border-t border-gray-100 dark:border-surface-700 overflow-hidden"
+            >
+              <div className="flex flex-col gap-1">
+                <Link to="/" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Home</Link>
+                <Link to="/leaderboard" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Leaderboard</Link>
+                {user && <Link to="/dashboard" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Dashboard</Link>}
+                {user ? (
+                  <button onClick={() => { signOut(); setMobileOpen(false); }} className="px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl text-left">Logout</button>
+                ) : (
+                  <div className="flex flex-col gap-2 p-2">
+                    <Link to="/login" className="px-4 py-3 text-sm font-bold text-center text-primary-500 border border-primary-500 rounded-xl" onClick={() => setMobileOpen(false)}>Login</Link>
+                    <Link to="/register" className="btn-primary text-center" onClick={() => setMobileOpen(false)}>Register</Link>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </nav>
   )

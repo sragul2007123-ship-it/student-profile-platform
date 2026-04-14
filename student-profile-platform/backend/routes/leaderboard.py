@@ -37,8 +37,8 @@ async def get_leaderboard():
                 "view_count": user["profiles"].get("view_count", 0)
             })
             
-        # Sort by score descending
-        enriched.sort(key=lambda x: x["score"], reverse=True)
+        # Sort by score descending, then view_count descending, then name ascending
+        enriched.sort(key=lambda x: (-x["score"], -x.get("view_count", 0), x.get("name", "").lower()))
         return enriched
     except Exception as e:
         print(f"Leaderboard error: {str(e)}")
@@ -95,7 +95,8 @@ async def get_friends_leaderboard(user_id: str):
                 "view_count": user["profiles"].get("view_count", 0)
             })
 
-        enriched.sort(key=lambda x: x["score"], reverse=True)
+        # Sort by score descending, then view_count descending, then name ascending
+        enriched.sort(key=lambda x: (-x["score"], -x.get("view_count", 0), x.get("name", "").lower()))
         return enriched
     except Exception as e:
         print(f"Friends leaderboard error: {str(e)}")
