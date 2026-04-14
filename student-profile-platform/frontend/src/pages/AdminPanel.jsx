@@ -24,14 +24,8 @@ export default function AdminPanel() {
       const data = await api.getAllStudents()
       setStudents(data)
       
-      // Calculate stats based on fetched data
-      let projectCount = 0
-      let skillCount = 0
-      
-      data.forEach(student => {
-        // We'd ideally get these counts from the backend or another call
-        // For now estimate from what we have or just mock
-      })
+      // Calculate total platform stats from fetched data
+
 
       setStats({
         total: data.length,

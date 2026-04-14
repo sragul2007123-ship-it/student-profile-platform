@@ -123,8 +123,8 @@ CREATE POLICY "Users can insert own certificates" ON certificates FOR INSERT WIT
 CREATE POLICY "Users can update own certificates" ON certificates FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete own certificates" ON certificates FOR DELETE USING (auth.uid() = user_id);
 
--- Allow anyone to update view_count (for profile view tracking)
-CREATE POLICY "Anyone can update view count" ON profiles FOR UPDATE USING (true) WITH CHECK (true);
+-- Use the secure RPC function 'increment_view_count' instead of direct table update for views.
+-- Direct update is only allowed for the profile owner.
 
 -- Function to auto-create user record on signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()

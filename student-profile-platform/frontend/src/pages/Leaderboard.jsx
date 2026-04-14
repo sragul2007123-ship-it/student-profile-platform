@@ -17,12 +17,18 @@ export default function Leaderboard() {
     loadAllData()
   }, [user])
 
-  // Set default tab based on login status
+  // Set default tab based on login status and friend availability
   useEffect(() => {
-    if (!user) setActiveTab('global')
-    else if (friendStudents.length > 0) setActiveTab('friends')
-    else setActiveTab('global')
-  }, [user, friendStudents.length])
+    if (!loading) {
+      if (!user) {
+        setActiveTab('global')
+      } else if (friendStudents.length > 0) {
+        setActiveTab('friends')
+      } else {
+        setActiveTab('global')
+      }
+    }
+  }, [user, friendStudents.length, loading])
 
   const loadAllData = async () => {
     setLoading(true)
