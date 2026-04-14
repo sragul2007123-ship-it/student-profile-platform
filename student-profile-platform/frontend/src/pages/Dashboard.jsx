@@ -101,36 +101,26 @@ export default function Dashboard() {
       const profileData = profileResponse.profile
 
       if (userData) {
-        console.log('--- DATA SYNC SUCCESS: User Found ---', userData)
-        setProfile(prev => {
-          const newState = {
-            ...prev,
-            name: userData.name || prev.name || user.user_metadata?.full_name || '',
-            username: userData.username || prev.username || '',
-            profile_photo: userData.profile_photo || prev.profile_photo || user.user_metadata?.avatar_url || '',
-            email: userData.email || prev.email || user.email || '',
-          }
-          console.log('New State (User):', newState)
-          return newState
-        })
+        setProfile(prev => ({
+          ...prev,
+          name: userData.name || prev.name || user.user_metadata?.full_name || '',
+          username: userData.username || prev.username || '',
+          profile_photo: userData.profile_photo || prev.profile_photo || user.user_metadata?.avatar_url || '',
+          email: userData.email || prev.email || user.email || '',
+        }))
       }
 
       if (profileData) {
-        console.log('--- DATA SYNC SUCCESS: Profile Found ---', profileData)
-        setProfile(prev => {
-          const newState = {
-            ...prev,
-            role: profileData.role || prev.role || '',
-            about: profileData.about || prev.about || '',
-            college: profileData.education?.college || prev.college || '',
-            degree: profileData.education?.degree || prev.degree || '',
-            year: profileData.education?.year || prev.year || '',
-            github: profileData.github || prev.github || '',
-            linkedin: profileData.linkedin || prev.linkedin || '',
-          }
-          console.log('New State (Full):', newState)
-          return newState
-        })
+        setProfile(prev => ({
+          ...prev,
+          role: profileData.role || prev.role || '',
+          about: profileData.about || prev.about || '',
+          college: profileData.education?.college || prev.college || '',
+          degree: profileData.education?.degree || prev.degree || '',
+          year: profileData.education?.year || prev.year || '',
+          github: profileData.github || prev.github || '',
+          linkedin: profileData.linkedin || prev.linkedin || '',
+        }))
       }
 
       if (skillsData) setSkills(skillsData)
