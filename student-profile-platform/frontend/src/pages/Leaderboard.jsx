@@ -238,8 +238,7 @@ export default function Leaderboard() {
                 </motion.div>
               </div>
             )}
-          </motion.div>
-        </AnimatePresence>
+
 
             {/* List Table */}
             <div className="glass-card overflow-hidden shadow-2xl border-white/10">
