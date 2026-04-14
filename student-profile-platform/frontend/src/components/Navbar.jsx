@@ -65,7 +65,6 @@ export default function Navbar() {
               )}
             </button>
 
-            {/* Auth Buttons */}
             {user ? (
               <div className="flex items-center gap-3 ml-2">
                 <Link to="/dashboard" className="w-8 h-8 rounded-full gradient-bg overflow-hidden flex items-center justify-center text-white text-sm font-semibold border-2 border-white dark:border-surface-800 shadow-md">
@@ -80,11 +79,11 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              // Only show Login/Register if NOT on the Landing Page or if on Landing Page but scrolled
+              // Hide Login/Register on Home Page's top section to keep center buttons as primary
               (!isHomePage || scrolled) && (
                 <div className="flex items-center gap-2 ml-2 animate-fade-in">
                   <Link to="/login" className="btn-ghost px-4 py-2">Login</Link>
-                  <Link to="/register" className="btn-primary px-4 py-2 text-sm">Register</Link>
+                  <Link to="/register" className="btn-primary px-4 py-2 text-sm shadow-xl shadow-primary-500/20">Register</Link>
                 </div>
               )
             )}

@@ -67,9 +67,27 @@ export default function Dashboard() {
 
   const loadData = async (retryCount = 0) => {
     try {
-      const data = await api.getProfile(user.id)
-      const userData = data.user
-      const profileData = data.profile
+      // Parallelize ALL data fetching for maximum speed
+      const [
+        profileResponse,
+        skillsData, 
+        projectsData, 
+        certsData, 
+        friendsData, 
+        pendingData, 
+        sentData
+      ] = await Promise.all([
+        api.getProfile(user.id),
+        api.getSkills(user.id),
+        api.getProjects(user.id),
+        api.getCertificates(user.id),
+        api.getFriends(user.id),
+        api.getPendingRequests(user.id),
+        api.getSentRequests(user.id)
+      ])
+
+      const userData = profileResponse.user
+      const profileData = profileResponse.profile
 
       if (userData) {
         setProfile(prev => ({
@@ -93,16 +111,6 @@ export default function Dashboard() {
           year: profileData.education?.year || '',
         }))
       }
-
-      // Load skills, projects, certificates, and friends
-      const [skillsData, projectsData, certsData, friendsData, pendingData, sentData] = await Promise.all([
-        api.getSkills(user.id),
-        api.getProjects(user.id),
-        api.getCertificates(user.id),
-        api.getFriends(user.id),
-        api.getPendingRequests(user.id),
-        api.getSentRequests(user.id)
-      ])
 
       if (skillsData) setSkills(skillsData)
       if (projectsData) setProjects(projectsData)
@@ -367,17 +375,6 @@ export default function Dashboard() {
     { id: 'friends', label: 'Friends', icon: '🤝' },
   ]
 
-  const [syncTimeout, setSyncTimeout] = useState(false)
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (loading || (!user && window.location.hash.includes('access_token='))) {
-        setSyncTimeout(true)
-      }
-    }, 5000)
-    return () => clearTimeout(timer)
-  }, [loading, user])
-
   if (loading || (!user && window.location.hash.includes('access_token='))) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gradient-bg-subtle">
@@ -386,28 +383,8 @@ export default function Dashboard() {
           Syncing your profile...
         </h2>
         <p className="text-gray-500 dark:text-gray-400 mt-2">
-          {window.location.hash.includes('access_token=') 
-            ? 'Finishing login, please wait...' 
-            : 'Loading your dashboard...'}
+          Please wait while we prepare your dashboard
         </p>
-        
-        {syncTimeout && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-8 flex flex-col items-center gap-4"
-          >
-            <p className="text-sm text-amber-600 bg-amber-50 px-4 py-2 rounded-lg border border-amber-100">
-              Taking longer than usual? Try refreshing your session.
-            </p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="px-6 py-1.5 bg-primary-500 text-white rounded-xl shadow-lg hover:bg-primary-600 transition-all font-semibold"
-            >
-              Refresh Dashboard
-            </button>
-          </motion.div>
-        )}
       </div>
     )
   }
