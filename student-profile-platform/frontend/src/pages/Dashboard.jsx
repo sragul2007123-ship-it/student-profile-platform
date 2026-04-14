@@ -462,27 +462,31 @@ export default function Dashboard() {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar Tabs */}
           <div className="lg:w-56 shrink-0">
-            <div className="glass-card p-3 flex lg:flex-col gap-1 overflow-x-auto lg:overflow-x-visible">
+            <motion.div 
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="glass-card p-3 flex lg:flex-col gap-1 overflow-x-auto lg:overflow-x-visible shadow-xl"
+            >
               {tabs.map((tab, i) => (
                 <motion.button
                   key={tab.id}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
+                  transition={{ delay: i * 0.05 + 0.2 }}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
                     activeTab === tab.id
                       ? 'gradient-bg text-white shadow-lg shadow-primary-500/25'
                       : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-surface-700'
                   }`}
-                  whileHover={{ x: 5 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ x: 5, backgroundColor: activeTab === tab.id ? undefined : 'rgba(0,0,0,0.05)' }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <span className="text-lg">{tab.icon}</span>
+                  <span className="text-xl">{tab.icon}</span>
                   {tab.label}
                 </motion.button>
               ))}
-            </div>
+            </motion.div>
           </div>
 
           {/* Content Area */}

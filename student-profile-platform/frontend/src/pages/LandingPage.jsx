@@ -261,16 +261,29 @@ export default function LandingPage() {
             {features.map((feature, i) => (
               <motion.div
                 key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="glass-card p-8 card-hover group"
+                initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ 
+                  duration: 0.6, 
+                  delay: i * 0.1,
+                  type: "spring",
+                  stiffness: 100
+                }}
+                whileHover={{ 
+                  y: -10,
+                  scale: 1.02,
+                  transition: { duration: 0.2 }
+                }}
+                className="glass-card-animated p-8 group cursor-default"
               >
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-white mb-6 group-hover:rotate-6 transition-transform duration-300 shadow-lg`}>
+                <motion.div 
+                  whileHover={{ rotate: 12, scale: 1.1 }}
+                  className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-white mb-6 shadow-lg transform transition-transform`}
+                >
                   {feature.icon}
-                </div>
-                <h3 className="text-xl font-semibold mb-3 dark:text-white">{feature.title}</h3>
+                </motion.div>
+                <h3 className="text-xl font-semibold mb-3 dark:text-white group-hover:text-primary-500 transition-colors uppercase tracking-tight">{feature.title}</h3>
                 <p className="text-gray-500 dark:text-gray-400 leading-relaxed">{feature.desc}</p>
               </motion.div>
             ))}

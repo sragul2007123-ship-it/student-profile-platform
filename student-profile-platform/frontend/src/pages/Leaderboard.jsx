@@ -166,13 +166,15 @@ export default function Leaderboard() {
             className="mb-12"
           >
             {currentStudents.length >= 3 && (
-              <div className="flex items-end justify-center gap-4 py-8">
+              <div className="flex items-end justify-center gap-4 py-8 perspective-1000">
                 {/* 2nd Place */}
-                <div className="text-center order-1">
-                  <motion.div 
-                    initial={{ height: 0 }} animate={{ height: 'auto' }}
-                    className="glass-card p-4 w-32 md:w-40 bg-gradient-to-t from-gray-50/50 to-white/50 dark:from-surface-700/50 dark:to-surface-800/50"
-                  >
+                <motion.div 
+                   initial={{ opacity: 0, scale: 0.8, y: 50 }} 
+                   animate={{ opacity: 1, scale: 1, y: 0 }}
+                   transition={{ duration: 0.8, delay: 0.3, type: "spring" }}
+                   className="text-center order-1"
+                >
+                  <div className="glass-card-animated p-4 w-32 md:w-40 bg-gradient-to-t from-gray-50/50 to-white/50 dark:from-surface-700/50 dark:to-surface-800/50">
                     <div className="relative inline-block mb-3">
                       <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 p-1 flex items-center justify-center shadow-lg">
                         <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-surface-600 flex items-center justify-center font-bold text-2xl">
@@ -183,18 +185,20 @@ export default function Leaderboard() {
                       </div>
                       <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-sm shadow-md border-2 border-white dark:border-surface-800">🥈</div>
                     </div>
-                    <Link to={`/student/${currentStudents[1].username}`} className="text-sm font-bold dark:text-white hover:text-primary-500 truncate block">{currentStudents[1].name}</Link>
-                    <p className="text-xs text-gray-400 mt-1">{currentStudents[1].score} pts</p>
-                  </motion.div>
-                </div>
-
+                    <Link to={`/student/${currentStudents[1].username}`} className="text-sm font-bold dark:text-white hover:text-primary-500 truncate block transition-colors uppercase tracking-tight">{currentStudents[1].name}</Link>
+                    <p className="text-xs text-gray-400 mt-1 font-black">{currentStudents[1].score} PTS</p>
+                  </div>
+                </motion.div>
+ 
                 {/* 1st Place */}
-                <div className="text-center order-2 -mt-4">
-                  <motion.div 
-                    initial={{ height: 0 }} animate={{ height: 'auto' }}
-                    className="glass-card p-6 w-36 md:w-48 ring-4 ring-yellow-400/20 bg-gradient-to-t from-yellow-50/50 to-white/50 dark:from-yellow-900/10 dark:to-surface-800/50 relative overflow-hidden"
-                  >
-                    <div className="absolute top-0 right-0 p-2 opacity-10 text-4xl">👑</div>
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8, y: 50 }} 
+                  animate={{ opacity: 1, scale: 1.1, y: -20 }}
+                  transition={{ duration: 0.8, delay: 0.1, type: "spring" }}
+                  className="text-center order-2 z-10"
+                >
+                  <div className="glass-card-animated p-6 w-36 md:w-48 ring-4 ring-yellow-400/20 bg-gradient-to-t from-yellow-50/50 to-white/50 dark:from-yellow-900/10 dark:to-surface-800/50 relative overflow-hidden shadow-2xl">
+                    <div className="absolute top-0 right-0 p-2 opacity-20 text-4xl animate-bounce">👑</div>
                     <div className="relative inline-block mb-3 scale-110">
                       <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 p-1 flex items-center justify-center shadow-xl ring-4 ring-yellow-400/30">
                         <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-surface-600 flex items-center justify-center font-bold text-3xl">
@@ -205,17 +209,19 @@ export default function Leaderboard() {
                       </div>
                       <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-lg shadow-md border-2 border-white dark:border-surface-800">🥇</div>
                     </div>
-                    <Link to={`/student/${currentStudents[0].username}`} className="text-base font-extrabold dark:text-white hover:text-primary-500 truncate block">{currentStudents[0].name}</Link>
-                    <p className="text-sm font-bold text-primary-500 mt-1">{currentStudents[0].score} pts</p>
-                  </motion.div>
-                </div>
-
+                    <Link to={`/student/${currentStudents[0].username}`} className="text-base font-black dark:text-white hover:text-primary-500 truncate block transition-colors uppercase tracking-wide">{currentStudents[0].name}</Link>
+                    <p className="text-sm font-black text-primary-500 mt-1 glow-text">{currentStudents[0].score} PTS</p>
+                  </div>
+                </motion.div>
+ 
                 {/* 3rd Place */}
-                <div className="text-center order-3">
-                  <motion.div 
-                    initial={{ height: 0 }} animate={{ height: 'auto' }}
-                    className="glass-card p-4 w-32 md:w-40 bg-gradient-to-t from-orange-50/50 to-white/50 dark:from-orange-900/10 dark:to-surface-800/50"
-                  >
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.8, y: 50 }} 
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.5, type: "spring" }}
+                  className="text-center order-3"
+                >
+                  <div className="glass-card-animated p-4 w-32 md:w-40 bg-gradient-to-t from-orange-50/50 to-white/50 dark:from-orange-900/10 dark:to-surface-800/50">
                     <div className="relative inline-block mb-3">
                       <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-amber-600 to-orange-800 p-1 flex items-center justify-center shadow-lg">
                         <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-surface-600 flex items-center justify-center font-bold text-2xl">
@@ -226,12 +232,14 @@ export default function Leaderboard() {
                       </div>
                       <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-orange-700 text-white rounded-full flex items-center justify-center text-sm shadow-md border-2 border-white dark:border-surface-800">🥉</div>
                     </div>
-                    <Link to={`/student/${currentStudents[2].username}`} className="text-sm font-bold dark:text-white hover:text-primary-500 truncate block">{currentStudents[2].name}</Link>
-                    <p className="text-xs text-gray-400 mt-1">{currentStudents[2].score} pts</p>
-                  </motion.div>
-                </div>
+                    <Link to={`/student/${currentStudents[2].username}`} className="text-sm font-bold dark:text-white hover:text-primary-500 truncate block transition-colors uppercase tracking-tight">{currentStudents[2].name}</Link>
+                    <p className="text-xs text-gray-400 mt-1 font-black">{currentStudents[2].score} PTS</p>
+                  </div>
+                </motion.div>
               </div>
             )}
+          </motion.div>
+        </AnimatePresence>
 
             {/* List Table */}
             <div className="glass-card overflow-hidden shadow-2xl border-white/10">
