@@ -132,9 +132,15 @@ export function AuthProvider({ children }) {
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
-    setUser(null)
-    setProfile(null)
+    try {
+      await supabase.auth.signOut()
+      setUser(null)
+      setProfile(null)
+      // Force a full clean redirect to clear all session state
+      window.location.href = '/'
+    } catch (err) {
+      console.error('Logout error:', err.message)
+    }
   }
 
   const value = {

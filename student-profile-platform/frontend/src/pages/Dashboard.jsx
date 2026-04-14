@@ -401,8 +401,8 @@ export default function Dashboard() {
               Taking longer than usual? Try refreshing your session.
             </p>
             <button 
-              onClick={() => window.location.href = '/dashboard'}
-              className="px-6 py-2 bg-primary-500 text-white rounded-xl shadow-lg hover:bg-primary-600 transition-all font-semibold"
+              onClick={() => window.location.reload()}
+              className="px-6 py-1.5 bg-primary-500 text-white rounded-xl shadow-lg hover:bg-primary-600 transition-all font-semibold"
             >
               Refresh Dashboard
             </button>
