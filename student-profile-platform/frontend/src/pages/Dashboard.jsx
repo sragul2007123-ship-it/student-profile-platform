@@ -75,7 +75,9 @@ export default function Dashboard() {
       } catch (err) {
         // If it's a 404, it means the trigger hasn't finished creating the record
         if (retryCount < 5) {
-          console.log(`User record not found yet, retrying... (${retryCount + 1}/5)`);
+          if (import.meta.env.DEV) {
+            console.log(`User record not found yet, retrying... (${retryCount + 1}/5)`);
+          }
           return setTimeout(() => loadData(retryCount + 1), 2000);
         }
         throw err;
@@ -539,7 +541,7 @@ export default function Dashboard() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Username <span className="text-red-500 text-xs font-bold ml-1 uppercase">Required</span>
+                        Username <span className="text-gray-400 dark:text-gray-500 text-[10px] font-bold ml-1 uppercase">(Required)</span>
                       </label>
                       <div className="relative">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium">@</span>
