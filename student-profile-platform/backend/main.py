@@ -1,13 +1,19 @@
-import logging
 import os
+import sys
+import logging
 from dotenv import load_dotenv
 
-# Load environment variables at the very beginning
+# Ensure the backend directory is in the python path
+backend_dir = os.path.dirname(os.path.abspath(__file__))
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
+
+# Load environment variables
 load_dotenv()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import profile, skills, projects, certificates, leaderboard, admin
+from routes import profile, skills, projects, certificates, leaderboard, admin, friends
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -31,6 +37,7 @@ app.include_router(projects.router, prefix="/api/projects", tags=["Projects"])
 app.include_router(certificates.router, prefix="/api/certificates", tags=["Certificates"])
 app.include_router(leaderboard.router, prefix="/api/leaderboard", tags=["Leaderboard"])
 app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
+app.include_router(friends.router, prefix="/api/friends", tags=["Friends"])
 
 @app.on_event("startup")
 async def startup_event():

@@ -41,6 +41,7 @@ class ProfileUpdate(BaseModel):
 
 class SkillBase(BaseModel):
     skill_name: str
+    category: Optional[str] = "Other"
     skill_level: int = 50
 
 

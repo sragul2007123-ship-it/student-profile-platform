@@ -16,7 +16,7 @@ The **Student Digital Profile Platform** is designed to bridge the gap between s
 - **🏆 Gamified Leaderboard:** Real-time ranking based on student achievements and project complexity.
 - **📱 Responsive Design:** Sleek, modern interface built with React and Tailwind CSS, optimized for all devices.
 - **⚡ Fast Backend:** High-performance API powered by FastAPI and PostgreSQL (Supabase).
-- **🖨️ Profile Sharing:** QR code generation and PDF downloads for easy sharing with recruiters (Coming Soon).
+- **📱 Profile Sharing:** Instant QR code generation for seamless mobile sharing with recruiters and peers.
 
 ---
 

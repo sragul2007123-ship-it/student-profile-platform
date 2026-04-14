@@ -19,6 +19,8 @@ async def add_certificate(user_id: str, certificate: CertificateCreate):
         data = certificate.dict()
         data["user_id"] = user_id
         res = supabase.table("certificates").insert(data).execute()
+        if not res.data:
+            raise Exception("Failed to insert certificate")
         return res.data[0]
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

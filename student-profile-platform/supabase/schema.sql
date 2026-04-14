@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS skills (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   skill_name TEXT NOT NULL,
+  category TEXT DEFAULT 'Other',
   skill_level INTEGER DEFAULT 50 CHECK (skill_level >= 0 AND skill_level <= 100),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -56,36 +57,67 @@ CREATE TABLE IF NOT EXISTS certificates (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Friendships table
+CREATE TABLE IF NOT EXISTS friendships (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  requester_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  addressee_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'rejected')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(requester_id, addressee_id)
+);
+
 -- Enable Row Level Security
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE skills ENABLE ROW LEVEL SECURITY;
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE certificates ENABLE ROW LEVEL SECURITY;
+ALTER TABLE friendships ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for users
+DROP POLICY IF EXISTS "Users can read all users" ON users;
+DROP POLICY IF EXISTS "Users can insert own user" ON users;
+DROP POLICY IF EXISTS "Users can update own user" ON users;
 CREATE POLICY "Users can read all users" ON users FOR SELECT USING (true);
 CREATE POLICY "Users can insert own user" ON users FOR INSERT WITH CHECK (auth.uid() = id);
 CREATE POLICY "Users can update own user" ON users FOR UPDATE USING (auth.uid() = id);
 
 -- RLS Policies for profiles
+DROP POLICY IF EXISTS "Profiles are publicly readable" ON profiles;
+DROP POLICY IF EXISTS "Users can insert own profile" ON profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
+DROP POLICY IF EXISTS "Anyone can update view count" ON profiles;
 CREATE POLICY "Profiles are publicly readable" ON profiles FOR SELECT USING (true);
 CREATE POLICY "Users can insert own profile" ON profiles FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = user_id);
 
 -- RLS Policies for skills
+DROP POLICY IF EXISTS "Skills are publicly readable" ON skills;
+DROP POLICY IF EXISTS "Users can insert own skills" ON skills;
+DROP POLICY IF EXISTS "Users can update own skills" ON skills;
+DROP POLICY IF EXISTS "Users can delete own skills" ON skills;
 CREATE POLICY "Skills are publicly readable" ON skills FOR SELECT USING (true);
 CREATE POLICY "Users can insert own skills" ON skills FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own skills" ON skills FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete own skills" ON skills FOR DELETE USING (auth.uid() = user_id);
 
 -- RLS Policies for projects
+DROP POLICY IF EXISTS "Projects are publicly readable" ON projects;
+DROP POLICY IF EXISTS "Users can insert own projects" ON projects;
+DROP POLICY IF EXISTS "Users can update own projects" ON projects;
+DROP POLICY IF EXISTS "Users can delete own projects" ON projects;
 CREATE POLICY "Projects are publicly readable" ON projects FOR SELECT USING (true);
 CREATE POLICY "Users can insert own projects" ON projects FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own projects" ON projects FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete own projects" ON projects FOR DELETE USING (auth.uid() = user_id);
 
 -- RLS Policies for certificates
+DROP POLICY IF EXISTS "Certificates are publicly readable" ON certificates;
+DROP POLICY IF EXISTS "Users can insert own certificates" ON certificates;
+DROP POLICY IF EXISTS "Users can update own certificates" ON certificates;
+DROP POLICY IF EXISTS "Users can delete own certificates" ON certificates;
 CREATE POLICY "Certificates are publicly readable" ON certificates FOR SELECT USING (true);
 CREATE POLICY "Users can insert own certificates" ON certificates FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own certificates" ON certificates FOR UPDATE USING (auth.uid() = user_id);
@@ -145,3 +177,15 @@ CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 CREATE INDEX IF NOT EXISTS idx_skills_user_id ON skills(user_id);
 CREATE INDEX IF NOT EXISTS idx_projects_user_id ON projects(user_id);
 CREATE INDEX IF NOT EXISTS idx_certificates_user_id ON certificates(user_id);
+CREATE INDEX IF NOT EXISTS idx_friendships_requester ON friendships(requester_id);
+CREATE INDEX IF NOT EXISTS idx_friendships_addressee ON friendships(addressee_id);
+
+-- RLS Policies for friendships
+DROP POLICY IF EXISTS "Friendships are readable by involved users" ON friendships;
+DROP POLICY IF EXISTS "Users can send friend requests" ON friendships;
+DROP POLICY IF EXISTS "Users can update friendships they are part of" ON friendships;
+DROP POLICY IF EXISTS "Users can delete friendships they are part of" ON friendships;
+CREATE POLICY "Friendships are readable by involved users" ON friendships FOR SELECT USING (true);
+CREATE POLICY "Users can send friend requests" ON friendships FOR INSERT WITH CHECK (auth.uid() = requester_id);
+CREATE POLICY "Users can update friendships they are part of" ON friendships FOR UPDATE USING (auth.uid() = requester_id OR auth.uid() = addressee_id);
+CREATE POLICY "Users can delete friendships they are part of" ON friendships FOR DELETE USING (auth.uid() = requester_id OR auth.uid() = addressee_id);

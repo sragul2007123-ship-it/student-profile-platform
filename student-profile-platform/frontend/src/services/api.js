@@ -48,9 +48,21 @@ export const api = {
 
   // Leaderboard
   getLeaderboard: () => request('/leaderboard'),
+  getFriendsLeaderboard: (userId) => request(`/leaderboard/friends/${userId}`),
+  getFriendsActivity: (userId) => request(`/leaderboard/friends/${userId}/activity`),
 
   // Views
   incrementViews: (username) => request(`/profile/${username}/views`, { method: 'POST' }),
+
+  // Friends
+  getFriends: (userId) => request(`/friends/${userId}`),
+  getPendingRequests: (userId) => request(`/friends/${userId}/pending`),
+  getSentRequests: (userId) => request(`/friends/${userId}/sent`),
+  sendFriendRequest: (userId, addresseeId) => request(`/friends/${userId}/send`, { method: 'POST', body: { addressee_id: addresseeId } }),
+  acceptFriendRequest: (friendshipId) => request(`/friends/${friendshipId}/accept`, { method: 'POST' }),
+  rejectFriendRequest: (friendshipId) => request(`/friends/${friendshipId}/reject`, { method: 'POST' }),
+  removeFriend: (friendshipId) => request(`/friends/${friendshipId}`, { method: 'DELETE' }),
+  searchUsers: (userId, query) => request(`/friends/${userId}/search?q=${encodeURIComponent(query)}`),
 
   // Admin
   getAllStudents: () => request('/admin/students'),

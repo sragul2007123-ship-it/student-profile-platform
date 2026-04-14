@@ -1,10 +1,13 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { api } from '../services/api'
+import { useAuth } from '../context/AuthContext'
+import { motion, AnimatePresence } from 'framer-motion'
 import QRCode from 'react-qr-code'
 
 export default function StudentProfile() {
   const { username } = useParams()
+  const { user } = useAuth()
   const [profileData, setProfileData] = useState(null)
   const [skills, setSkills] = useState([])
   const [projects, setProjects] = useState([])
@@ -13,13 +16,22 @@ export default function StudentProfile() {
   const [error, setError] = useState(null)
   const [showQR, setShowQR] = useState(false)
   const [showShareMenu, setShowShareMenu] = useState(false)
+  const [friendStatus, setFriendStatus] = useState(null) // null, 'none', 'pending', 'accepted', 'sent'
+  const [friendshipId, setFriendshipId] = useState(null)
+  const [friendLoading, setFriendLoading] = useState(false)
   const profileRef = useRef(null)
 
   const profileUrl = `${window.location.origin}/student/${username}`
 
   useEffect(() => {
-    loadProfile()
+    if (username) loadProfile()
   }, [username])
+
+  useEffect(() => {
+    if (user && profileData?.id && user.id !== profileData.id) {
+      checkFriendship()
+    }
+  }, [user, profileData])
 
   const loadProfile = async () => {
     setLoading(true)
@@ -41,19 +53,63 @@ export default function StudentProfile() {
     setLoading(false)
   }
 
-  const downloadPDF = async () => {
-    const html2pdf = (await import('html2pdf.js')).default
-    const element = profileRef.current
-    if (!element) return
+  const checkFriendship = async () => {
+    try {
+      // Check if we are friends, have a pending request, or sent a request
+      const friends = await api.getFriends(user.id)
+      const isFriend = friends.find(f => f.id === profileData.id)
+      if (isFriend) {
+        setFriendStatus('accepted')
+        setFriendshipId(isFriend.friendship_id)
+        return
+      }
 
-    const opt = {
-      margin: 0.5,
-      filename: `${profileData?.name || username}-portfolio.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+      const pending = await api.getPendingRequests(user.id)
+      const pendingReq = pending.find(f => f.id === profileData.id)
+      if (pendingReq) {
+        setFriendStatus('pending')
+        setFriendshipId(pendingReq.friendship_id)
+        return
+      }
+
+      const sent = await api.getSentRequests(user.id)
+      const sentReq = sent.find(f => f.id === profileData.id)
+      if (sentReq) {
+        setFriendStatus('sent')
+        setFriendshipId(sentReq.friendship_id)
+        return
+      }
+
+      setFriendStatus('none')
+    } catch (err) {
+      console.error('Error checking friendship:', err)
+      setFriendStatus('none')
     }
-    html2pdf().set(opt).from(element).save()
+  }
+
+  const handleFriendAction = async () => {
+    if (!user) {
+      alert('Please login to add friends')
+      return
+    }
+    setFriendLoading(true)
+    try {
+      if (friendStatus === 'none') {
+        await api.sendFriendRequest(user.id, profileData.id)
+        setFriendStatus('sent')
+      } else if (friendStatus === 'pending') {
+        await api.acceptFriendRequest(friendshipId)
+        setFriendStatus('accepted')
+      } else if (friendStatus === 'accepted') {
+        await api.removeFriend(friendshipId)
+        setFriendStatus('none')
+        setFriendshipId(null)
+      }
+    } catch (err) {
+      console.error('Friend action error:', err)
+      alert(err.message)
+    }
+    setFriendLoading(false)
   }
 
   const shareLinks = {
@@ -89,74 +145,101 @@ export default function StudentProfile() {
     <div className="min-h-screen gradient-bg-subtle">
       {/* Floating Action Buttons */}
       <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-3">
-        <button
-          onClick={() => setShowQR(true)}
-          className="w-12 h-12 rounded-full gradient-bg text-white shadow-xl shadow-primary-500/30 flex items-center justify-center hover:scale-110 transition-transform"
-          title="QR Code"
-        >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-          </svg>
-        </button>
-        <button
-          onClick={downloadPDF}
-          className="w-12 h-12 rounded-full bg-emerald-500 text-white shadow-xl shadow-emerald-500/30 flex items-center justify-center hover:scale-110 transition-transform"
-          title="Download PDF"
-        >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        </button>
+        <AnimatePresence>
+          {username && (
+            <motion.button
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              onClick={() => setShowQR(true)}
+              className="w-12 h-12 rounded-full gradient-bg text-white shadow-xl shadow-primary-500/30 flex items-center justify-center"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              title="QR Code"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+              </svg>
+            </motion.button>
+          )}
+        </AnimatePresence>
         <div className="relative">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={() => setShowShareMenu(!showShareMenu)}
-            className="w-12 h-12 rounded-full bg-accent-500 text-white shadow-xl shadow-accent-500/30 flex items-center justify-center hover:scale-110 transition-transform"
+            className="w-12 h-12 rounded-full bg-accent-500 text-white shadow-xl shadow-accent-500/30 flex items-center justify-center"
             title="Share"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
             </svg>
-          </button>
-          {showShareMenu && (
-            <div className="absolute bottom-14 right-0 glass-card p-3 w-48 animate-scale-in">
-              <a href={shareLinks.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-surface-700 transition-colors text-sm">
-                <span className="text-blue-600">in</span> LinkedIn
-              </a>
-              <a href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-surface-700 transition-colors text-sm">
-                <span className="text-green-500">💬</span> WhatsApp
-              </a>
-              <a href={shareLinks.email} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-surface-700 transition-colors text-sm">
-                <span>✉️</span> Email
-              </a>
-              <button
-                onClick={() => { navigator.clipboard.writeText(profileUrl); setShowShareMenu(false) }}
-                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-surface-700 transition-colors text-sm w-full text-left"
+          </motion.button>
+          <AnimatePresence>
+            {showShareMenu && (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                className="absolute bottom-14 right-0 glass-card p-3 w-48 shadow-2xl z-50"
               >
-                <span>📋</span> Copy Link
-              </button>
-            </div>
-          )}
+                <a href={shareLinks.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-surface-700 transition-colors text-sm">
+                  <span className="text-blue-600">in</span> LinkedIn
+                </a>
+                <a href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-surface-700 transition-colors text-sm">
+                  <span className="text-green-500">💬</span> WhatsApp
+                </a>
+                <a href={shareLinks.email} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-surface-700 transition-colors text-sm">
+                  <span>✉️</span> Email
+                </a>
+                <button
+                  onClick={() => { navigator.clipboard.writeText(profileUrl); setShowShareMenu(false) }}
+                  className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-surface-700 transition-colors text-sm w-full text-left"
+                >
+                  <span>📋</span> Copy Link
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
       {/* QR Code Modal */}
-      {showQR && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowQR(false)}>
-          <div className="glass-card p-8 text-center max-w-sm animate-scale-in" onClick={e => e.stopPropagation()}>
-            <h3 className="text-xl font-semibold mb-4 dark:text-white">Scan to View Profile</h3>
-            <div className="bg-white p-4 rounded-xl inline-block mb-4">
-              <QRCode value={profileUrl} size={200} />
-            </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{profileUrl}</p>
-            <button onClick={() => setShowQR(false)} className="btn-ghost">Close</button>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {showQR && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" 
+            onClick={() => setShowQR(false)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="glass-card p-8 text-center max-w-sm" 
+              onClick={e => e.stopPropagation()}
+            >
+              <h3 className="text-xl font-semibold mb-4 dark:text-white">Scan to View Profile</h3>
+              <div className="bg-white p-4 rounded-xl inline-block mb-4">
+                <QRCode value={profileUrl} size={200} />
+              </div>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 break-all">{profileUrl}</p>
+              <button onClick={() => setShowQR(false)} className="btn-ghost">Close</button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Profile Content */}
       <div ref={profileRef} className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
         {/* Header / Hero Card */}
-        <div className="glass-card overflow-hidden mb-8 animate-slide-up">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-card overflow-hidden mb-8"
+        >
           <div className="h-32 gradient-bg relative">
             <div className="absolute inset-0 bg-gradient-to-r from-primary-600/50 to-accent-600/50"></div>
           </div>
@@ -169,7 +252,7 @@ export default function StudentProfile() {
                   profileData?.name?.[0]?.toUpperCase() || '?'
                 )}
               </div>
-              <div className="text-center sm:text-left pb-2">
+              <div className="text-center sm:text-left pb-2 flex-1">
                 <h1 className="text-3xl font-display font-bold dark:text-white">{profileData?.name}</h1>
                 <p className="text-primary-500 font-semibold text-lg">{profileData?.role}</p>
                 {profileData?.education && (
@@ -178,6 +261,28 @@ export default function StudentProfile() {
                   </p>
                 )}
               </div>
+              {/* Friend Button */}
+              {user && profileData?.id && user.id !== profileData.id && friendStatus && (
+                <button
+                  onClick={handleFriendAction}
+                  disabled={friendLoading || friendStatus === 'sent'}
+                  className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shrink-0 ${
+                    friendStatus === 'accepted'
+                      ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400'
+                      : friendStatus === 'pending'
+                      ? 'gradient-bg text-white shadow-lg shadow-primary-500/25'
+                      : friendStatus === 'sent'
+                      ? 'bg-gray-100 dark:bg-surface-700 text-gray-500 cursor-not-allowed'
+                      : 'gradient-bg text-white shadow-lg shadow-primary-500/25 hover:shadow-xl'
+                  }`}
+                >
+                  {friendLoading ? '...' :
+                    friendStatus === 'accepted' ? '✓ Friends' :
+                    friendStatus === 'pending' ? 'Accept Request' :
+                    friendStatus === 'sent' ? 'Request Sent' :
+                    '+ Add Friend'}
+                </button>
+              )}
             </div>
             {/* View Count */}
             <div className="absolute top-20 right-8 hidden sm:flex items-center gap-1 text-sm text-gray-400 dark:text-gray-500">
@@ -188,66 +293,111 @@ export default function StudentProfile() {
               {profileData?.view_count || 0} views
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* About Section */}
         {profileData?.about && (
-          <div className="glass-card p-8 mb-8 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-8 mb-8"
+          >
             <h2 className="text-2xl font-display font-bold mb-4 dark:text-white">About</h2>
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">{profileData.about}</p>
-          </div>
+          </motion.div>
         )}
 
         {/* Skills Section */}
         {skills.length > 0 && (
-          <div className="glass-card p-8 mb-8 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-8 mb-8"
+          >
             <h2 className="text-2xl font-display font-bold mb-6 dark:text-white">Skills</h2>
-            <div className="space-y-5">
-              {skills.map((skill, i) => (
-                <div key={skill.id} style={{ animationDelay: `${i * 0.1}s` }}>
-                  <div className="flex justify-between mb-2">
-                    <span className="font-medium dark:text-gray-200">{skill.skill_name}</span>
-                    <span className="text-sm font-semibold text-primary-500">{skill.skill_level}%</span>
-                  </div>
-                  <div className="w-full h-3 bg-gray-100 dark:bg-surface-700 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full gradient-bg transition-all duration-1000 ease-out animate-progress"
-                      style={{ '--progress-width': `${skill.skill_level}%`, width: `${skill.skill_level}%` }}
-                    ></div>
+            <div className="space-y-8">
+              {Array.from(new Set(skills.map(s => s.category || 'Other'))).map(category => (
+                <div key={category}>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-primary-500 mb-4">{category}</h3>
+                  <div className="space-y-5">
+                    {skills.filter(s => (s.category || 'Other') === category).map((skill, i) => (
+                      <motion.div 
+                        key={skill.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.1 }}
+                      >
+                        <div className="flex justify-between mb-2">
+                          <span className="font-medium dark:text-gray-200">{skill.skill_name}</span>
+                          <span className="text-sm font-semibold text-primary-500">{skill.skill_level}%</span>
+                        </div>
+                        <div className="w-full h-3 bg-gray-100 dark:bg-surface-700 rounded-full overflow-hidden shadow-inner">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            whileInView={{ width: `${skill.skill_level}%` }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1, ease: "easeOut" }}
+                            className="h-full rounded-full gradient-bg"
+                          ></motion.div>
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Projects Section */}
         {projects.length > 0 && (
-          <div className="glass-card p-8 mb-8 animate-slide-up" style={{ animationDelay: '0.3s' }}>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-8 mb-8"
+          >
             <h2 className="text-2xl font-display font-bold mb-6 dark:text-white">Projects</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {projects.map((project) => (
-                <div key={project.id} className="p-6 rounded-xl bg-gray-50 dark:bg-surface-700/50 border border-gray-100 dark:border-surface-600 hover:border-primary-300 dark:hover:border-primary-600 transition-all card-hover">
-                  <h3 className="text-lg font-semibold mb-2 dark:text-white">{project.title}</h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 leading-relaxed">{project.description}</p>
-                  <div className="flex gap-3">
-                    {project.github_link && (
-                      <a href={project.github_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-900 dark:bg-gray-700 text-white text-xs font-medium hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
-                        <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                        GitHub
-                      </a>
-                    )}
-                    {project.demo_link && (
-                      <a href={project.demo_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg gradient-bg text-white text-xs font-medium hover:shadow-lg transition-all">
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                        Live Demo
-                      </a>
-                    )}
+              {projects.map((project, i) => (
+                <motion.div 
+                    key={project.id}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className="group overflow-hidden rounded-xl bg-gray-50 dark:bg-surface-700/50 border border-gray-100 dark:border-surface-600 hover:border-primary-300 dark:hover:border-primary-600 transition-all card-hover flex flex-col"
+                >
+                  {project.image_url && (
+                    <div className="h-40 w-full overflow-hidden">
+                      <img src={project.image_url} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <h3 className="text-lg font-semibold mb-2 dark:text-white">{project.title}</h3>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm mb-4 leading-relaxed">{project.description}</p>
+                    <div className="flex gap-3">
+                      {project.github_link && (
+                        <a href={project.github_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-900 dark:bg-gray-700 text-white text-xs font-medium hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                          <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                          GitHub
+                        </a>
+                      )}
+                      {project.demo_link && (
+                        <a href={project.demo_link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg gradient-bg text-white text-xs font-medium hover:shadow-lg transition-all">
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                          Live Demo
+                        </a>
+                      )}
+                    </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Certificates Section */}

@@ -9,17 +9,32 @@ router = APIRouter()
 @router.get("/{user_id}")
 async def get_profile(user_id: str):
     try:
-        # Get user
+        # Get user - this must exist
         user_res = supabase.table("users").select("*").eq("id", user_id).single().execute()
-        # Get profile
-        profile_res = supabase.table("profiles").select("*").eq("user_id", user_id).single().execute()
+        
+        # Get profile - might not exist yet
+        try:
+            profile_res = supabase.table("profiles").select("*").eq("user_id", user_id).single().execute()
+            profile_data = profile_res.data
+        except Exception:
+            # If profile doesn't exist, return default values
+            profile_data = {
+                "user_id": user_id,
+                "role": "",
+                "about": "",
+                "education": {},
+                "github": "",
+                "linkedin": "",
+                "view_count": 0
+            }
         
         return {
             "user": user_res.data,
-            "profile": profile_res.data
+            "profile": profile_data
         }
     except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        print(f"Get profile error: {str(e)}")
+        raise HTTPException(status_code=404, detail="User not found")
 
 @router.get("/username/{username}")
 async def get_public_profile(username: str):
@@ -47,7 +62,7 @@ async def get_public_profile(username: str):
             "certificates": data.get("certificates", [])
         }
     except Exception as e:
-        print(f"Profile error: {str(e)}")
+        print(f"Public profile error: {str(e)}")
         raise HTTPException(status_code=404, detail="Profile not found")
 
 @router.put("/{user_id}")
@@ -66,11 +81,12 @@ async def update_profile(user_id: str, data: ProfileUpdate):
         if profile_update:
             # Handle nested education if present
             if "education" in profile_update and profile_update["education"]:
-                # If education is still a Pydantic model
                 if hasattr(profile_update["education"], "dict"):
                     profile_update["education"] = profile_update["education"].dict()
             
-            supabase.table("profiles").update(profile_update).eq("user_id", user_id).execute()
+            # Use upsert to handle case where profile record doesn't exist yet
+            profile_update["user_id"] = user_id
+            supabase.table("profiles").upsert(profile_update).execute()
             
         return {"message": "Profile updated successfully"}
     except Exception as e:

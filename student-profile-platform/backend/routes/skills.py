@@ -19,6 +19,8 @@ async def add_skill(user_id: str, skill: SkillCreate):
         data = skill.dict()
         data["user_id"] = user_id
         res = supabase.table("skills").insert(data).execute()
+        if not res.data:
+            raise Exception("Failed to insert skill - possibly permission denied")
         return res.data[0]
     except Exception as e:
         print(f"Skill add error: {str(e)}")
@@ -29,6 +31,8 @@ async def update_skill(skill_id: str, skill: SkillCreate):
     try:
         data = skill.dict()
         res = supabase.table("skills").update(data).eq("id", skill_id).execute()
+        if not res.data:
+            raise Exception("Skill not found or no changes made")
         return res.data[0]
     except Exception as e:
         print(f"Skill update error: {str(e)}")
