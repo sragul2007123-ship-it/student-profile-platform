@@ -359,6 +359,17 @@ export default function Dashboard() {
     { id: 'friends', label: 'Friends', icon: '🤝' },
   ]
 
+  const [syncTimeout, setSyncTimeout] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (loading || (!user && window.location.hash.includes('access_token='))) {
+        setSyncTimeout(true)
+      }
+    }, 5000)
+    return () => clearTimeout(timer)
+  }, [loading, user])
+
   if (loading || (!user && window.location.hash.includes('access_token='))) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gradient-bg-subtle">
@@ -371,6 +382,24 @@ export default function Dashboard() {
             ? 'Finishing login, please wait...' 
             : 'Loading your dashboard...'}
         </p>
+        
+        {syncTimeout && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 flex flex-col items-center gap-4"
+          >
+            <p className="text-sm text-amber-600 bg-amber-50 px-4 py-2 rounded-lg border border-amber-100">
+              Taking longer than usual? Try refreshing your session.
+            </p>
+            <button 
+              onClick={() => window.location.href = '/dashboard'}
+              className="px-6 py-2 bg-primary-500 text-white rounded-xl shadow-lg hover:bg-primary-600 transition-all font-semibold"
+            >
+              Refresh Dashboard
+            </button>
+          </motion.div>
+        )}
       </div>
     )
   }
