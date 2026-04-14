@@ -65,7 +65,7 @@ export default function Dashboard() {
     setTimeout(() => setMessage({ type: '', text: '' }), 5000)
   }
 
-  const loadData = async () => {
+  const loadData = async (retryCount = 0) => {
     try {
       const data = await api.getProfile(user.id)
       const userData = data.user
@@ -112,7 +112,15 @@ export default function Dashboard() {
       if (sentData) setSentRequests(sentData)
     } catch (err) {
       console.error('Error loading data:', err)
-      showMessage('error', 'Failed to load profile data.')
+      
+      // If it's the first time and it failed, retry once after a short delay
+      // This handles the race condition where Supabase triggers are still creating the profile
+      if (retryCount < 2) {
+        console.log(`Retrying data load... attempt ${retryCount + 1}`)
+        setTimeout(() => loadData(retryCount + 1), 1500)
+      } else {
+        showMessage('error', 'Failed to load profile data. Please refresh if the error persists.')
+      }
     }
   }
 
