@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 
@@ -9,6 +9,9 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const isHomePage = location.pathname === '/'
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -65,18 +68,25 @@ export default function Navbar() {
             {/* Auth Buttons */}
             {user ? (
               <div className="flex items-center gap-3 ml-2">
-                <div className="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-white text-sm font-semibold">
-                  {user.email?.[0]?.toUpperCase() || 'U'}
-                </div>
-                <button onClick={signOut} className="btn-ghost text-red-500 hover:bg-red-50 dark:hover:bg-red-950">
+                <Link to="/dashboard" className="w-8 h-8 rounded-full gradient-bg overflow-hidden flex items-center justify-center text-white text-sm font-semibold border-2 border-white dark:border-surface-800 shadow-md">
+                  {user.user_metadata?.avatar_url ? (
+                    <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                  ) : (
+                    user.email?.[0]?.toUpperCase() || 'U'
+                  )}
+                </Link>
+                <button onClick={signOut} className="btn-ghost text-red-500 hover:bg-red-50 dark:hover:bg-red-950 px-3 py-1.5 text-sm">
                   Logout
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2 ml-2">
-                <Link to="/login" className="btn-ghost">Login</Link>
-                <Link to="/register" className="btn-primary text-sm">Register</Link>
-              </div>
+              // Only show Login/Register if NOT on the Landing Page or if on Landing Page but scrolled
+              (!isHomePage || scrolled) && (
+                <div className="flex items-center gap-2 ml-2 animate-fade-in">
+                  <Link to="/login" className="btn-ghost px-4 py-2">Login</Link>
+                  <Link to="/register" className="btn-primary px-4 py-2 text-sm">Register</Link>
+                </div>
+              )
             )}
           </div>
 

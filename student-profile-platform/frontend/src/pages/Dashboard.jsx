@@ -411,6 +411,32 @@ export default function Dashboard() {
         <div className="mb-8">
           <h1 className="text-3xl font-display font-bold dark:text-white">Dashboard</h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">Manage your digital profile</p>
+          
+          {/* New User Onboarding Banner */}
+          {!profile.username && !loading && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-6 p-6 rounded-2xl bg-gradient-to-r from-primary-600 to-indigo-600 text-white shadow-xl shadow-primary-500/20 relative overflow-hidden group"
+            >
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                </svg>
+              </div>
+              <div className="relative z-10">
+                <h3 className="text-xl font-bold mb-1">🎉 Welcome to your new profile!</h3>
+                <p className="text-primary-100 mb-4 max-w-lg">You've successfully signed up. Let's start by creating your unique username and adding your basic info.</p>
+                <button 
+                  onClick={() => setActiveTab('profile')}
+                  className="px-6 py-2 bg-white text-primary-600 rounded-xl font-bold hover:bg-primary-50 transition-colors shadow-lg"
+                >
+                  Complete My Profile
+                </button>
+              </div>
+            </motion.div>
+          )}
+
           {profile.username && (
             <p className="text-sm text-primary-500 mt-2">
               Your profile: <a href={`/student/${profile.username}`} className="underline hover:text-primary-700" target="_blank" rel="noopener noreferrer">/student/{profile.username}</a>
