@@ -9,35 +9,39 @@ router = APIRouter()
 @router.get("/{user_id}")
 async def get_profile(user_id: str):
     try:
-        # Try to get user
-        try:
-            user_res = supabase.table("users").select("*").eq("id", user_id).single().execute()
-            user_data = user_res.data
-        except Exception:
-            # If user record is missing, create it now (Zero-Trigger Fallback)
-            # Fetch email from Supabase Auth as a last resort
-            auth_user = supabase.auth.admin.get_user_by_id(user_id)
-            user_data = {
-                "id": user_id,
-                "email": auth_user.user.email if auth_user and auth_user.user else "",
-                "name": "New Student",
-                "created_at": "now()"
-            }
-            supabase.table("users").insert(user_data).execute()
+        # 1. Get User Data
+        user_res = supabase.table("users").select("*").eq("id", user_id).execute()
+        user_data = user_res.data[0] if user_res.data else None
         
-        # Get profile
-        try:
-            profile_res = supabase.table("profiles").select("*").eq("user_id", user_id).single().execute()
-            profile_data = profile_res.data
-        except Exception:
-            # If profile doesn't exist, create it
+        if not user_data:
+            # Fallback: Check if record exists in Auth but not in public.users
+            try:
+                auth_user = supabase.auth.admin.get_user_by_id(user_id)
+                if auth_user and auth_user.user:
+                    user_data = {
+                        "id": user_id,
+                        "email": auth_user.user.email,
+                        "name": auth_user.user.user_metadata.get("full_name", "Student"),
+                        "profile_photo": auth_user.user.user_metadata.get("avatar_url", ""),
+                        "created_at": "now()"
+                    }
+                    # Save it so it's there next time
+                    supabase.table("users").insert(user_data).execute()
+            except Exception as auth_err:
+                print(f"Auth fallback error: {auth_err}")
+                raise HTTPException(status_code=404, detail="User record not found")
+
+        # 2. Get Profile Data
+        profile_res = supabase.table("profiles").select("*").eq("user_id", user_id).execute()
+        profile_data = profile_res.data[0] if profile_res.data else None
+        
+        if not profile_data:
+            # Create default profile if missing
             profile_data = {
                 "user_id": user_id,
                 "role": "",
                 "about": "",
                 "education": {},
-                "github": "",
-                "linkedin": "",
                 "view_count": 0
             }
             supabase.table("profiles").insert(profile_data).execute()
@@ -49,6 +53,7 @@ async def get_profile(user_id: str):
     except Exception as e:
         print(f"Get profile error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get("/username/{username}")
 async def get_public_profile(username: str):
@@ -89,23 +94,35 @@ async def update_profile(user_id: str, data: ProfileUpdate):
         user_update = {k: v for k, v in update_data.items() if k in user_fields}
         profile_update = {k: v for k, v in update_data.items() if k not in user_fields}
         
+        # 1. Update/Create User Record
         if user_update:
-            supabase.table("users").update(user_update).eq("id", user_id).execute()
+            user_update["id"] = user_id
+            # Use upsert to ensure record exists
+            res = supabase.table("users").upsert(user_update).execute()
+            if not res.data:
+                raise Exception("Failed to save user data - possibly permission denied")
         
+        # 2. Update/Create Profile Record
         if profile_update:
             # Handle nested education if present
             if "education" in profile_update and profile_update["education"]:
                 if hasattr(profile_update["education"], "dict"):
                     profile_update["education"] = profile_update["education"].dict()
             
-            # Use upsert to handle case where profile record doesn't exist yet
             profile_update["user_id"] = user_id
-            supabase.table("profiles").upsert(profile_update).execute()
+            res = supabase.table("profiles").upsert(profile_update).execute()
+            if not res.data:
+                raise Exception("Failed to save profile details")
             
-        return {"message": "Profile updated successfully"}
+        return {"message": "Profile saved successfully"}
     except Exception as e:
-        print(f"Update error: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e))
+        print(f"Update profile error for user {user_id}: {str(e)}")
+        detail = str(e)
+        if "duplicate key value" in detail:
+            detail = "Username already taken. Please choose another one."
+        raise HTTPException(status_code=400, detail=detail)
+
+
 
 @router.post("/{username}/views")
 async def increment_views(username: str):

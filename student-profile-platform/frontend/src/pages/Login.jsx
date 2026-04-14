@@ -38,7 +38,7 @@ export default function Login() {
           throw new Error("Password must be at least 6 characters")
         }
         await signUpWithEmail(email, password, name)
-        setSuccess('Check your email to confirm your account!')
+        setSuccess('Registration successful! Please check your email for a confirmation link.')
       } else {
         if (isMagicLink) {
           await signInWithMagicLink(email)
@@ -49,10 +49,15 @@ export default function Login() {
         }
       }
     } catch (err) {
-      setError(err.message)
+      let msg = err.message
+      if (msg.includes('already registered') || msg.includes('User already exists')) {
+        msg = "This email is already registered. Please login instead."
+      }
+      setError(msg)
     } finally {
       setAuthLoading(false)
     }
+
   }
 
   return (

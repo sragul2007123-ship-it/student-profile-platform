@@ -8,7 +8,7 @@ router = APIRouter()
 @router.get("/{user_id}")
 async def get_certificates(user_id: str):
     try:
-        res = supabase.table("certificates").select("*").eq("user_id", user_id).order("created_at", ascending=False).execute()
+        res = supabase.table("certificates").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
         return res.data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

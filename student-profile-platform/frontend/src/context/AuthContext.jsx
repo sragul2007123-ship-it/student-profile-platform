@@ -35,17 +35,15 @@ export function AuthProvider({ children }) {
           setProfile(null)
         }
         
-        // Check for error in URL (from Supabase redirect)
-        const params = new URLSearchParams(window.location.hash.substring(1))
-        const errorMsg = params.get('error_description') || params.get('error')
-        if (errorMsg) {
-          console.error('❌ Auth Redirect Error:', errorMsg)
-          alert('Authentication Error: ' + errorMsg)
+        // Clean the URL hash after successful login to prevent stuck spinners
+        if (session && window.location.hash.includes('access_token=')) {
+          window.history.replaceState(null, '', window.location.pathname)
         }
         
         setLoading(false)
       }
     )
+
 
     return () => subscription.unsubscribe()
   }, [])
@@ -133,15 +131,23 @@ export function AuthProvider({ children }) {
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut()
+      // Clear local state first for immediate UI update
       setUser(null)
       setProfile(null)
-      // Force a full clean redirect to clear all session state
-      window.location.href = '/'
+      
+      // Notify Supabase in the background
+      await supabase.auth.signOut()
     } catch (err) {
       console.error('Logout error:', err.message)
+    } finally {
+      // Direct navigation to home without full page reload if possible
+      // But we use window.location.href='/' to be 100% sure all memory is cleared
+      // however, we ensure the Dashboard isn't showing the spinner anymore
+      window.location.href = '/'
     }
   }
+
+
 
   const value = {
     user,

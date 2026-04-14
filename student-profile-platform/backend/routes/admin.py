@@ -10,7 +10,7 @@ async def get_all_students():
         # We select the full profile and just the IDs of projects/skills/certificates for counting
         res = supabase.table("users").select(
             "*, profiles(*), projects(id), skills(id), certificates(id)"
-        ).order("created_at", ascending=False).execute()
+        ).order("created_at", desc=True).execute()
         return res.data
     except Exception as e:
         print(f"Admin fetch error: {str(e)}")

@@ -101,26 +101,36 @@ export default function Dashboard() {
       const profileData = profileResponse.profile
 
       if (userData) {
-        setProfile(prev => ({
-          ...prev,
-          name: userData.name || user.user_metadata?.full_name || '',
-          username: userData.username || '',
-          profile_photo: userData.profile_photo || user.user_metadata?.avatar_url || '',
-          email: userData.email || user.email || '',
-        }))
+        console.log('--- DATA SYNC SUCCESS: User Found ---', userData)
+        setProfile(prev => {
+          const newState = {
+            ...prev,
+            name: userData.name || prev.name || user.user_metadata?.full_name || '',
+            username: userData.username || prev.username || '',
+            profile_photo: userData.profile_photo || prev.profile_photo || user.user_metadata?.avatar_url || '',
+            email: userData.email || prev.email || user.email || '',
+          }
+          console.log('New State (User):', newState)
+          return newState
+        })
       }
 
       if (profileData) {
-        setProfile(prev => ({
-          ...prev,
-          role: profileData.role || '',
-          about: profileData.about || '',
-          github: profileData.github || '',
-          linkedin: profileData.linkedin || '',
-          college: profileData.education?.college || '',
-          degree: profileData.education?.degree || '',
-          year: profileData.education?.year || '',
-        }))
+        console.log('--- DATA SYNC SUCCESS: Profile Found ---', profileData)
+        setProfile(prev => {
+          const newState = {
+            ...prev,
+            role: profileData.role || prev.role || '',
+            about: profileData.about || prev.about || '',
+            college: profileData.education?.college || prev.college || '',
+            degree: profileData.education?.degree || prev.degree || '',
+            year: profileData.education?.year || prev.year || '',
+            github: profileData.github || prev.github || '',
+            linkedin: profileData.linkedin || prev.linkedin || '',
+          }
+          console.log('New State (Full):', newState)
+          return newState
+        })
       }
 
       if (skillsData) setSkills(skillsData)
@@ -133,11 +143,10 @@ export default function Dashboard() {
       console.error('Error loading data:', err)
       if (retryCount < 3) {
         setTimeout(() => loadData(retryCount + 1), 2000)
-      } else {
-        showMessage('error', 'Sync error: The server is taking too long to respond. Please refresh.')
       }
     }
   }
+
 
   const uploadFile = async (file, bucket, folder = '') => {
     const fileExt = file.name.split('.').pop()
@@ -382,7 +391,12 @@ export default function Dashboard() {
     { id: 'friends', label: 'Friends', icon: '🤝' },
   ]
 
-  if (loading || (!user && window.location.hash.includes('access_token='))) {
+  // Only show the syncing screen during the VERY first load of the app
+  // or when an OAuth redirect is physically happening in the URL.
+  // Never show it if we are just logged out.
+  const isAuthFlow = window.location.hash.includes('access_token=') || window.location.hash.includes('error=');
+  
+  if (loading && isAuthFlow) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gradient-bg-subtle">
         <div className="w-16 h-16 rounded-full border-4 border-primary-200 border-t-primary-500 animate-spin mb-4"></div>
@@ -395,6 +409,8 @@ export default function Dashboard() {
       </div>
     )
   }
+
+
 
   return (
     <div className="min-h-screen pt-20 pb-12 gradient-bg-subtle">
@@ -430,11 +446,15 @@ export default function Dashboard() {
           )}
 
           {profile.username && (
-            <p className="text-sm text-primary-500 mt-2">
-              Your profile: <a href={`/student/${profile.username}`} className="underline hover:text-primary-700" target="_blank" rel="noopener noreferrer">/student/{profile.username}</a>
-            </p>
+            <div className="flex items-center gap-2 mt-2">
+               <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+               <p className="text-sm text-gray-400">
+                Live URL: <a href={`/student/${profile.username}`} className="font-medium text-primary-500 underline hover:text-primary-700" target="_blank" rel="noopener noreferrer">/student/{profile.username}</a>
+              </p>
+            </div>
           )}
         </div>
+
 
         {/* Message Toast */}
         {message.text && (
@@ -513,18 +533,7 @@ export default function Dashboard() {
                       )}
                     </div>
                     <input type="file" ref={fileInputRef} onChange={handlePhotoUpload} accept="image/*" className="hidden" />
-                    <p className="text-xs text-gray-500 mt-3 font-medium">Click photo to upload from device</p>
-                    
-                    <div className="mt-4 w-full max-w-sm">
-                      <label className="block text-xs font-semibold text-gray-400 uppercase mb-1">Or paste Photo URL</label>
-                      <input
-                        type="url"
-                        className="input-field text-sm py-2"
-                        placeholder="https://..."
-                        value={profile.profile_photo}
-                        onChange={e => setProfile(prev => ({ ...prev, profile_photo: e.target.value }))}
-                      />
-                    </div>
+                    <p className="text-xs text-gray-500 mt-3 font-medium">Click photo to upload a new one</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
@@ -539,15 +548,23 @@ export default function Dashboard() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Username</label>
-                      <input
-                        type="text"
-                        className="input-field"
-                        placeholder="yourname (for your public URL)"
-                        value={profile.username}
-                        onChange={e => setProfile(prev => ({ ...prev, username: e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '') }))}
-                      />
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Username <span className="text-red-500 text-xs font-bold ml-1 uppercase">Required</span>
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium">@</span>
+                        <input
+                          type="text"
+                          className={`input-field pl-8 ${!profile.username ? 'border-amber-300 dark:border-amber-900/50 bg-amber-50/30' : ''}`}
+                          placeholder="yourname"
+                          value={profile.username}
+                          required
+                          onChange={e => setProfile(prev => ({ ...prev, username: e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '') }))}
+                        />
+                      </div>
+                      <p className="text-[10px] text-gray-500 mt-1">This will be your unique profile link.</p>
                     </div>
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Role / Title</label>
                       <input

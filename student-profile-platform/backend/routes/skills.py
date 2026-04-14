@@ -8,7 +8,7 @@ router = APIRouter()
 @router.get("/{user_id}")
 async def get_skills(user_id: str):
     try:
-        res = supabase.table("skills").select("*").eq("user_id", user_id).order("created_at", ascending=False).execute()
+        res = supabase.table("skills").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
         return res.data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -23,8 +23,9 @@ async def add_skill(user_id: str, skill: SkillCreate):
             raise Exception("Failed to insert skill - possibly permission denied")
         return res.data[0]
     except Exception as e:
-        print(f"Skill add error: {str(e)}")
-        raise HTTPException(status_code=400, detail=str(e))
+        print(f"Skill add error for user {user_id}: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Database error: {str(e)}")
+
 
 @router.put("/{skill_id}")
 async def update_skill(skill_id: str, skill: SkillCreate):

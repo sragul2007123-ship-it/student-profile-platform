@@ -1,8 +1,14 @@
-const API_BASE = import.meta.env.VITE_API_URL || '/api'
+let API_BASE = import.meta.env.VITE_API_URL || '/api'
+
+// Ensure API_BASE ends with /api if it's a full URL and missing it
+if (API_BASE.startsWith('http') && !API_BASE.endsWith('/api')) {
+  API_BASE = API_BASE.replace(/\/$/, '') + '/api'
+}
 
 if (import.meta.env.DEV) {
   console.log('API Base URL:', API_BASE)
 }
+
 
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`

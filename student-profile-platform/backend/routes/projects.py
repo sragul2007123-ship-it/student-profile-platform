@@ -8,7 +8,7 @@ router = APIRouter()
 @router.get("/{user_id}")
 async def get_projects(user_id: str):
     try:
-        res = supabase.table("projects").select("*").eq("user_id", user_id).order("created_at", ascending=False).execute()
+        res = supabase.table("projects").select("*").eq("user_id", user_id).order("created_at", desc=True).execute()
         return res.data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
