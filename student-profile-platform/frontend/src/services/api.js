@@ -17,9 +17,10 @@ async function request(endpoint, options = {}) {
 
   const response = await fetch(url, config)
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'Request failed' }))
+    const error = await response.json().catch(() => ({ detail: `Request to ${url} failed with status ${response.status}` }))
     throw new Error(error.detail || 'Request failed')
   }
+
   return response.json()
 }
 

@@ -9,15 +9,28 @@ router = APIRouter()
 @router.get("/{user_id}")
 async def get_profile(user_id: str):
     try:
-        # Get user - this must exist
-        user_res = supabase.table("users").select("*").eq("id", user_id).single().execute()
+        # Try to get user
+        try:
+            user_res = supabase.table("users").select("*").eq("id", user_id).single().execute()
+            user_data = user_res.data
+        except Exception:
+            # If user record is missing, create it now (Zero-Trigger Fallback)
+            # Fetch email from Supabase Auth as a last resort
+            auth_user = supabase.auth.admin.get_user_by_id(user_id)
+            user_data = {
+                "id": user_id,
+                "email": auth_user.user.email if auth_user and auth_user.user else "",
+                "name": "New Student",
+                "created_at": "now()"
+            }
+            supabase.table("users").insert(user_data).execute()
         
-        # Get profile - might not exist yet
+        # Get profile
         try:
             profile_res = supabase.table("profiles").select("*").eq("user_id", user_id).single().execute()
             profile_data = profile_res.data
         except Exception:
-            # If profile doesn't exist, return default values
+            # If profile doesn't exist, create it
             profile_data = {
                 "user_id": user_id,
                 "role": "",
@@ -27,14 +40,15 @@ async def get_profile(user_id: str):
                 "linkedin": "",
                 "view_count": 0
             }
+            supabase.table("profiles").insert(profile_data).execute()
         
         return {
-            "user": user_res.data,
+            "user": user_data,
             "profile": profile_data
         }
     except Exception as e:
         print(f"Get profile error: {str(e)}")
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/username/{username}")
 async def get_public_profile(username: str):
