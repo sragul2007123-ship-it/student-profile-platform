@@ -81,6 +81,56 @@ export function AuthProvider({ children }) {
     }
   }
 
+  const signUpWithEmail = async (email, password, name) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          },
+          emailRedirectTo: `${window.location.origin}/dashboard`
+        }
+      })
+      if (error) throw error
+      return data
+    } catch (err) {
+      console.error('Registration error:', err.message)
+      throw err
+    }
+  }
+
+  const signInWithEmail = async (email, password) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+      if (error) throw error
+      return data
+    } catch (err) {
+      console.error('Login error:', err.message)
+      throw err
+    }
+  }
+
+  const signInWithMagicLink = async (email) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`
+        }
+      })
+      if (error) throw error
+      return data
+    } catch (err) {
+      console.error('Magic link error:', err.message)
+      throw err
+    }
+  }
+
   const signOut = async () => {
     await supabase.auth.signOut()
     setUser(null)
@@ -92,6 +142,9 @@ export function AuthProvider({ children }) {
     profile,
     loading,
     signInWithGoogle,
+    signUpWithEmail,
+    signInWithEmail,
+    signInWithMagicLink,
     signOut,
     refreshProfile: () => user && fetchProfile(user.id),
   }
