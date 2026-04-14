@@ -68,8 +68,20 @@ export default function Dashboard() {
   const loadData = async (retryCount = 0) => {
     try {
       // Parallelize ALL data fetching for maximum speed
+      // We wrap getProfile in its own try/catch to handle the "New User" race condition specifically
+      let profileResponse;
+      try {
+        profileResponse = await api.getProfile(user.id);
+      } catch (err) {
+        // If it's a 404, it means the trigger hasn't finished creating the record
+        if (retryCount < 5) {
+          console.log(`User record not found yet, retrying... (${retryCount + 1}/5)`);
+          return setTimeout(() => loadData(retryCount + 1), 2000);
+        }
+        throw err;
+      }
+
       const [
-        profileResponse,
         skillsData, 
         projectsData, 
         certsData, 
@@ -77,7 +89,6 @@ export default function Dashboard() {
         pendingData, 
         sentData
       ] = await Promise.all([
-        api.getProfile(user.id),
         api.getSkills(user.id),
         api.getProjects(user.id),
         api.getCertificates(user.id),
@@ -120,14 +131,10 @@ export default function Dashboard() {
       if (sentData) setSentRequests(sentData)
     } catch (err) {
       console.error('Error loading data:', err)
-      
-      // If it's the first time and it failed, retry once after a short delay
-      // This handles the race condition where Supabase triggers are still creating the profile
-      if (retryCount < 2) {
-        console.log(`Retrying data load... attempt ${retryCount + 1}`)
-        setTimeout(() => loadData(retryCount + 1), 1500)
+      if (retryCount < 3) {
+        setTimeout(() => loadData(retryCount + 1), 2000)
       } else {
-        showMessage('error', 'Failed to load profile data. Please refresh if the error persists.')
+        showMessage('error', 'Sync error: The server is taking too long to respond. Please refresh.')
       }
     }
   }
