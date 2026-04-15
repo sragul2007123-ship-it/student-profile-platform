@@ -60,7 +60,7 @@
   }
 
   .card-hover {
-    @apply hover:shadow-2xl hover:shadow-primary-500/10 hover:-translate-y-1.5 transition-all duration-400 ease-out border border-transparent hover:border-primary-500/30;
+    @apply hover:shadow-2xl hover:shadow-primary-500/10 hover:-translate-y-1.5 transition-all duration-500 ease-out border border-transparent hover:border-primary-500/30;
   }
 
   .section-title {
