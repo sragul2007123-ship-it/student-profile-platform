@@ -44,6 +44,13 @@ export default function Leaderboard() {
     setLoading(false)
   }
 
+  const getRankBadge = (index) => {
+    if (index === 0) return { emoji: '🥇', bg: 'from-yellow-400 to-amber-500', ring: 'ring-yellow-400/30' }
+    if (index === 1) return { emoji: '🥈', bg: 'from-gray-300 to-gray-400', ring: 'ring-gray-300/30' }
+    if (index === 2) return { emoji: '🥉', bg: 'from-amber-600 to-orange-700', ring: 'ring-amber-600/30' }
+    return { emoji: `#${index + 1}`, bg: 'from-primary-500 to-primary-600', ring: 'ring-primary-400/20' }
+  }
+
   const getSelectedBadgeEmoji = (selectedBadge) => {
     const badgeMap = {
       'elite': '👑',
