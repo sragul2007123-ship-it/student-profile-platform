@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -7,6 +7,7 @@ import QRCode from 'react-qr-code'
 
 export default function StudentProfile() {
   const { username } = useParams()
+  const navigate = useNavigate()
   const { user } = useAuth()
   const [profileData, setProfileData] = useState(null)
   const [skills, setSkills] = useState([])
@@ -111,6 +112,10 @@ export default function StudentProfile() {
       console.error('Error checking friendship:', err)
       setFriendStatus('none')
     }
+  }
+
+  const handleMessageUser = () => {
+    navigate(`/messages?user=${profileData.id}`)
   }
 
   const handleFriendAction = async () => {
@@ -332,27 +337,40 @@ export default function StudentProfile() {
                   </p>
                 )}
               </div>
-              {/* Friend Button */}
               {user && profileData?.id && user.id !== profileData.id && friendStatus && (
-                <button
-                  onClick={handleFriendAction}
-                  disabled={friendLoading || friendStatus === 'sent'}
-                  className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shrink-0 ${
-                    friendStatus === 'accepted'
-                      ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400'
-                      : friendStatus === 'pending'
-                      ? 'gradient-bg text-white shadow-lg shadow-primary-500/25'
-                      : friendStatus === 'sent'
-                      ? 'bg-gray-100 dark:bg-surface-700 text-gray-500 cursor-not-allowed'
-                      : 'gradient-bg text-white shadow-lg shadow-primary-500/25 hover:shadow-xl'
-                  }`}
-                >
-                  {friendLoading ? '...' :
-                    friendStatus === 'accepted' ? '✓ Friends' :
-                    friendStatus === 'pending' ? 'Accept Request' :
-                    friendStatus === 'sent' ? 'Request Sent' :
-                    '+ Add Friend'}
-                </button>
+                <div className="flex flex-col sm:flex-row gap-2 shrink-0 pt-2 sm:pt-0">
+                  <button
+                    onClick={handleFriendAction}
+                    disabled={friendLoading || friendStatus === 'sent'}
+                    className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                      friendStatus === 'accepted'
+                        ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400'
+                        : friendStatus === 'pending'
+                        ? 'gradient-bg text-white shadow-lg shadow-primary-500/25'
+                        : friendStatus === 'sent'
+                        ? 'bg-gray-100 dark:bg-surface-700 text-gray-500 cursor-not-allowed'
+                        : 'gradient-bg text-white shadow-lg shadow-primary-500/25 hover:shadow-xl'
+                    }`}
+                  >
+                    {friendLoading ? '...' :
+                      friendStatus === 'accepted' ? '✓ Friends' :
+                      friendStatus === 'pending' ? 'Accept Request' :
+                      friendStatus === 'sent' ? 'Request Sent' :
+                      '+ Add Friend'}
+                  </button>
+                  
+                  {friendStatus === 'accepted' && (
+                    <button
+                      onClick={handleMessageUser}
+                      className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-all flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                      </svg>
+                      Message
+                    </button>
+                  )}
+                </div>
               )}
             </div>
             {/* View Count */}

@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useLocation } from 'react-router-dom'
 import { api } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 
 export default function Messages() {
   const { user } = useAuth()
+  const location = useLocation()
   const [conversations, setConversations] = useState([])
   const [selectedFriend, setSelectedFriend] = useState(null)
   const [messages, setMessages] = useState([])
@@ -38,7 +40,19 @@ export default function Messages() {
     try {
       const convs = await api.getConversations(user.id)
       setConversations(convs)
-      if (convs.length > 0) {
+      
+      // Check for 'user' query param to pre-select a friend
+      const searchParams = new URLSearchParams(location.search)
+      const userIdParam = searchParams.get('user')
+      
+      if (userIdParam) {
+        const friend = convs.find(f => f.id === userIdParam)
+        if (friend) {
+          setSelectedFriend(friend)
+        } else if (convs.length > 0) {
+          setSelectedFriend(convs[0])
+        }
+      } else if (convs.length > 0) {
         setSelectedFriend(convs[0])
       }
     } catch (err) {
