@@ -10,25 +10,14 @@ export default function Leaderboard() {
   const [friendStudents, setFriendStudents] = useState([])
   const [friendsActivity, setFriendsActivity] = useState([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('friends') // 'friends' or 'global'
+  const [activeTab, setActiveTab] = useState('global') // 'global' or 'friends'
   const [myStats, setMyStats] = useState({ globalRank: 0, friendsRank: 0 })
 
   useEffect(() => {
     loadAllData()
   }, [user])
 
-  // Set default tab based on login status and friend availability
-  useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        setActiveTab('global')
-      } else if (friendStudents.length > 0) {
-        setActiveTab('friends')
-      } else {
-        setActiveTab('global')
-      }
-    }
-  }, [user, friendStudents.length, loading])
+  // Global ranking is always default preference
 
   const loadAllData = async () => {
     setLoading(true)
@@ -55,11 +44,15 @@ export default function Leaderboard() {
     setLoading(false)
   }
 
-  const getRankBadge = (index) => {
-    if (index === 0) return { emoji: '🥇', bg: 'from-yellow-400 to-amber-500', ring: 'ring-yellow-400/30' }
-    if (index === 1) return { emoji: '🥈', bg: 'from-gray-300 to-gray-400', ring: 'ring-gray-300/30' }
-    if (index === 2) return { emoji: '🥉', bg: 'from-amber-600 to-orange-700', ring: 'ring-amber-600/30' }
-    return { emoji: `#${index + 1}`, bg: 'from-primary-500 to-primary-600', ring: 'ring-primary-400/20' }
+  const getSelectedBadgeEmoji = (selectedBadge) => {
+    const badgeMap = {
+      'elite': '👑',
+      'master': '🏆', 
+      'diamond': '💎',
+      'star': '⭐',
+      'rocket': '🚀'
+    }
+    return badgeMap[selectedBadge] || null
   }
 
   const currentStudents = activeTab === 'friends' ? friendStudents : globalStudents
@@ -177,10 +170,16 @@ export default function Leaderboard() {
                   <div className="glass-card-animated p-4 w-32 md:w-40 bg-gradient-to-t from-gray-50/50 to-white/50 dark:from-surface-700/50 dark:to-surface-800/50">
                     <div className="relative inline-block mb-3">
                       <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 p-1 flex items-center justify-center shadow-lg">
-                        <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-surface-600 flex items-center justify-center font-bold text-2xl">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-surface-600 flex items-center justify-center font-bold text-2xl relative">
                           {currentStudents[1].profile_photo ? (
                             <img src={currentStudents[1].profile_photo} alt="" className="w-full h-full object-cover" />
                           ) : currentStudents[1].name?.[0]}
+                          {/* Selected badge overlay */}
+                          {currentStudents[1].selected_badge && currentStudents[1].badge_visibility !== false && (
+                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-white dark:bg-surface-800 rounded-full flex items-center justify-center shadow-md border border-white dark:border-surface-700">
+                              <span className="text-xs">{getSelectedBadgeEmoji(currentStudents[1].selected_badge)}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-sm shadow-md border-2 border-white dark:border-surface-800">🥈</div>
@@ -201,10 +200,16 @@ export default function Leaderboard() {
                     <div className="absolute top-0 right-0 p-2 opacity-20 text-4xl animate-bounce">👑</div>
                     <div className="relative inline-block mb-3 scale-110">
                       <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 p-1 flex items-center justify-center shadow-xl ring-4 ring-yellow-400/30">
-                        <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-surface-600 flex items-center justify-center font-bold text-3xl">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-surface-600 flex items-center justify-center font-bold text-3xl relative">
                           {currentStudents[0].profile_photo ? (
                             <img src={currentStudents[0].profile_photo} alt="" className="w-full h-full object-cover" />
                           ) : currentStudents[0].name?.[0]}
+                          {/* Selected badge overlay */}
+                          {currentStudents[0].selected_badge && currentStudents[0].badge_visibility !== false && (
+                            <div className="absolute -top-1 -right-1 w-6 h-6 bg-white dark:bg-surface-800 rounded-full flex items-center justify-center shadow-md border-2 border-white dark:border-surface-700">
+                              <span className="text-sm">{getSelectedBadgeEmoji(currentStudents[0].selected_badge)}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-lg shadow-md border-2 border-white dark:border-surface-800">🥇</div>
@@ -224,10 +229,16 @@ export default function Leaderboard() {
                   <div className="glass-card-animated p-4 w-32 md:w-40 bg-gradient-to-t from-orange-50/50 to-white/50 dark:from-orange-900/10 dark:to-surface-800/50">
                     <div className="relative inline-block mb-3">
                       <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-amber-600 to-orange-800 p-1 flex items-center justify-center shadow-lg">
-                        <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-surface-600 flex items-center justify-center font-bold text-2xl">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-surface-600 flex items-center justify-center font-bold text-2xl relative">
                           {currentStudents[2].profile_photo ? (
                             <img src={currentStudents[2].profile_photo} alt="" className="w-full h-full object-cover" />
                           ) : currentStudents[2].name?.[0]}
+                          {/* Selected badge overlay */}
+                          {currentStudents[2].selected_badge && currentStudents[2].badge_visibility !== false && (
+                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-white dark:bg-surface-800 rounded-full flex items-center justify-center shadow-md border border-white dark:border-surface-700">
+                              <span className="text-xs">{getSelectedBadgeEmoji(currentStudents[2].selected_badge)}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-orange-700 text-white rounded-full flex items-center justify-center text-sm shadow-md border-2 border-white dark:border-surface-800">🥉</div>
@@ -292,6 +303,12 @@ export default function Leaderboard() {
                                     </div>
                                   )}
                                 </div>
+                                {/* Display selected badge if available and visible */}
+                                {student.selected_badge && student.badge_visibility !== false && (
+                                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-white dark:bg-surface-800 rounded-full flex items-center justify-center shadow-md border-2 border-white dark:border-surface-700">
+                                    <span className="text-sm">{getSelectedBadgeEmoji(student.selected_badge)}</span>
+                                  </div>
+                                )}
                               </div>
                               <div>
                                 <p className="text-base font-bold dark:text-white group-hover:text-primary-500 transition-colors">{student.name}</p>
