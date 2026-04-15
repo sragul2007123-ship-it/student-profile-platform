@@ -32,17 +32,24 @@ async def send_message(message: dict):
 @router.get("/conversations/{user_id}")
 async def get_conversations(user_id: str):
     try:
-        # This is a bit complex in Supabase without a custom RPC, 
-        # so we'll fetch direct friends for simplicity as potential conversations.
-        res = supabase.table("friendships").select(
-            "*, requester:users!friendships_requester_id_fkey(id, name, username, profile_photo), addressee:users!friendships_addressee_id_fkey(id, name, username, profile_photo)"
-        ).or_(f"requester_id.eq.{user_id},addressee_id.eq.{user_id}").eq("status", "accepted").execute()
+        # Fetch accepted friendships for the user
+        friendships_res = supabase.table("friendships").select("requester_id, addressee_id").or_(
+            f"requester_id.eq.{user_id},addressee_id.eq.{user_id}"
+        ).eq("status", "accepted").execute()
         
-        friends = []
-        for f in res.data:
-            friend = f["addressee"] if f["requester_id"] == user_id else f["requester"]
-            friends.append(friend)
-        return friends
+        friend_ids = []
+        for f in friendships_res.data:
+            if str(f["requester_id"]) == user_id:
+                friend_ids.append(f["addressee_id"])
+            else:
+                friend_ids.append(f["requester_id"])
+        
+        if not friend_ids:
+            return []
+            
+        # Fetch user details for the friend IDs
+        users_res = supabase.table("users").select("id, name, username, profile_photo").in_("id", friend_ids).execute()
+        return users_res.data
     except Exception as e:
         print("Error fetching conversations", str(e))
         raise HTTPException(status_code=500, detail="Failed to fetch conversations")
