@@ -22,8 +22,8 @@ export default function Navbar() {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled 
-        ? 'bg-white/80 dark:bg-surface-900/80 backdrop-blur-lg shadow-lg shadow-black/5' 
+      scrolled || mobileOpen
+        ? 'bg-white/95 dark:bg-surface-900/95 backdrop-blur-xl shadow-lg shadow-black/5' 
         : 'bg-transparent'
     }`}>
       <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8">
@@ -43,11 +43,15 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-2">
             <Link to="/" className="btn-ghost">Home</Link>
-            <Link to="/leaderboard" className="btn-ghost">Leaderboard</Link>
-            <Link to="/posts" className="btn-ghost">Feed</Link>
-            <Link to="/messages" className="btn-ghost">Messages</Link>
-            <Link to="/insights" className="btn-ghost text-accent-500 hover:text-accent-600 font-bold">AI Insights</Link>
-            {user && <Link to="/dashboard" className="btn-ghost">Dashboard</Link>}
+            {user && (
+              <>
+                <Link to="/leaderboard" className="btn-ghost">Leaderboard</Link>
+                <Link to="/posts" className="btn-ghost">Feed</Link>
+                <Link to="/messages" className="btn-ghost">Messages</Link>
+                <Link to="/insights" className="btn-ghost text-accent-500 hover:text-accent-600 font-bold">AI Insights</Link>
+                <Link to="/dashboard" className="btn-ghost">Dashboard</Link>
+              </>
+            )}
             {user?.email === 'admin@studentprofile.com' && (
               <Link to="/admin" className="btn-ghost">Admin</Link>
             )}
@@ -128,15 +132,19 @@ export default function Navbar() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="md:hidden py-4 border-t border-gray-100 dark:border-surface-700 overflow-hidden"
+              className="md:hidden py-4 border-t border-gray-100 dark:border-surface-700 overflow-hidden bg-white dark:bg-surface-900 shadow-2xl relative z-10"
             >
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 px-2">
                 <Link to="/" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Home</Link>
-                <Link to="/leaderboard" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Leaderboard</Link>
-                <Link to="/posts" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Feed</Link>
-                <Link to="/messages" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Messages</Link>
-                <Link to="/insights" className="px-4 py-3 text-sm font-bold text-accent-500 hover:bg-accent-50/50 dark:hover:bg-accent-900/10 rounded-xl" onClick={() => setMobileOpen(false)}>AI Insights</Link>
-                {user && <Link to="/dashboard" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Dashboard</Link>}
+                {user && (
+                  <>
+                    <Link to="/leaderboard" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Leaderboard</Link>
+                    <Link to="/posts" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Feed</Link>
+                    <Link to="/messages" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Messages</Link>
+                    <Link to="/insights" className="px-4 py-3 text-sm font-bold text-accent-500 hover:bg-accent-50/50 dark:hover:bg-accent-900/10 rounded-xl" onClick={() => setMobileOpen(false)}>AI Insights</Link>
+                    <Link to="/dashboard" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Dashboard</Link>
+                  </>
+                )}
                 {user ? (
                   <button onClick={() => { signOut(); setMobileOpen(false); }} className="px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl text-left">Logout</button>
                 ) : (
