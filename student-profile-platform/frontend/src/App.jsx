@@ -7,7 +7,11 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import StudentProfile from './pages/StudentProfile'
 import Leaderboard from './pages/Leaderboard'
+import Recruiters from './pages/Recruiters'
+import RecruiterProfile from './pages/RecruiterProfile'
 import AdminPanel from './pages/AdminPanel'
+import Posts from './pages/Posts'
+import RecruiterInsights from './pages/RecruiterInsights'
 import { AnimatePresence } from 'framer-motion'
 
 function AnimatedRoutes() {
@@ -22,6 +26,10 @@ function AnimatedRoutes() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/student/:username" element={<StudentProfile />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/posts" element={<Posts />} />
+        <Route path="/insights" element={<RecruiterInsights />} />
+        <Route path="/recruiters" element={<Recruiters />} />
+        <Route path="/recruiter/:username" element={<RecruiterProfile />} />
         <Route path="/admin" element={<AdminPanel />} />
       </Routes>
     </AnimatePresence>
@@ -35,7 +43,9 @@ function App() {
         <Router>
           <div className="min-h-screen bg-white dark:bg-surface-900 transition-colors duration-300">
             <Navbar />
-            <AnimatedRoutes />
+            <main className="pt-14 sm:pt-16">
+              <AnimatedRoutes />
+            </main>
           </div>
         </Router>
       </AuthProvider>

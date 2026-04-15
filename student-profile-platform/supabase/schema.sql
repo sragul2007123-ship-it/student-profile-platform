@@ -96,6 +96,25 @@ CREATE TABLE IF NOT EXISTS leaderboard (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Posts table for the feed
+CREATE TABLE IF NOT EXISTS posts (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  image_url TEXT,
+  likes_count INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Comments table
+CREATE TABLE IF NOT EXISTS post_comments (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Enable Row Level Security
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
@@ -104,6 +123,8 @@ ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE certificates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE friendships ENABLE ROW LEVEL SECURITY;
 ALTER TABLE leaderboard ENABLE ROW LEVEL SECURITY;
+ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE post_comments ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for users
 DROP POLICY IF EXISTS "Users can read all users" ON users;
@@ -225,3 +246,23 @@ CREATE POLICY "Users can delete friendships they are part of" ON friendships FOR
 DROP POLICY IF EXISTS "Leaderboard is publicly readable" ON leaderboard;
 DROP POLICY IF EXISTS "System can update leaderboard" ON leaderboard;
 CREATE POLICY "Leaderboard is publicly readable" ON leaderboard FOR SELECT USING (true);
+
+-- RLS Policies for posts
+DROP POLICY IF EXISTS "Posts are publicly readable" ON posts;
+DROP POLICY IF EXISTS "Users can insert own posts" ON posts;
+DROP POLICY IF EXISTS "Users can update own posts" ON posts;
+DROP POLICY IF EXISTS "Users can delete own posts" ON posts;
+CREATE POLICY "Posts are publicly readable" ON posts FOR SELECT USING (true);
+CREATE POLICY "Users can insert own posts" ON posts FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own posts" ON posts FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own posts" ON posts FOR DELETE USING (auth.uid() = user_id);
+
+-- RLS Policies for post_comments
+DROP POLICY IF EXISTS "Comments are publicly readable" ON post_comments;
+DROP POLICY IF EXISTS "Users can insert own comments" ON post_comments;
+DROP POLICY IF EXISTS "Users can update own comments" ON post_comments;
+DROP POLICY IF EXISTS "Users can delete own comments" ON post_comments;
+CREATE POLICY "Comments are publicly readable" ON post_comments FOR SELECT USING (true);
+CREATE POLICY "Users can insert own comments" ON post_comments FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own comments" ON post_comments FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own comments" ON post_comments FOR DELETE USING (auth.uid() = user_id);

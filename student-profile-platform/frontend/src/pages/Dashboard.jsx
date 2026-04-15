@@ -1127,32 +1127,7 @@ export default function Dashboard() {
                   <h2 className="text-2xl font-display font-bold mb-6 dark:text-white">🎨 Profile Customization</h2>
                   <p className="text-gray-600 dark:text-gray-300 mb-8">Make your profile unique with custom themes, layouts, and media.</p>
 
-                  {/* Banner Image */}
-                  <div className="mb-8">
-                    <h3 className="text-lg font-semibold mb-4 dark:text-white">Banner Image</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-4">
-                        <input
-                          type="text"
-                          className="input-field flex-1"
-                          placeholder="Enter banner image URL..."
-                          value={bannerImage}
-                          onChange={(e) => setBannerImage(e.target.value)}
-                        />
-                        <button
-                          onClick={() => setBannerImage('')}
-                          className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                      {bannerImage && (
-                        <div className="relative w-full h-32 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-surface-700">
-                          <img src={bannerImage} alt="Banner preview" className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                    </div>
-                  </div>
+
 
                   {/* Theme Color */}
                   <div className="mb-8">

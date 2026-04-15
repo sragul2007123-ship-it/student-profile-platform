@@ -74,4 +74,13 @@ export const api = {
   // Admin
   getAllStudents: () => request('/admin/students'),
   deleteStudent: (id) => request(`/admin/students/${id}`, { method: 'DELETE' }),
+
+  // Recruiters
+  getRecruiters: () => request('/recruiters/'),
+  getRecruiter: (username) => request(`/recruiters/${username}`),
+  searchRecruiters: (query) => request(`/recruiters/search/${query}`),
+
+  // Posts
+  getAllPosts: () => request('/posts/'),
+  createPost: (data) => request('/posts/', { method: 'POST', body: data }),
 }

@@ -30,6 +30,11 @@
     @apply bg-gradient-to-r from-primary-500 via-accent-500 to-primary-400 bg-clip-text text-transparent;
   }
 
+  .gradient-text-animate {
+    @apply bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500 bg-[length:200%_auto] bg-clip-text text-transparent;
+    animation: text-shine 3s linear infinite;
+  }
+
   .gradient-bg {
     @apply bg-gradient-to-br from-primary-600 via-primary-500 to-accent-500;
   }
@@ -39,7 +44,7 @@
   }
 
   .btn-primary {
-    @apply px-6 py-3 rounded-xl font-semibold text-white gradient-bg hover:shadow-lg hover:shadow-primary-500/25 transform hover:-translate-y-0.5 transition-all duration-300;
+    @apply px-6 py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-primary-600 via-primary-500 to-accent-500 bg-[length:200%_auto] hover:bg-right hover:shadow-lg hover:shadow-primary-500/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-500 ease-out;
   }
 
   .btn-secondary {
@@ -55,7 +60,7 @@
   }
 
   .card-hover {
-    @apply hover:shadow-xl hover:-translate-y-1 transition-all duration-300;
+    @apply hover:shadow-2xl hover:shadow-primary-500/10 hover:-translate-y-1.5 transition-all duration-400 ease-out border border-transparent hover:border-primary-500/30;
   }
 
   .section-title {
@@ -101,6 +106,12 @@
   @keyframes reveal {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes text-shine {
+    to {
+      background-position: 200% center;
+    }
   }
 
   .glass-card-animated {

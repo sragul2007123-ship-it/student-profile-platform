@@ -117,9 +117,9 @@ export default function LandingPage() {
             className="text-5xl sm:text-6xl lg:text-7xl font-display font-extrabold leading-tight mb-6"
           >
             Build Your{' '}
-            <span className="gradient-text">Student</span>
+            <span className="gradient-text-animate">Student</span>
             <br />
-            <span className="gradient-text">Digital Profile</span>
+            <span className="gradient-text-animate">Digital Profile</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -250,7 +250,7 @@ export default function LandingPage() {
           <div className="text-center mb-16">
             <h2 className="section-title mb-4">
               Everything You Need to{' '}
-              <span className="gradient-text">Stand Out</span>
+              <span className="gradient-text-animate">Stand Out</span>
             </h2>
             <p className="section-subtitle">
               Powerful tools to build, customize, and share your professional profile
@@ -297,7 +297,7 @@ export default function LandingPage() {
           <div className="text-center mb-16">
             <h2 className="section-title mb-4">
               See What Your{' '}
-              <span className="gradient-text">Profile Looks Like</span>
+              <span className="gradient-text-animate">Profile Looks Like</span>
             </h2>
             <p className="section-subtitle">
               A preview of the stunning portfolio you'll create

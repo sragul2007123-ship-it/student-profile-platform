@@ -1,7 +1,11 @@
 from fastapi import APIRouter, HTTPException
 from database import supabase
+import time
 
 router = APIRouter()
+
+# Simple memory cache for fast leaderboard loading
+_LEADERBOARD_CACHE = {}
 
 def get_badge_tier(rank: int) -> dict:
     """Determine badge tier and details based on rank"""
@@ -32,6 +36,11 @@ def get_badge_tier(rank: int) -> dict:
 
 @router.get("/")
 async def get_leaderboard():
+    global _LEADERBOARD_CACHE
+    now = time.time()
+    if "global" in _LEADERBOARD_CACHE and now - _LEADERBOARD_CACHE["global"]["timestamp"] < 300: # 5 mins cache
+        return _LEADERBOARD_CACHE["global"]["data"]
+
     try:
         # Get users with profiles and associated records in a single query
         # This significantly improves performance by avoiding N+1 queries
@@ -76,6 +85,10 @@ async def get_leaderboard():
             entry["rank"] = rank
             entry["badge"] = get_badge_tier(rank) if entry.get("badge_visibility", True) else None
         
+        _LEADERBOARD_CACHE["global"] = {
+            "timestamp": time.time(),
+            "data": enriched
+        }
         return enriched
     except Exception as e:
         print(f"Leaderboard error: {str(e)}")
@@ -85,6 +98,12 @@ async def get_leaderboard():
 @router.get("/friends/{user_id}")
 async def get_friends_leaderboard(user_id: str):
     """Get leaderboard filtered to only show friends of the given user."""
+    global _LEADERBOARD_CACHE
+    now = time.time()
+    cache_key = f"friends_leaderboard_{user_id}"
+    if cache_key in _LEADERBOARD_CACHE and now - _LEADERBOARD_CACHE[cache_key]["timestamp"] < 300:
+        return _LEADERBOARD_CACHE[cache_key]["data"]
+
     try:
         # Get accepted friend IDs
         res1 = supabase.table("friendships").select("addressee_id").eq(
@@ -144,6 +163,10 @@ async def get_friends_leaderboard(user_id: str):
             entry["rank"] = rank
             entry["badge"] = get_badge_tier(rank) if entry.get("badge_visibility", True) else None
         
+        _LEADERBOARD_CACHE[cache_key] = {
+            "timestamp": time.time(),
+            "data": enriched
+        }
         return enriched
     except Exception as e:
         print(f"Friends leaderboard error: {str(e)}")

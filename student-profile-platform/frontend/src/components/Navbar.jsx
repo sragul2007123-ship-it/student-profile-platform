@@ -26,8 +26,8 @@ export default function Navbar() {
         ? 'bg-white/80 dark:bg-surface-900/80 backdrop-blur-lg shadow-lg shadow-black/5' 
         : 'bg-transparent'
     }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="w-full px-3 sm:px-4 md:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex items-center justify-between h-14 sm:h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center shadow-lg shadow-primary-500/25 group-hover:shadow-primary-500/40 transition-shadow">
@@ -44,6 +44,9 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-2">
             <Link to="/" className="btn-ghost">Home</Link>
             <Link to="/leaderboard" className="btn-ghost">Leaderboard</Link>
+            <Link to="/posts" className="btn-ghost">Feed</Link>
+            <Link to="/recruiters" className="btn-ghost">Recruiters</Link>
+            <Link to="/insights" className="btn-ghost text-accent-500 hover:text-accent-600 font-bold">AI Insights</Link>
             {user && <Link to="/dashboard" className="btn-ghost">Dashboard</Link>}
             {user?.email === 'admin@studentprofile.com' && (
               <Link to="/admin" className="btn-ghost">Admin</Link>
@@ -130,6 +133,9 @@ export default function Navbar() {
               <div className="flex flex-col gap-1">
                 <Link to="/" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Home</Link>
                 <Link to="/leaderboard" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Leaderboard</Link>
+                <Link to="/posts" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Feed</Link>
+                <Link to="/recruiters" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Recruiters</Link>
+                <Link to="/insights" className="px-4 py-3 text-sm font-bold text-accent-500 hover:bg-accent-50/50 dark:hover:bg-accent-900/10 rounded-xl" onClick={() => setMobileOpen(false)}>AI Insights</Link>
                 {user && <Link to="/dashboard" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Dashboard</Link>}
                 {user ? (
                   <button onClick={() => { signOut(); setMobileOpen(false); }} className="px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-xl text-left">Logout</button>

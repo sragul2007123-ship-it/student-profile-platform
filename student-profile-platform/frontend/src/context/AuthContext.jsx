@@ -121,17 +121,43 @@ export function AuthProvider({ children }) {
 
   const signInWithMagicLink = async (email) => {
     try {
+      console.log('🔗 Requesting magic link for:', email)
       const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           emailRedirectTo: `${window.location.origin}/dashboard`
         }
       })
-      if (error) throw error
+      
+      if (error) {
+        console.error('❌ Magic link error:', error.message)
+        throw error
+      }
+      
+      if (import.meta.env.DEV) {
+        console.log('✅ Magic link sent successfully')
+        console.log('📧 Redirect URL:', `${window.location.origin}/dashboard`)
+        console.log('⏱️  Link expires in 24 hours')
+      }
       return data
     } catch (err) {
-      console.error('Magic link error:', err.message)
-      throw err
+      console.error('❌ Magic link error details:', {
+        message: err.message,
+        status: err.status,
+        error: err
+      })
+      
+      // Provide more helpful error messages
+      let userMessage = err.message
+      if (err.message.includes('Email not from') || err.message.includes('email provider')) {
+        userMessage = 'Magic link feature is not configured. Please contact support or use Google login.'
+      } else if (err.message.includes('rate limit')) {
+        userMessage = 'Too many requests. Please wait a few minutes before trying again.'
+      } else if (err.message.includes('invalid email')) {
+        userMessage = 'Please enter a valid email address.'
+      }
+      
+      throw new Error(userMessage)
     }
   }
 
