@@ -15,6 +15,7 @@ export default function Messages() {
   const [loadingConv, setLoadingConv] = useState(true)
   const [loadingMsgs, setLoadingMsgs] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [convSearch, setConvSearch] = useState('')
   const scrollRef = useRef(null)
   const fileInputRef = useRef(null)
 
@@ -40,6 +41,31 @@ export default function Messages() {
   useEffect(() => {
     if (selectedFriend && user) {
       loadMessages()
+      
+      // Realtime subscription for instant messaging
+      const channel = supabase
+        .channel('public:messages')
+        .on('postgres_changes', { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'messages',
+          filter: `receiver_id=eq.${user.id}`
+        }, (payload) => {
+          // If the message is from our currently selected friend, add it instantly
+          if (payload.new.sender_id === selectedFriend.id) {
+            setMessages(prev => {
+              // Avoid duplicates if optimistic update already added it
+              if (prev.find(m => m.id === payload.new.id)) return prev
+              return [...prev, payload.new]
+            })
+            setTimeout(() => scrollToBottom(), 100)
+          }
+        })
+        .subscribe()
+
+      return () => {
+        supabase.removeChannel(channel)
+      }
     }
   }, [selectedFriend, user])
 
@@ -173,7 +199,19 @@ export default function Messages() {
           {/* sidebar - Conversations */}
           <div className="w-80 border-r border-gray-100 dark:border-surface-700/50 flex flex-col bg-white/40 dark:bg-surface-800/40 backdrop-blur-xl">
             <div className="p-6 border-b border-gray-100 dark:border-surface-700/50">
-              <h2 className="text-xl font-bold dark:text-white">Messages</h2>
+              <h2 className="text-xl font-bold dark:text-white mb-4">Messages</h2>
+              <div className="relative">
+                <input 
+                  type="text" 
+                  placeholder="Search friends..." 
+                  className="w-full bg-gray-50 dark:bg-surface-700/50 text-xs py-2 px-8 rounded-xl border-none focus:ring-1 focus:ring-primary-500 outline-none dark:text-white"
+                  value={convSearch}
+                  onChange={(e) => setConvSearch(e.target.value)}
+                />
+                <svg className="w-3.5 h-3.5 absolute left-3 top-2.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
             </div>
             
             <div className="flex-1 overflow-y-auto p-2 space-y-1">
@@ -181,12 +219,14 @@ export default function Messages() {
                 <div className="flex justify-center py-8">
                   <div className="w-6 h-6 border-2 border-primary-200 border-t-primary-500 rounded-full animate-spin"></div>
                 </div>
-              ) : conversations.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-sm text-gray-500">No recent conversations.</p>
+              ) : conversations.filter(c => c.name.toLowerCase().includes(convSearch.toLowerCase())).length === 0 ? (
+                <div className="text-center py-8 px-4">
+                  <p className="text-sm text-gray-500">No friends found matching "{convSearch}"</p>
                 </div>
               ) : (
-                conversations.map((friend) => (
+                conversations
+                  .filter(c => c.name.toLowerCase().includes(convSearch.toLowerCase()))
+                  .map((friend) => (
                   <button
                     key={friend.id}
                     onClick={() => setSelectedFriend(friend)}

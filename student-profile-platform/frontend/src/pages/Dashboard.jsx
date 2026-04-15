@@ -399,6 +399,21 @@ export default function Dashboard() {
     }
   }
 
+  const calculateCompletion = () => {
+    let score = 0;
+    let total = 7;
+    if (profile.name) score++;
+    if (profile.username) score++;
+    if (profile.about) score++;
+    if (profile.profile_photo) score++;
+    if (skills.length > 0) score++;
+    if (projects.length > 0) score++;
+    if (certificates.length > 0) score++;
+    return Math.round((score / total) * 100);
+  };
+
+  const completionPercent = calculateCompletion();
+
   const tabs = [
     { id: 'profile', label: 'Profile', icon: '👤' },
     { id: 'education', label: 'Education', icon: '🎓' },
@@ -437,7 +452,24 @@ export default function Dashboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-display font-bold dark:text-white">Dashboard</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">Manage your digital profile</p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <p className="text-gray-500 dark:text-gray-400 mt-1">Manage your digital profile</p>
+            
+            {/* Completion Progress Bar */}
+            <div className="w-full sm:w-64">
+              <div className="flex justify-between items-center mb-1.5">
+                <span className="text-[10px] font-black uppercase text-primary-500 tracking-wider">Profile Strength</span>
+                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{completionPercent}%</span>
+              </div>
+              <div className="h-2 w-full bg-gray-200 dark:bg-surface-700 rounded-full overflow-hidden">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${completionPercent}%` }}
+                  className={`h-full ${completionPercent === 100 ? 'bg-green-500' : 'gradient-bg'}`}
+                />
+              </div>
+            </div>
+          </div>
           
           {/* New User Onboarding Banner */}
           {!profile.username && !loading && (
