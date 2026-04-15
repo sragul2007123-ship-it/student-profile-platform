@@ -42,6 +42,13 @@ class ProfileBase(BaseModel):
     badge_visibility: Optional[bool] = True
     company: Optional[str] = ""  # For recruiters
     company_logo: Optional[str] = ""  # For recruiters
+    # Profile customization fields
+    banner_image: Optional[str] = ""
+    theme_color: Optional[str] = "primary"
+    layout_style: Optional[str] = "default"
+    gallery_images: Optional[List[str]] = []
+    custom_css: Optional[str] = ""
+    profile_layout: Optional[dict] = {"sections": ["about", "skills", "projects", "certificates"]}
 
 
 class ProfileUpdate(BaseModel):
@@ -58,6 +65,13 @@ class ProfileUpdate(BaseModel):
     badge_visibility: Optional[bool] = None
     company: Optional[str] = None
     company_logo: Optional[str] = None
+    # Profile customization fields
+    banner_image: Optional[str] = None
+    theme_color: Optional[str] = None
+    layout_style: Optional[str] = None
+    gallery_images: Optional[List[str]] = None
+    custom_css: Optional[str] = None
+    profile_layout: Optional[dict] = None
 
 
 class SkillBase(BaseModel):
