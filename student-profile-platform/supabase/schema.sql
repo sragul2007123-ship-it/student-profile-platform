@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT UNIQUE,
   username TEXT UNIQUE,
   profile_photo TEXT,
+  user_type TEXT DEFAULT 'student' CHECK (user_type IN ('student', 'recruiter')),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -23,6 +24,20 @@ CREATE TABLE IF NOT EXISTS profiles (
   github TEXT DEFAULT '',
   linkedin TEXT DEFAULT '',
   view_count INTEGER DEFAULT 0,
+  user_type TEXT DEFAULT 'student' CHECK (user_type IN ('student', 'recruiter')),
+  leaderboard_rank INTEGER,
+  badge_tier TEXT CHECK (badge_tier IN ('bronze', 'silver', 'gold', 'platinum')) DEFAULT NULL,
+  selected_badge TEXT DEFAULT NULL,
+  badge_visibility BOOLEAN DEFAULT true,
+  company TEXT DEFAULT '',
+  company_logo TEXT DEFAULT '',
+  -- Profile customization fields
+  banner_image TEXT DEFAULT '',
+  theme_color TEXT DEFAULT 'primary',
+  layout_style TEXT DEFAULT 'default' CHECK (layout_style IN ('default', 'minimal', 'creative', 'professional')),
+  gallery_images JSONB DEFAULT '[]',
+  custom_css TEXT DEFAULT '',
+  profile_layout JSONB DEFAULT '{"sections": ["about", "skills", "projects", "certificates"]}',
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -68,6 +83,19 @@ CREATE TABLE IF NOT EXISTS friendships (
   UNIQUE(requester_id, addressee_id)
 );
 
+-- Leaderboard table for tracking rankings
+CREATE TABLE IF NOT EXISTS leaderboard (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+  rank INTEGER,
+  total_score INTEGER DEFAULT 0,
+  skills_score INTEGER DEFAULT 0,
+  projects_score INTEGER DEFAULT 0,
+  certificates_score INTEGER DEFAULT 0,
+  profile_completeness INTEGER DEFAULT 0,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Enable Row Level Security
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
@@ -75,6 +103,7 @@ ALTER TABLE skills ENABLE ROW LEVEL SECURITY;
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE certificates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE friendships ENABLE ROW LEVEL SECURITY;
+ALTER TABLE leaderboard ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for users
 DROP POLICY IF EXISTS "Users can read all users" ON users;
@@ -179,6 +208,8 @@ CREATE INDEX IF NOT EXISTS idx_projects_user_id ON projects(user_id);
 CREATE INDEX IF NOT EXISTS idx_certificates_user_id ON certificates(user_id);
 CREATE INDEX IF NOT EXISTS idx_friendships_requester ON friendships(requester_id);
 CREATE INDEX IF NOT EXISTS idx_friendships_addressee ON friendships(addressee_id);
+CREATE INDEX IF NOT EXISTS idx_leaderboard_rank ON leaderboard(rank);
+CREATE INDEX IF NOT EXISTS idx_leaderboard_user_id ON leaderboard(user_id);
 
 -- RLS Policies for friendships
 DROP POLICY IF EXISTS "Friendships are readable by involved users" ON friendships;
@@ -189,3 +220,8 @@ CREATE POLICY "Friendships are readable by involved users" ON friendships FOR SE
 CREATE POLICY "Users can send friend requests" ON friendships FOR INSERT WITH CHECK (auth.uid() = requester_id);
 CREATE POLICY "Users can update friendships they are part of" ON friendships FOR UPDATE USING (auth.uid() = requester_id OR auth.uid() = addressee_id);
 CREATE POLICY "Users can delete friendships they are part of" ON friendships FOR DELETE USING (auth.uid() = requester_id OR auth.uid() = addressee_id);
+
+-- RLS Policies for leaderboard
+DROP POLICY IF EXISTS "Leaderboard is publicly readable" ON leaderboard;
+DROP POLICY IF EXISTS "System can update leaderboard" ON leaderboard;
+CREATE POLICY "Leaderboard is publicly readable" ON leaderboard FOR SELECT USING (true);

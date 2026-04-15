@@ -21,6 +21,9 @@ export default function StudentProfile() {
   const [friendLoading, setFriendLoading] = useState(false)
   const profileRef = useRef(null)
 
+  // Performance optimization: Cache profile data
+  const [cachedProfiles, setCachedProfiles] = useState(new Map())
+
   const profileUrl = `${window.location.origin}/student/${username}`
 
   useEffect(() => {
@@ -34,6 +37,21 @@ export default function StudentProfile() {
   }, [user, profileData])
 
   const loadProfile = async () => {
+    // Check cache first for better performance
+    const cacheKey = username
+    if (cachedProfiles.has(cacheKey)) {
+      const cached = cachedProfiles.get(cacheKey)
+      // Use cached data if it's less than 5 minutes old
+      if (Date.now() - cached.timestamp < 5 * 60 * 1000) {
+        setProfileData({ ...cached.user, ...cached.profile })
+        setSkills(cached.skills || [])
+        setProjects(cached.projects || [])
+        setCertificates(cached.certificates || [])
+        setLoading(false)
+        return
+      }
+    }
+
     setLoading(true)
     try {
       const data = await api.getPublicProfile(username)
@@ -43,8 +61,16 @@ export default function StudentProfile() {
       setProjects(data.projects || [])
       setCertificates(data.certificates || [])
 
-      // Increment view count via backend
-      api.incrementViews(username).catch(err => console.error('Error incrementing views:', err))
+      // Cache the data
+      setCachedProfiles(prev => new Map(prev).set(cacheKey, {
+        ...data,
+        timestamp: Date.now()
+      }))
+
+      // Increment view count via backend (only for non-owners)
+      if (!user || user.id !== data.user.id) {
+        api.incrementViews(username).catch(err => console.error('Error incrementing views:', err))
+      }
       
     } catch (err) {
       setError('Profile not found')
@@ -120,10 +146,36 @@ export default function StudentProfile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center gradient-bg-subtle">
-        <div className="text-center">
-          <div className="w-16 h-16 rounded-full border-4 border-primary-200 border-t-primary-500 animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-500">Loading profile...</p>
+      <div className="min-h-screen gradient-bg-subtle">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+          {/* Header Skeleton */}
+          <div className="glass-card overflow-hidden mb-8 animate-pulse">
+            <div className="h-32 bg-gray-200 dark:bg-surface-700"></div>
+            <div className="px-8 pb-8 -mt-16">
+              <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6">
+                <div className="w-32 h-32 rounded-2xl bg-gray-200 dark:bg-surface-700 shrink-0"></div>
+                <div className="text-center sm:text-left pb-2 flex-1 space-y-3">
+                  <div className="h-8 bg-gray-200 dark:bg-surface-700 rounded w-48 mx-auto sm:mx-0"></div>
+                  <div className="h-5 bg-gray-200 dark:bg-surface-700 rounded w-32 mx-auto sm:mx-0"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-surface-700 rounded w-40 mx-auto sm:mx-0"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Content Skeletons */}
+          <div className="space-y-8">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="glass-card p-8 animate-pulse">
+                <div className="h-6 bg-gray-200 dark:bg-surface-700 rounded w-32 mb-6"></div>
+                <div className="space-y-4">
+                  <div className="h-4 bg-gray-200 dark:bg-surface-700 rounded w-full"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-surface-700 rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-surface-700 rounded w-1/2"></div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     )
@@ -233,15 +285,34 @@ export default function StudentProfile() {
       </AnimatePresence>
 
       {/* Profile Content */}
-      <div ref={profileRef} className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+      <div ref={profileRef} className={`max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16 ${
+        profileData?.layout_style === 'minimal' ? 'max-w-2xl' :
+        profileData?.layout_style === 'creative' ? 'max-w-6xl' :
+        profileData?.layout_style === 'professional' ? 'max-w-5xl' :
+        'max-w-4xl'
+      }`}>
         {/* Header / Hero Card */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="glass-card overflow-hidden mb-8"
         >
-          <div className="h-32 gradient-bg relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary-600/50 to-accent-600/50"></div>
+          {/* Custom Banner */}
+          <div className={`h-32 relative ${profileData?.banner_image ? '' : 'gradient-bg'}`}>
+            {profileData?.banner_image ? (
+              <img src={profileData.banner_image} alt="Profile banner" className="w-full h-full object-cover" />
+            ) : (
+              <div className={`absolute inset-0 bg-gradient-to-r ${
+                profileData?.theme_color === 'emerald' ? 'from-emerald-500/50 to-teal-600/50' :
+                profileData?.theme_color === 'rose' ? 'from-rose-500/50 to-pink-600/50' :
+                profileData?.theme_color === 'amber' ? 'from-amber-500/50 to-orange-600/50' :
+                profileData?.theme_color === 'violet' ? 'from-violet-500/50 to-purple-600/50' :
+                profileData?.theme_color === 'cyan' ? 'from-cyan-500/50 to-blue-600/50' :
+                profileData?.theme_color === 'lime' ? 'from-lime-500/50 to-green-600/50' :
+                profileData?.theme_color === 'indigo' ? 'from-indigo-500/50 to-blue-600/50' :
+                'from-primary-600/50 to-accent-600/50'
+              }`}></div>
+            )}
           </div>
           <div className="px-8 pb-8 -mt-16 relative">
             <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6">
@@ -433,6 +504,42 @@ export default function StudentProfile() {
                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                       </a>
                     )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Gallery Section */}
+        {profileData?.gallery_images && profileData.gallery_images.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-8 mb-8"
+          >
+            <h2 className="text-2xl font-display font-bold mb-6 dark:text-white">Gallery</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {profileData.gallery_images.map((image, i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="aspect-square rounded-xl overflow-hidden group cursor-pointer"
+                  onClick={() => window.open(image, '_blank')}
+                >
+                  <img 
+                    src={image} 
+                    alt={`Gallery image ${i + 1}`} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" 
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
                   </div>
                 </motion.div>
               ))}

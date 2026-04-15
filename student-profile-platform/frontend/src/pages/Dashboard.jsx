@@ -35,6 +35,14 @@ export default function Dashboard() {
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState({ type: '', text: '' })
+  const [selectedBadge, setSelectedBadge] = useState(null)
+  const [badgeVisibility, setBadgeVisibility] = useState(true)
+  // Profile customization state
+  const [bannerImage, setBannerImage] = useState('')
+  const [themeColor, setThemeColor] = useState('primary')
+  const [layoutStyle, setLayoutStyle] = useState('default')
+  const [galleryImages, setGalleryImages] = useState([])
+  const [profileLayout, setProfileLayout] = useState({ sections: ['about', 'skills', 'projects', 'certificates'] })
 
   // New item forms
   const [newSkill, setNewSkill] = useState({ skill_name: '', category: 'Technical', skill_level: 50 })
@@ -123,6 +131,15 @@ export default function Dashboard() {
           github: profileData.github || prev.github || '',
           linkedin: profileData.linkedin || prev.linkedin || '',
         }))
+        
+        // Load customization settings
+        setSelectedBadge(profileData.selected_badge || null)
+        setBadgeVisibility(profileData.badge_visibility !== false)
+        setBannerImage(profileData.banner_image || '')
+        setThemeColor(profileData.theme_color || 'primary')
+        setLayoutStyle(profileData.layout_style || 'default')
+        setGalleryImages(profileData.gallery_images || [])
+        setProfileLayout(profileData.profile_layout || { sections: ['about', 'skills', 'projects', 'certificates'] })
       }
 
       if (skillsData) setSkills(skillsData)
@@ -235,6 +252,14 @@ export default function Dashboard() {
           degree: profile.degree,
           year: profile.year,
         },
+        // Include customization fields
+        selected_badge: selectedBadge,
+        badge_visibility: badgeVisibility,
+        banner_image: bannerImage,
+        theme_color: themeColor,
+        layout_style: layoutStyle,
+        gallery_images: galleryImages,
+        profile_layout: profileLayout,
       })
       
       setProfile(prev => ({ ...prev, username: cleanUsername }))
@@ -380,6 +405,8 @@ export default function Dashboard() {
     { id: 'skills', label: 'Skills', icon: '⚡' },
     { id: 'projects', label: 'Projects', icon: '🚀' },
     { id: 'certificates', label: 'Certificates', icon: '📜' },
+    { id: 'customization', label: 'Customize', icon: '🎨' },
+    { id: 'badges', label: 'Badges', icon: '⭐' },
     { id: 'friends', label: 'Friends', icon: '🤝' },
   ]
 
@@ -938,6 +965,292 @@ export default function Dashboard() {
                   </div>
                 </div>
               )}
+
+              {/* Badges Tab */}
+              {activeTab === 'badges' && (
+                <div className="animate-fade-in">
+                  <h2 className="text-xl font-semibold mb-6 dark:text-white">Customize Your Badge</h2>
+                  
+                  <div className="mb-8 p-6 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                    <h3 className="font-semibold text-blue-900 dark:text-blue-200 mb-2">🎖️ How to Get Badges</h3>
+                    <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-1">
+                      <li>✅ <strong>Elite Scholar 👑</strong> - Reach Top 10 in the Leaderboard</li>
+                      <li>✅ <strong>Master Scholar 🏆</strong> - Reach Top 50 in the Leaderboard</li>
+                      <li>💡 Keep adding skills, projects, and certificates to improve your ranking!</li>
+                    </ul>
+                  </div>
+
+                  <div className="mb-8">
+                    <h3 className="text-lg font-semibold mb-4 dark:text-white">Your Available Badges</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      {/* Elite Scholar Badge */}
+                      <div 
+                        onClick={() => setSelectedBadge('elite')}
+                        className={`p-6 rounded-xl border-2 cursor-pointer transition-all transform hover:scale-105 ${
+                          selectedBadge === 'elite'
+                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-lg shadow-primary-500/20'
+                            : 'border-gray-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-primary-400'
+                        }`}
+                      >
+                        <div className="text-4xl mb-2">👑</div>
+                        <h4 className="font-bold dark:text-white">Elite Scholar</h4>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">Top 10 Student</p>
+                        <div className="mt-3 flex justify-between items-center">
+                          <span className="text-xs font-semibold text-gray-400">Status</span>
+                          <span className="px-2 py-1 rounded text-xs font-semibold bg-yellow-100 text-yellow-700">Locked</span>
+                        </div>
+                      </div>
+
+                      {/* Master Scholar Badge */}
+                      <div 
+                        onClick={() => setSelectedBadge('master')}
+                        className={`p-6 rounded-xl border-2 cursor-pointer transition-all transform hover:scale-105 ${
+                          selectedBadge === 'master'
+                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-lg shadow-primary-500/20'
+                            : 'border-gray-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-primary-400'
+                        }`}
+                      >
+                        <div className="text-4xl mb-2">🏆</div>
+                        <h4 className="font-bold dark:text-white">Master Scholar</h4>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">Top 50 Student</p>
+                        <div className="mt-3 flex justify-between items-center">
+                          <span className="text-xs font-semibold text-gray-400">Status</span>
+                          <span className="px-2 py-1 rounded text-xs font-semibold bg-yellow-100 text-yellow-700">Locked</span>
+                        </div>
+                      </div>
+
+                      {/* Diamond Scholar Badge */}
+                      <div 
+                        onClick={() => setSelectedBadge('diamond')}
+                        className={`p-6 rounded-xl border-2 cursor-pointer transition-all transform hover:scale-105 ${
+                          selectedBadge === 'diamond'
+                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-lg shadow-primary-500/20'
+                            : 'border-gray-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-primary-400'
+                        }`}
+                      >
+                        <div className="text-4xl mb-2">💎</div>
+                        <h4 className="font-bold dark:text-white">Diamond Scholar</h4>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">Exceptional Achiever</p>
+                        <div className="mt-3 flex justify-between items-center">
+                          <span className="text-xs font-semibold text-gray-400">Status</span>
+                          <span className="px-2 py-1 rounded text-xs font-semibold bg-emerald-100 text-emerald-700">Available</span>
+                        </div>
+                      </div>
+
+                      {/* Star Scholar Badge */}
+                      <div 
+                        onClick={() => setSelectedBadge('star')}
+                        className={`p-6 rounded-xl border-2 cursor-pointer transition-all transform hover:scale-105 ${
+                          selectedBadge === 'star'
+                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-lg shadow-primary-500/20'
+                            : 'border-gray-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-primary-400'
+                        }`}
+                      >
+                        <div className="text-4xl mb-2">⭐</div>
+                        <h4 className="font-bold dark:text-white">Star Scholar</h4>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">Rising Star</p>
+                        <div className="mt-3 flex justify-between items-center">
+                          <span className="text-xs font-semibold text-gray-400">Status</span>
+                          <span className="px-2 py-1 rounded text-xs font-semibold bg-emerald-100 text-emerald-700">Available</span>
+                        </div>
+                      </div>
+
+                      {/* Rocket Scholar Badge */}
+                      <div 
+                        onClick={() => setSelectedBadge('rocket')}
+                        className={`p-6 rounded-xl border-2 cursor-pointer transition-all transform hover:scale-105 ${
+                          selectedBadge === 'rocket'
+                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-lg shadow-primary-500/20'
+                            : 'border-gray-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-primary-400'
+                        }`}
+                      >
+                        <div className="text-4xl mb-2">🚀</div>
+                        <h4 className="font-bold dark:text-white">Rocket Scholar</h4>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">Fast Progress</p>
+                        <div className="mt-3 flex justify-between items-center">
+                          <span className="text-xs font-semibold text-gray-400">Status</span>
+                          <span className="px-2 py-1 rounded text-xs font-semibold bg-emerald-100 text-emerald-700">Available</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Badge Visibility Settings */}
+                  <div className="mb-8 p-6 rounded-xl bg-gray-50 dark:bg-surface-700/50 border border-gray-200 dark:border-surface-600">
+                    <h3 className="text-lg font-semibold mb-4 dark:text-white">Badge Visibility</h3>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={badgeVisibility} 
+                        onChange={(e) => setBadgeVisibility(e.target.checked)}
+                        className="w-5 h-5 rounded accent-primary-500"
+                      />
+                      <span className="text-gray-700 dark:text-gray-300">
+                        Show my badge on my profile and in the leaderboard
+                      </span>
+                    </label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                      {badgeVisibility 
+                        ? '✅ Your badge will be visible to others' 
+                        : '🔒 Your badge will be hidden from public view'}
+                    </p>
+                  </div>
+
+                  {/* Selected Badge Preview */}
+                  {selectedBadge && (
+                    <div className="mb-8 p-6 rounded-xl bg-gradient-to-br from-primary-50 to-indigo-50 dark:from-primary-900/20 dark:to-indigo-900/20 border border-primary-200 dark:border-primary-800">
+                      <h3 className="text-lg font-semibold mb-4 dark:text-white">Badge Preview</h3>
+                      <div className="text-center py-8">
+                        <div className="text-6xl mb-4 inline-block">
+                          {selectedBadge === 'elite' && '👑'}
+                          {selectedBadge === 'master' && '🏆'}
+                          {selectedBadge === 'diamond' && '💎'}
+                          {selectedBadge === 'star' && '⭐'}
+                          {selectedBadge === 'rocket' && '🚀'}
+                        </div>
+                        <p className="text-gray-600 dark:text-gray-300">
+                          This badge will appear on your profile and leaderboard ranking
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  <button onClick={saveProfile} disabled={saving} className="btn-primary w-full shadow-lg shadow-primary-500/20">
+                    {saving ? 'Saving...' : 'Save Badge Settings'}
+                  </button>
+                </div>
+              )}
+
+              {/* Customization Tab */}
+              {activeTab === 'customization' && (
+                <div className="animate-fade-in">
+                  <h2 className="text-2xl font-display font-bold mb-6 dark:text-white">🎨 Profile Customization</h2>
+                  <p className="text-gray-600 dark:text-gray-300 mb-8">Make your profile unique with custom themes, layouts, and media.</p>
+
+                  {/* Banner Image */}
+                  <div className="mb-8">
+                    <h3 className="text-lg font-semibold mb-4 dark:text-white">Banner Image</h3>
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="text"
+                          className="input-field flex-1"
+                          placeholder="Enter banner image URL..."
+                          value={bannerImage}
+                          onChange={(e) => setBannerImage(e.target.value)}
+                        />
+                        <button
+                          onClick={() => setBannerImage('')}
+                          className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      {bannerImage && (
+                        <div className="relative w-full h-32 rounded-xl overflow-hidden border-2 border-gray-200 dark:border-surface-700">
+                          <img src={bannerImage} alt="Banner preview" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Theme Color */}
+                  <div className="mb-8">
+                    <h3 className="text-lg font-semibold mb-4 dark:text-white">Theme Color</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {[
+                        { id: 'primary', name: 'Primary', color: 'from-blue-500 to-purple-600' },
+                        { id: 'emerald', name: 'Emerald', color: 'from-emerald-500 to-teal-600' },
+                        { id: 'rose', name: 'Rose', color: 'from-rose-500 to-pink-600' },
+                        { id: 'amber', name: 'Amber', color: 'from-amber-500 to-orange-600' },
+                        { id: 'violet', name: 'Violet', color: 'from-violet-500 to-purple-600' },
+                        { id: 'cyan', name: 'Cyan', color: 'from-cyan-500 to-blue-600' },
+                        { id: 'lime', name: 'Lime', color: 'from-lime-500 to-green-600' },
+                        { id: 'indigo', name: 'Indigo', color: 'from-indigo-500 to-blue-600' }
+                      ].map(theme => (
+                        <button
+                          key={theme.id}
+                          onClick={() => setThemeColor(theme.id)}
+                          className={`p-4 rounded-xl border-2 transition-all ${
+                            themeColor === theme.id
+                              ? 'border-primary-500 shadow-lg shadow-primary-500/25'
+                              : 'border-gray-200 dark:border-surface-700 hover:border-primary-400'
+                          }`}
+                        >
+                          <div className={`w-full h-8 rounded-lg bg-gradient-to-r ${theme.color} mb-2`}></div>
+                          <p className="text-sm font-medium dark:text-white">{theme.name}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Layout Style */}
+                  <div className="mb-8">
+                    <h3 className="text-lg font-semibold mb-4 dark:text-white">Layout Style</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {[
+                        { id: 'default', name: 'Default', description: 'Clean and professional layout' },
+                        { id: 'minimal', name: 'Minimal', description: 'Simple and focused design' },
+                        { id: 'creative', name: 'Creative', description: 'Bold and artistic presentation' },
+                        { id: 'professional', name: 'Professional', description: 'Corporate-style layout' }
+                      ].map(layout => (
+                        <button
+                          key={layout.id}
+                          onClick={() => setLayoutStyle(layout.id)}
+                          className={`p-6 rounded-xl border-2 text-left transition-all ${
+                            layoutStyle === layout.id
+                              ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-lg shadow-primary-500/25'
+                              : 'border-gray-200 dark:border-surface-700 hover:border-primary-400 bg-white dark:bg-surface-800'
+                          }`}
+                        >
+                          <h4 className="font-semibold dark:text-white mb-1">{layout.name}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{layout.description}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Gallery Images */}
+                  <div className="mb-8">
+                    <h3 className="text-lg font-semibold mb-4 dark:text-white">Gallery Images</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Add up to 6 images to showcase your work or personality</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                      {galleryImages.map((image, index) => (
+                        <div key={index} className="relative group">
+                          <div className="aspect-square rounded-xl overflow-hidden border-2 border-gray-200 dark:border-surface-700">
+                            <img src={image} alt={`Gallery ${index + 1}`} className="w-full h-full object-cover" />
+                          </div>
+                          <button
+                            onClick={() => setGalleryImages(prev => prev.filter((_, i) => i !== index))}
+                            className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                      {galleryImages.length < 6 && (
+                        <div className="aspect-square rounded-xl border-2 border-dashed border-gray-300 dark:border-surface-600 flex items-center justify-center cursor-pointer hover:border-primary-400 transition-colors"
+                             onClick={() => {
+                               const url = prompt('Enter image URL:');
+                               if (url) setGalleryImages(prev => [...prev, url]);
+                             }}>
+                          <div className="text-center">
+                            <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            <p className="text-xs text-gray-500">Add Image</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <button onClick={saveProfile} disabled={saving} className="btn-primary w-full shadow-lg shadow-primary-500/20">
+                    {saving ? 'Saving...' : 'Save Customization'}
+                  </button>
+                </div>
+              )}
+
               {/* Friends Tab */}
               {activeTab === 'friends' && (
                 <div className="animate-fade-in">
