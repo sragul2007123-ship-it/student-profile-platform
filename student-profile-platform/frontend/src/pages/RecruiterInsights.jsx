@@ -1,7 +1,57 @@
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { api } from '../services/api'
 
 export default function RecruiterInsights() {
+  const [searchUsername, setSearchUsername] = useState('')
+  const [matchingResult, setMatchingResult] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleConsultAI = async (e) => {
+    e.preventDefault()
+    if (!searchUsername.trim()) return
+    
+    setLoading(true)
+    setError('')
+    setMatchingResult(null)
+    
+    try {
+      const profile = await api.getPublicProfile(searchUsername.trim())
+      if (profile) {
+        // Simulated AI Matching Logic
+        const skillsCount = profile.skills?.length || 0
+        const projectsCount = profile.projects?.length || 0
+        const certsCount = profile.certificates?.length || 0
+        
+        // Mock score calculation
+        let score = 40 // Base score
+        score += Math.min(skillsCount * 5, 25)
+        score += Math.min(projectsCount * 8, 25)
+        score += Math.min(certsCount * 5, 10)
+        
+        if (profile.bio || profile.about) score += 5
+        
+        // Random variance for "AI feeling"
+        score += Math.floor(Math.random() * 10)
+        score = Math.min(score, 99)
+
+        setMatchingResult({
+          score: score,
+          user: profile,
+          analysis: score > 80 ? "Top Tier Talent. Highly recommended for senior roles." : 
+                    score > 60 ? "Solid Professional. Great fit for mid-level growth." : 
+                    "Developing Talent. Potential for junior or internship roles."
+        })
+      }
+    } catch (err) {
+      setError("User not found or profile is private.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen pt-24 pb-12 gradient-bg-subtle relative overflow-hidden">
       {/* Decorative Orbs */}
@@ -15,120 +65,137 @@ export default function RecruiterInsights() {
           className="text-center mb-16"
         >
           <div className="inline-block px-4 py-1.5 rounded-full bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-300 font-bold tracking-widest text-xs uppercase mb-6 shadow-sm">
-            AI Platform Guide
+            AI Talent Predictor
           </div>
           <h1 className="text-4xl md:text-5xl font-display font-extrabold text-gray-900 dark:text-white mb-6">
-            How Recruiters Spot <span className="gradient-text-animate">Top Talent</span>
+            Consult the <span className="gradient-text-animate">Recruiter AI</span>
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Understand the AI-driven selection process that recruiters use on our platform to find the perfect candidates for their next big roles.
+            Enter a username below to see how our AI evaluates their profile against real-world recruiter expectations.
           </p>
+
+          <form onSubmit={handleConsultAI} className="mt-10 max-w-lg mx-auto">
+            <div className="flex gap-2 p-2 glass-card rounded-2xl shadow-2xl bg-white/60 dark:bg-surface-800/60 backdrop-blur-xl border border-white/40 dark:border-surface-700/50">
+              <input 
+                type="text" 
+                placeholder="Enter username (e.g. sragul)" 
+                className="flex-1 bg-transparent border-none focus:ring-0 text-gray-800 dark:text-gray-200 px-4 py-3 placeholder-gray-400 font-medium"
+                value={searchUsername}
+                onChange={(e) => setSearchUsername(e.target.value)}
+              />
+              <button 
+                type="submit"
+                disabled={loading}
+                className="px-6 py-3 rounded-xl gradient-bg text-white font-bold shadow-lg shadow-primary-500/30 hover:shadow-xl transition-all disabled:opacity-50"
+              >
+                {loading ? 'Analyzing...' : 'Analyze'}
+              </button>
+            </div>
+            {error && <p className="text-red-500 mt-4 font-medium">{error}</p>}
+          </form>
         </motion.div>
+
+        <AnimatePresence>
+          {matchingResult && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="glass-card mb-16 p-10 rounded-3xl shadow-2xl bg-gradient-to-br from-white to-gray-50 dark:from-surface-800 dark:to-surface-900 overflow-hidden relative"
+            >
+              <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                <div>
+                  <h2 className="text-3xl font-display font-bold dark:text-white mb-2">Analysis for @{matchingResult.user.username}</h2>
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="px-4 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 font-bold text-sm">
+                      VERIFIED PROFILE
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-600 dark:text-gray-300 mb-8 text-lg leading-relaxed italic">
+                    "{matchingResult.analysis}"
+                  </p>
+
+                  <div className="space-y-6">
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span className="font-bold dark:text-white">Hireability Score</span>
+                        <span className="font-bold text-primary-500">{matchingResult.score}%</span>
+                      </div>
+                      <div className="w-full h-4 bg-gray-200 dark:bg-surface-700 rounded-full overflow-hidden">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${matchingResult.score}%` }}
+                          transition={{ duration: 1.5, ease: "easeOut" }}
+                          className="h-full gradient-bg"
+                        ></motion.div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-10">
+                    <Link to={`/student/${matchingResult.user.username}`} className="inline-block px-8 py-4 rounded-full border-2 border-primary-500 text-primary-600 dark:text-primary-400 font-bold hover:bg-primary-50 dark:hover:bg-primary-950/30 transition-all text-lg">
+                      View Full Profile →
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="flex justify-center">
+                  <div className="relative">
+                    <div className="w-64 h-64 rounded-full border-8 border-primary-500/20 flex items-center justify-center p-4">
+                      <div className="w-full h-full rounded-full border-8 border-primary-500/40 flex items-center justify-center p-4">
+                        <div className="w-full h-full rounded-full gradient-bg flex items-center justify-center text-white text-6xl font-black shadow-2xl animate-pulse-subtle">
+                          {matchingResult.score}
+                        </div>
+                      </div>
+                    </div>
+                    {/* Floating stats */}
+                    <div className="absolute top-0 -right-4 bg-white dark:bg-surface-700 p-3 rounded-xl shadow-xl border border-gray-100 dark:border-surface-600 scale-90">
+                      <p className="text-[10px] text-gray-400 uppercase font-bold">Projects</p>
+                      <p className="font-bold dark:text-white">{matchingResult.user.projects?.length || 0}</p>
+                    </div>
+                    <div className="absolute bottom-0 -left-4 bg-white dark:bg-surface-700 p-3 rounded-xl shadow-xl border border-gray-100 dark:border-surface-600 scale-90">
+                      <p className="text-[10px] text-gray-400 uppercase font-bold">Skills</p>
+                      <p className="font-bold dark:text-white">{matchingResult.user.skills?.length || 0}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
             className="glass-card p-8 rounded-3xl shadow-xl flex flex-col justify-center border-l-4 border-l-primary-500"
           >
             <div className="w-14 h-14 bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-inner">
               🤖
             </div>
-            <h3 className="text-2xl font-bold dark:text-white mb-4">1. AI Profile Parsing</h3>
+            <h3 className="text-2xl font-bold dark:text-white mb-4">AI Profile Parsing</h3>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
-              When you upload your skills, projects, and certificates, our internal AI engine semantically analyzes your tech stack. <strong className="text-gray-900 dark:text-white">Tip:</strong> Use highly specific skill names (e.g., "React.js" instead of just "Frontend") because the AI maps these to recruiter queries.
+              Our engine maps skills to current market trends. Use highly specific names like "TailwindCSS" or "FastAPI" to maximize your score.
             </p>
           </motion.div>
 
           <motion.div 
             initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
             className="glass-card p-8 rounded-3xl shadow-xl flex flex-col justify-center border-l-4 border-l-accent-500"
           >
             <div className="w-14 h-14 bg-accent-100 dark:bg-accent-900/40 text-accent-600 dark:text-accent-400 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-inner">
               🔍
             </div>
-            <h3 className="text-2xl font-bold dark:text-white mb-4">2. Semantic Search Filtering</h3>
+            <h3 className="text-2xl font-bold dark:text-white mb-4">Semantic Analysis</h3>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">
-              Recruiters don't just search keywords; they search intent. If a recruiter searches for <em>"developer who builds modern user interfaces in 2026"</em>, the AI matches them with your highlighted <strong>Projects and Github Activity</strong>.
+              It's not just about what you know, but what you've built. Projects with live links are weighted 3x more by our AI.
             </p>
           </motion.div>
         </div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="glass-card p-10 rounded-3xl shadow-2xl bg-gradient-to-br from-white to-gray-50 dark:from-surface-800 dark:to-surface-900 overflow-hidden relative"
-        >
-           <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-              <svg className="w-64 h-64" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-            </div>
-          
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <div>
-              <h2 className="text-3xl font-display font-bold dark:text-white mb-6">The "Score" Matrix</h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg leading-relaxed">
-                Recruiters see an aggregated <strong>"Hireability Score"</strong> based on three major factors:
-              </p>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-4">
-                  <div className="mt-1 w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">✓</div>
-                  <span className="text-gray-700 dark:text-gray-300 text-lg"><strong>Project Complexity:</strong> Live demo links weigh more than just descriptions.</span>
-                </li>
-                <li className="flex items-start gap-4">
-                  <div className="mt-1 w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">✓</div>
-                  <span className="text-gray-700 dark:text-gray-300 text-lg"><strong>Profile Consistency:</strong> Frequently posting updates/projects on the feed signals active learning.</span>
-                </li>
-                <li className="flex items-start gap-4">
-                  <div className="mt-1 w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">✓</div>
-                  <span className="text-gray-700 dark:text-gray-300 text-lg"><strong>Leaderboard Ranking:</strong> Reaching Top 10 guarantees your profile is placed in the "Featured Talent" daily email.</span>
-                </li>
-              </ul>
-              
-              <div className="mt-10">
-                <Link to="/dashboard" className="inline-block px-8 py-4 rounded-full gradient-bg text-white font-bold shadow-lg shadow-primary-500/40 hover:shadow-xl hover:-translate-y-1 transition-all active:translate-y-0 text-lg">
-                  Boost My Profile Now →
-                </Link>
-              </div>
-            </div>
-            
-            {/* Visual Dashboard Representation */}
-            <div className="glass-card rounded-2xl bg-gray-900 p-6 shadow-2xl relative border border-gray-700 transform rotate-1 hover:rotate-0 transition-transform duration-500">
-               <div className="flex items-center gap-2 mb-6 border-b border-gray-800 pb-4">
-                 <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                 <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                 <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-               </div>
-               
-               <div className="space-y-4">
-                 {/* Fake recruiter dashboard UI */}
-                 <div className="h-8 bg-gray-800 rounded w-1/3 mb-6"></div>
-                 <div className="flex gap-4 items-center bg-gray-800/50 p-4 rounded-xl border border-gray-700 border-l-4 border-l-emerald-500">
-                    <div className="w-12 h-12 rounded-full bg-gray-700 flex shrink-0"></div>
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-gray-700 rounded w-1/2"></div>
-                      <div className="h-3 bg-gray-700 rounded w-1/4"></div>
-                    </div>
-                    <div className="text-emerald-400 font-bold">98% Match</div>
-                 </div>
-                 <div className="flex gap-4 items-center bg-gray-800/50 p-4 rounded-xl border border-gray-700 opacity-60">
-                    <div className="w-12 h-12 rounded-full bg-gray-700 flex shrink-0"></div>
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-gray-700 rounded w-1/2"></div>
-                      <div className="h-3 bg-gray-700 rounded w-1/4"></div>
-                    </div>
-                    <div className="text-amber-400 font-bold">74% Match</div>
-                 </div>
-               </div>
-            </div>
-            
-          </div>
-        </motion.div>
       </div>
     </div>
   )

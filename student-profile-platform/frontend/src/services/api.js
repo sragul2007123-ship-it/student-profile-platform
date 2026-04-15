@@ -83,4 +83,9 @@ export const api = {
   // Posts
   getAllPosts: () => request('/posts/'),
   createPost: (data) => request('/posts/', { method: 'POST', body: data }),
+
+  // Messages
+  getMessages: (userId, otherId) => request(`/messages/${userId}/${otherId}`),
+  sendMessage: (data) => request('/messages/', { method: 'POST', body: data }),
+  getConversations: (userId) => request(`/messages/conversations/${userId}`),
 }

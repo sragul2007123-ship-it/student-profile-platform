@@ -45,7 +45,7 @@ export default function Navbar() {
             <Link to="/" className="btn-ghost">Home</Link>
             <Link to="/leaderboard" className="btn-ghost">Leaderboard</Link>
             <Link to="/posts" className="btn-ghost">Feed</Link>
-            <Link to="/recruiters" className="btn-ghost">Recruiters</Link>
+            <Link to="/messages" className="btn-ghost">Messages</Link>
             <Link to="/insights" className="btn-ghost text-accent-500 hover:text-accent-600 font-bold">AI Insights</Link>
             {user && <Link to="/dashboard" className="btn-ghost">Dashboard</Link>}
             {user?.email === 'admin@studentprofile.com' && (
@@ -134,7 +134,7 @@ export default function Navbar() {
                 <Link to="/" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Home</Link>
                 <Link to="/leaderboard" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Leaderboard</Link>
                 <Link to="/posts" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Feed</Link>
-                <Link to="/recruiters" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Recruiters</Link>
+                <Link to="/messages" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Messages</Link>
                 <Link to="/insights" className="px-4 py-3 text-sm font-bold text-accent-500 hover:bg-accent-50/50 dark:hover:bg-accent-900/10 rounded-xl" onClick={() => setMobileOpen(false)}>AI Insights</Link>
                 {user && <Link to="/dashboard" className="px-4 py-3 text-sm font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-surface-700 rounded-xl" onClick={() => setMobileOpen(false)}>Dashboard</Link>}
                 {user ? (

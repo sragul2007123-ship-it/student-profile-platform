@@ -126,6 +126,17 @@ ALTER TABLE leaderboard ENABLE ROW LEVEL SECURITY;
 ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE post_comments ENABLE ROW LEVEL SECURITY;
 
+-- Messages table for DMs
+CREATE TABLE IF NOT EXISTS messages (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  sender_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  receiver_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  is_read BOOLEAN DEFAULT FALSE
+);
+ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+
 -- RLS Policies for users
 DROP POLICY IF EXISTS "Users can read all users" ON users;
 DROP POLICY IF EXISTS "Users can insert own user" ON users;
@@ -266,3 +277,9 @@ CREATE POLICY "Comments are publicly readable" ON post_comments FOR SELECT USING
 CREATE POLICY "Users can insert own comments" ON post_comments FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own comments" ON post_comments FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Users can delete own comments" ON post_comments FOR DELETE USING (auth.uid() = user_id);
+
+-- RLS Policies for messages
+DROP POLICY IF EXISTS "Users can read own messages" ON messages;
+DROP POLICY IF EXISTS "Users can send messages" ON messages;
+CREATE POLICY "Users can read own messages" ON messages FOR SELECT USING (auth.uid() = sender_id OR auth.uid() = receiver_id);
+CREATE POLICY "Users can send messages" ON messages FOR INSERT WITH CHECK (auth.uid() = sender_id);
