@@ -32,17 +32,16 @@ async def send_message(message: dict):
 @router.get("/conversations/{user_id}")
 async def get_conversations(user_id: str):
     try:
-        # Fetch accepted friendships for the user
-        friendships_res = supabase.table("friendships").select("requester_id, addressee_id").or_(
-            f"requester_id.eq.{user_id},addressee_id.eq.{user_id}"
-        ).eq("status", "accepted").execute()
+        # Fetch friendships where user is requester
+        res1 = supabase.table("friendships").select("addressee_id").eq("requester_id", user_id).eq("status", "accepted").execute()
+        # Fetch friendships where user is addressee
+        res2 = supabase.table("friendships").select("requester_id").eq("addressee_id", user_id).eq("status", "accepted").execute()
         
         friend_ids = []
-        for f in friendships_res.data:
-            if str(f["requester_id"]) == user_id:
-                friend_ids.append(f["addressee_id"])
-            else:
-                friend_ids.append(f["requester_id"])
+        for f in res1.data:
+            friend_ids.append(f["addressee_id"])
+        for f in res2.data:
+            friend_ids.append(f["requester_id"])
         
         if not friend_ids:
             return []
@@ -51,5 +50,5 @@ async def get_conversations(user_id: str):
         users_res = supabase.table("users").select("id, name, username, profile_photo").in_("id", friend_ids).execute()
         return users_res.data
     except Exception as e:
-        print("Error fetching conversations", str(e))
-        raise HTTPException(status_code=500, detail="Failed to fetch conversations")
+        print(f"Get conversations error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
