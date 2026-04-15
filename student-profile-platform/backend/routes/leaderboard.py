@@ -3,6 +3,33 @@ from database import supabase
 
 router = APIRouter()
 
+def get_badge_tier(rank: int) -> dict:
+    """Determine badge tier and details based on rank"""
+    if rank <= 10:
+        return {
+            "tier": "platinum",
+            "name": "Elite Scholar",
+            "emoji": "👑",
+            "color": "#FFD700",
+            "description": "Top 10 Student"
+        }
+    elif rank <= 50:
+        return {
+            "tier": "gold",
+            "name": "Master Scholar",
+            "emoji": "🏆",
+            "color": "#FFA500",
+            "description": "Top 50 Student"
+        }
+    else:
+        return {
+            "tier": None,
+            "name": None,
+            "emoji": None,
+            "color": None,
+            "description": None
+        }
+
 @router.get("/")
 async def get_leaderboard():
     try:
@@ -34,11 +61,21 @@ async def get_leaderboard():
                 "projectCount": project_count,
                 "certCount": cert_count,
                 "score": score,
-                "view_count": user["profiles"].get("view_count", 0)
+                "view_count": user["profiles"].get("view_count", 0),
+                "user_type": user.get("user_type", "student"),
+                "selected_badge": user["profiles"].get("selected_badge"),
+                "badge_visibility": user["profiles"].get("badge_visibility", True)
             })
             
         # Sort by score descending, then view_count descending, then name ascending
         enriched.sort(key=lambda x: (-x["score"], -x.get("view_count", 0), x.get("name", "").lower()))
+        
+        # Add rank and badge information
+        for idx, entry in enumerate(enriched):
+            rank = idx + 1
+            entry["rank"] = rank
+            entry["badge"] = get_badge_tier(rank) if entry.get("badge_visibility", True) else None
+        
         return enriched
     except Exception as e:
         print(f"Leaderboard error: {str(e)}")
@@ -92,11 +129,21 @@ async def get_friends_leaderboard(user_id: str):
                 "projectCount": project_count,
                 "certCount": cert_count,
                 "score": score,
-                "view_count": user["profiles"].get("view_count", 0)
+                "view_count": user["profiles"].get("view_count", 0),
+                "user_type": user.get("user_type", "student"),
+                "selected_badge": user["profiles"].get("selected_badge"),
+                "badge_visibility": user["profiles"].get("badge_visibility", True)
             })
 
         # Sort by score descending, then view_count descending, then name ascending
         enriched.sort(key=lambda x: (-x["score"], -x.get("view_count", 0), x.get("name", "").lower()))
+        
+        # Add rank and badge information
+        for idx, entry in enumerate(enriched):
+            rank = idx + 1
+            entry["rank"] = rank
+            entry["badge"] = get_badge_tier(rank) if entry.get("badge_visibility", True) else None
+        
         return enriched
     except Exception as e:
         print(f"Friends leaderboard error: {str(e)}")

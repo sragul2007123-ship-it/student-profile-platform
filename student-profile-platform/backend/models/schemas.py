@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 
@@ -9,11 +9,20 @@ class Education(BaseModel):
     year: Optional[str] = ""
 
 
+class BadgeOption(BaseModel):
+    id: str
+    name: str
+    icon: str
+    color: str
+    description: Optional[str] = ""
+
+
 class UserBase(BaseModel):
     name: Optional[str] = ""
     email: Optional[str] = ""
     username: Optional[str] = ""
     profile_photo: Optional[str] = ""
+    user_type: Optional[str] = "student"  # student or recruiter
 
 
 class UserCreate(UserBase):
@@ -26,6 +35,13 @@ class ProfileBase(BaseModel):
     education: Optional[Education] = Education()
     github: Optional[str] = ""
     linkedin: Optional[str] = ""
+    user_type: Optional[str] = "student"
+    leaderboard_rank: Optional[int] = None
+    badge_tier: Optional[str] = None  # bronze, silver, gold, platinum
+    selected_badge: Optional[str] = None  # which badge to display
+    badge_visibility: Optional[bool] = True
+    company: Optional[str] = ""  # For recruiters
+    company_logo: Optional[str] = ""  # For recruiters
 
 
 class ProfileUpdate(BaseModel):
@@ -37,6 +53,11 @@ class ProfileUpdate(BaseModel):
     education: Optional[Education] = None
     github: Optional[str] = None
     linkedin: Optional[str] = None
+    user_type: Optional[str] = None
+    selected_badge: Optional[str] = None
+    badge_visibility: Optional[bool] = None
+    company: Optional[str] = None
+    company_logo: Optional[str] = None
 
 
 class SkillBase(BaseModel):
