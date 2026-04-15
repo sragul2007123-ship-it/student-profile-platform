@@ -20,6 +20,21 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Global Presence Heartbeat
+  useEffect(() => {
+    if (user) {
+      // Immediate update on mount/login
+      const update = () => {
+        import('../services/api').then(({ api }) => {
+          api.updatePresence(user.id).catch(() => {})
+        })
+      }
+      update()
+      const interval = setInterval(update, 120000)
+      return () => clearInterval(interval)
+    }
+  }, [user])
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       scrolled || mobileOpen

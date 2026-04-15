@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
   username TEXT UNIQUE,
   profile_photo TEXT,
   user_type TEXT DEFAULT 'student' CHECK (user_type IN ('student', 'recruiter')),
+  last_seen TIMESTAMPTZ DEFAULT NOW(),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -131,7 +132,9 @@ CREATE TABLE IF NOT EXISTS messages (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   sender_id UUID REFERENCES users(id) ON DELETE CASCADE,
   receiver_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  content TEXT NOT NULL,
+  content TEXT,
+  media_url TEXT,
+  media_type TEXT CHECK (media_type IN ('image', 'video', 'file')),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   is_read BOOLEAN DEFAULT FALSE
 );
