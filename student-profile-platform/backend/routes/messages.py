@@ -81,3 +81,39 @@ async def update_presence(user_id: str):
         return {"status": "success"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/{message_id}")
+async def delete_message(message_id: int):
+    try:
+        res = supabase.table("messages").delete().eq("id", message_id).execute()
+        return {"status": "success", "data": res.data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.patch("/{message_id}/react")
+async def react_to_message(message_id: int, reaction_data: dict):
+    try:
+        emoji = reaction_data.get("emoji")
+        user_id = reaction_data.get("user_id")
+        
+        # Fetch current reactions
+        msg_res = supabase.table("messages").select("reactions").eq("id", message_id).single().execute()
+        reactions = msg_res.data.get("reactions") if msg_res.data else {}
+        if reactions is None: reactions = {}
+        
+        # Update reactions logic
+        if emoji in reactions:
+            if user_id in reactions[emoji]:
+                reactions[emoji].remove(user_id)
+                if not reactions[emoji]:
+                    del reactions[emoji]
+            else:
+                reactions[emoji].append(user_id)
+        else:
+            reactions[emoji] = [user_id]
+            
+        supabase.table("messages").update({"reactions": reactions}).eq("id", message_id).execute()
+        return {"status": "success", "reactions": reactions}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+

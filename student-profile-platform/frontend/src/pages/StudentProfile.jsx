@@ -18,15 +18,8 @@ export default function StudentProfile() {
   const [friendLoading, setFriendLoading] = useState(false)
   const [cachedProfiles, setCachedProfiles] = useState(new Map())
   
-  // EmailJS State
-  const [showEmailModal, setShowEmailModal] = useState(false)
-  const [emailForm, setEmailForm] = useState({ name: '', email: '', message: '' })
-  const [sendingEmail, setSendingEmail] = useState(false)
-  const [emailSent, setEmailSent] = useState(false)
-
   useEffect(() => {
     loadProfile()
-    // Scroll to top when profile changes
     window.scrollTo(0, 0)
   }, [username])
 
@@ -39,10 +32,8 @@ export default function StudentProfile() {
   const loadProfile = async () => {
     const cacheKey = username.toLowerCase()
     
-    // Check cache first for "Smart" instant loading
     if (cachedProfiles.has(cacheKey)) {
       const cached = cachedProfiles.get(cacheKey)
-      // Only keep cache for 5 minutes
       if (Date.now() - cached.timestamp < 300000) {
         setProfileData({ ...cached.user, ...cached.profile })
         setSkills(cached.skills || [])
@@ -62,7 +53,6 @@ export default function StudentProfile() {
       setProjects(data.projects || [])
       setCertificates(data.certificates || [])
       
-      // Cache the data
       setCachedProfiles(prev => new Map(prev).set(cacheKey, {
         ...data,
         timestamp: Date.now()
@@ -127,42 +117,6 @@ export default function StudentProfile() {
 
   const handleMessageUser = () => {
     navigate(`/messages?user=${profileData.id}`)
-  }
-
-  const handleSendEmail = async (e) => {
-    e.preventDefault()
-    if (!window.emailjs) {
-      alert("Email service is currently offline. Please try again later.")
-      return
-    }
-
-    setSendingEmail(true)
-    try {
-      // These are placeholders - the user MUST replace them with their own EmailJS IDs
-      // SERVICE_ID, TEMPLATE_ID, USER_ID (Public Key)
-      await window.emailjs.send(
-        "service_default", 
-        "template_default", 
-        {
-          to_name: profileData.name,
-          to_email: profileData.email,
-          from_name: emailForm.name,
-          from_email: emailForm.email,
-          message: emailForm.message
-        }
-      )
-      setEmailSent(true)
-      setTimeout(() => {
-        setShowEmailModal(false)
-        setEmailSent(false)
-        setEmailForm({ name: '', email: '', message: '' })
-      }, 2000)
-    } catch (err) {
-      console.error('EmailJS Error:', err)
-      alert('Failed to send email. Ensure you have configured your EmailJS Public Key in index.html.')
-    } finally {
-      setSendingEmail(false)
-    }
   }
 
   if (loading) {
@@ -342,15 +296,12 @@ export default function StudentProfile() {
           <h2 className="text-2xl font-display font-bold mb-6 dark:text-white">Contact</h2>
           <div className="flex flex-wrap gap-4">
             {profileData?.email && (
-              <button 
-                onClick={() => setShowEmailModal(true)}
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-primary-500 text-white shadow-lg shadow-primary-500/30 hover:-translate-y-1 transition-all"
-              >
+              <a href={`mailto:${profileData.email}`} className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-primary-500 text-white shadow-lg shadow-primary-500/30 hover:-translate-y-1 transition-all">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 <span className="text-sm font-bold">Email Me</span>
-              </button>
+              </a>
             )}
             {profileData?.github && (
               <a href={profileData.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gray-50 dark:bg-surface-700/50 border border-gray-100 dark:border-surface-600 hover:border-gray-300 dark:hover:border-gray-500 transition-colors">
@@ -364,96 +315,11 @@ export default function StudentProfile() {
                 <span className="text-sm font-medium dark:text-gray-200">LinkedIn</span>
               </a>
             )}
-            {profileData?.email && (
-              <a href={`mailto:${profileData.email}`} className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gray-50 dark:bg-surface-700/50 border border-gray-100 dark:border-surface-600 hover:border-primary-300 dark:hover:border-primary-600 transition-colors text-xs text-gray-400">
-                Direct Link
-              </a>
-            )}
           </div>
         </div>
-
-        {/* Email Modal */}
-        <AnimatePresence>
-          {showEmailModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className="glass-card w-full max-w-lg p-8 relative"
-              >
-                <button 
-                  onClick={() => setShowEmailModal(false)}
-                  className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-                >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-                
-                <h2 className="text-2xl font-bold mb-2 dark:text-white">Email {profileData.name}</h2>
-                <p className="text-sm text-gray-500 mb-6">Your message will be delivered straight to their inbox via EmailJS.</p>
-                
-                {emailSent ? (
-                  <div className="py-10 text-center">
-                    <div className="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center text-3xl mx-auto mb-4 animate-bounce">✓</div>
-                    <h3 className="text-xl font-bold dark:text-white">Message Sent!</h3>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSendEmail} className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Your Name</label>
-                      <input 
-                        type="text" 
-                        required
-                        className="input-field"
-                        placeholder="John Doe"
-                        value={emailForm.name}
-                        onChange={(e) => setEmailForm({...emailForm, name: e.target.value})}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Your Email</label>
-                      <input 
-                        type="email" 
-                        required
-                        className="input-field"
-                        placeholder="john@example.com"
-                        value={emailForm.email}
-                        onChange={(e) => setEmailForm({...emailForm, email: e.target.value})}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Message</label>
-                      <textarea 
-                        required
-                        rows={4}
-                        className="input-field resize-none"
-                        placeholder="Hello! I would like to connect..."
-                        value={emailForm.message}
-                        onChange={(e) => setEmailForm({...emailForm, message: e.target.value})}
-                      />
-                    </div>
-                    <button 
-                      type="submit" 
-                      disabled={sendingEmail}
-                      className="btn-primary w-full flex items-center justify-center gap-2"
-                    >
-                      {sendingEmail ? 'Sending...' : 'Send Message'}
-                      {!sendingEmail && (
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg>
-                      )}
-                    </button>
-                  </form>
-                )}
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
 
       </div>
     </div>
   )
 }
+

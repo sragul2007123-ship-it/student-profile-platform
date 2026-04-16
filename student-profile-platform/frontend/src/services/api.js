@@ -89,4 +89,7 @@ export const api = {
   sendMessage: (data) => request('/messages/', { method: 'POST', body: data }),
   getConversations: (userId) => request(`/messages/conversations/${userId}`),
   updatePresence: (userId) => request(`/messages/presence/${userId}`, { method: 'POST' }),
+  deleteMessage: (messageId) => request(`/messages/${messageId}`, { method: 'DELETE' }),
+  reactToMessage: (messageId, emoji, userId) => request(`/messages/${messageId}/react`, { method: 'PATCH', body: { emoji, user_id: userId } }),
 }
+

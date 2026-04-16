@@ -42,23 +42,26 @@ export default function Messages() {
     if (selectedFriend && user) {
       loadMessages()
       
-      // Realtime subscription for instant messaging
+      // Realtime subscription for instant messaging, deletions, and reactions
       const channel = supabase
         .channel('public:messages')
         .on('postgres_changes', { 
-          event: 'INSERT', 
+          event: '*', 
           schema: 'public', 
-          table: 'messages',
-          filter: `receiver_id=eq.${user.id}`
+          table: 'messages'
         }, (payload) => {
-          // If the message is from our currently selected friend, add it instantly
-          if (payload.new.sender_id === selectedFriend.id) {
-            setMessages(prev => {
-              // Avoid duplicates if optimistic update already added it
-              if (prev.find(m => m.id === payload.new.id)) return prev
-              return [...prev, payload.new]
-            })
-            setTimeout(() => scrollToBottom(), 100)
+          if (payload.eventType === 'INSERT') {
+            if (payload.new.sender_id === selectedFriend.id || payload.new.sender_id === user.id) {
+              setMessages(prev => {
+                if (prev.find(m => m.id === payload.new.id)) return prev
+                return [...prev, payload.new]
+              })
+              setTimeout(() => scrollToBottom(), 100)
+            }
+          } else if (payload.eventType === 'DELETE') {
+            setMessages(prev => prev.filter(m => m.id !== payload.old.id))
+          } else if (payload.eventType === 'UPDATE') {
+            setMessages(prev => prev.map(m => m.id === payload.new.id ? payload.new : m))
           }
         })
         .subscribe()
@@ -69,11 +72,39 @@ export default function Messages() {
     }
   }, [selectedFriend, user])
 
+  const [activeMenu, setActiveMenu] = useState(null) // ID of message with open menu
+
+  const handleReact = async (messageId, emoji) => {
+    try {
+      const res = await api.reactToMessage(messageId, emoji, user.id)
+      if (res.status === 'success') {
+        setMessages(prev => prev.map(m => m.id === messageId ? { ...m, reactions: res.reactions } : m))
+      }
+    } catch (err) {
+      console.error('Reaction failed:', err)
+    } finally {
+      setActiveMenu(null)
+    }
+  }
+
+  const handleUnsend = async (messageId) => {
+    if (!window.confirm('Unsend this message?')) return
+    try {
+      await api.deleteMessage(messageId)
+      setMessages(prev => prev.filter(m => m.id !== messageId))
+    } catch (err) {
+      console.error('Unsend failed:', err)
+    } finally {
+      setActiveMenu(null)
+    }
+  }
+
+  const quickEmojis = ['❤️', '😂', '👍', '🔥', '😢', '🙌']
+
   const scrollToBottom = (behavior = 'smooth') => {
     scrollRef.current?.scrollIntoView({ behavior })
   }
 
-  // Pre-process messages to avoid repetitive parsing in render
   const memoizedMessages = useMemo(() => messages, [messages])
 
   const loadConversations = async () => {
@@ -101,7 +132,6 @@ export default function Messages() {
     try {
       const msgs = await api.getMessages(user.id, selectedFriend.id)
       setMessages(msgs)
-      // Instant scroll on first load
       setTimeout(() => scrollToBottom('auto'), 100)
     } catch (err) {
       console.error('Error loading messages:', err)
@@ -167,7 +197,6 @@ export default function Messages() {
       content: newMessage.trim()
     }
 
-    // Optimistic update for "smart" performance feeling
     const tempId = Date.now()
     const tempMsg = { ...msgData, id: tempId, created_at: new Date().toISOString() }
     setMessages(prev => [...prev, tempMsg])
@@ -176,7 +205,6 @@ export default function Messages() {
 
     try {
       const sent = await api.sendMessage(msgData)
-      // Replace temp with real
       setMessages(prev => prev.map(m => m.id === tempId ? sent : m))
     } catch (err) {
       console.error('Error sending message:', err)
@@ -188,8 +216,9 @@ export default function Messages() {
     if (!lastSeen) return false
     const lastSeenDate = new Date(lastSeen)
     const now = new Date()
-    return (now - lastSeenDate) < 5 * 60 * 1000 // Active if seen in last 5 mins
+    return (now - lastSeenDate) < 5 * 60 * 1000 
   }
+
 
   return (
     <div className="min-h-[calc(100vh-4rem)] pt-16 pb-0 gradient-bg-subtle h-[calc(100vh-4rem)] overflow-hidden">
@@ -291,7 +320,7 @@ export default function Messages() {
                 </div>
 
                 {/* Messages Feed */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                <div className="flex-1 overflow-y-auto p-4 space-y-6" onClick={() => setActiveMenu(null)}>
                   {loadingMsgs ? (
                     <div className="flex justify-center py-10">
                       <div className="w-8 h-8 border-3 border-primary-200 border-t-primary-500 rounded-full animate-spin"></div>
@@ -299,31 +328,96 @@ export default function Messages() {
                   ) : memoizedMessages.map((msg, i) => (
                     <motion.div
                       key={msg.id || i}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'}`}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className={`flex flex-col ${msg.sender_id === user.id ? 'items-end' : 'items-start'}`}
                     >
-                      <div className={`max-w-[75%] p-3 rounded-2xl shadow-sm ${
-                        msg.sender_id === user.id 
-                          ? 'bg-primary-500 text-white rounded-tr-none' 
-                          : 'bg-white dark:bg-surface-700 dark:text-gray-200 rounded-tl-none'
-                      }`}>
-                        {msg.content && <p className="text-sm whitespace-pre-wrap">{msg.content}</p>}
-                        
-                        {msg.media_url && (
-                          <div className="mt-2 rounded-lg overflow-hidden max-w-sm">
-                            {msg.media_type === 'image' ? (
-                              <img src={msg.media_url} className="w-full h-auto cursor-pointer" alt="Media" onClick={() => window.open(msg.media_url)} />
-                            ) : msg.media_type === 'video' ? (
-                              <video src={msg.media_url} controls className="w-full h-auto" />
-                            ) : (
-                              <a href={msg.media_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-3 bg-black/10 rounded-lg text-xs font-medium truncate">
-                                📎 {msg.media_url.split('/').pop().substring(0, 20)}...
-                              </a>
-                            )}
+                      <div className={`group relative max-w-[75%] ${msg.sender_id === user.id ? 'items-end' : 'items-start'}`}>
+                        {/* Reaction/Menu Trigger */}
+                        <div 
+                          className={`absolute ${msg.sender_id === user.id ? '-left-8' : '-right-8'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer p-1 rounded-full hover:bg-gray-100 dark:hover:bg-surface-700`}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setActiveMenu(activeMenu === msg.id ? null : msg.id)
+                          }}
+                        >
+                          <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                          </svg>
+                        </div>
+
+                        {/* Reaction Menu */}
+                        <AnimatePresence>
+                          {activeMenu === msg.id && (
+                            <motion.div 
+                              initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                              className={`absolute z-30 bottom-full mb-2 ${msg.sender_id === user.id ? 'right-0' : 'left-0'} bg-white dark:bg-surface-800 shadow-xl rounded-2xl p-2 border border-gray-100 dark:border-surface-700 flex gap-1`}
+                            >
+                              {quickEmojis.map(emoji => (
+                                <button 
+                                  key={emoji} 
+                                  onClick={() => handleReact(msg.id, emoji)}
+                                  className="hover:scale-125 transition-transform p-1 text-lg"
+                                >
+                                  {emoji}
+                                </button>
+                              ))}
+                              {msg.sender_id === user.id && (
+                                <button 
+                                  onClick={() => handleUnsend(msg.id)}
+                                  className="ml-2 pl-2 border-l border-gray-100 dark:border-surface-700 text-xs font-bold text-red-500 hover:text-red-600 px-2"
+                                >
+                                  Unsend
+                                </button>
+                              )}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+
+                        <div className={`p-3 rounded-2xl shadow-sm ${
+                          msg.sender_id === user.id 
+                            ? 'bg-primary-500 text-white rounded-tr-none' 
+                            : 'bg-white dark:bg-surface-700 dark:text-gray-200 rounded-tl-none'
+                        }`}>
+                          {msg.content && <p className="text-sm whitespace-pre-wrap">{msg.content}</p>}
+                          
+                          {msg.media_url && (
+                            <div className="mt-2 rounded-lg overflow-hidden max-w-sm">
+                              {msg.media_type === 'image' ? (
+                                <img src={msg.media_url} className="w-full h-auto cursor-pointer" alt="Media" onClick={() => window.open(msg.media_url)} />
+                              ) : msg.media_type === 'video' ? (
+                                <video src={msg.media_url} controls className="w-full h-auto" />
+                              ) : (
+                                <a href={msg.media_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-3 bg-black/10 rounded-lg text-xs font-medium truncate">
+                                  📎 {msg.media_url.split('/').pop().substring(0, 20)}...
+                                </a>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Reactions Display */}
+                        {msg.reactions && Object.keys(msg.reactions).length > 0 && (
+                          <div className={`flex flex-wrap gap-1 mt-1 ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'}`}>
+                            {Object.entries(msg.reactions).map(([emoji, users]) => (
+                                <div 
+                                  key={emoji} 
+                                  onClick={() => handleReact(msg.id, emoji)}
+                                  className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] cursor-pointer transition-all ${
+                                    users.includes(user.id) 
+                                      ? 'bg-primary-100 dark:bg-primary-900/40 border border-primary-500/30' 
+                                      : 'bg-gray-100 dark:bg-surface-800 border border-transparent'
+                                  }`}
+                                >
+                                  <span>{emoji}</span>
+                                  <span className="font-bold opacity-60 text-[8px]">{users.length}</span>
+                                </div>
+                            ))}
                           </div>
                         )}
-                        
+
                         <p className={`text-[9px] mt-1.5 opacity-60 ${msg.sender_id === user.id ? 'text-right' : 'text-left'}`}>
                           {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </p>
@@ -393,3 +487,4 @@ export default function Messages() {
     </div>
   )
 }
+
