@@ -119,6 +119,16 @@ export default function StudentProfile() {
     navigate(`/messages?user=${profileData.id}`)
   }
 
+  const [showCopied, setShowCopied] = useState(false)
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href)
+    setShowCopied(true)
+    setTimeout(() => setShowCopied(false), 2000)
+  }
+
+  // ... (rest of the checks)
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center gradient-bg-subtle">
@@ -174,7 +184,12 @@ export default function StudentProfile() {
                 )}
               </div>
               <div className="text-center sm:text-left pb-2 flex-1">
-                <h1 className="text-3xl font-display font-bold dark:text-white">{profileData?.name}</h1>
+                <div className="flex flex-col sm:flex-row items-center gap-2">
+                  <h1 className="text-3xl font-display font-bold dark:text-white">{profileData?.name}</h1>
+                  <span className="px-2 py-0.5 rounded-md bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs font-bold">
+                    @{profileData?.username}
+                  </span>
+                </div>
                 <p className="text-primary-500 font-semibold text-lg">{profileData?.role}</p>
                 {profileData?.education && (
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -182,44 +197,70 @@ export default function StudentProfile() {
                   </p>
                 )}
               </div>
-              {user && profileData?.id && user.id !== profileData.id && (
-                <div className="flex flex-col sm:flex-row gap-2 shrink-0 pt-2 sm:pt-0">
-                  <button
-                    onClick={handleFriendAction}
-                    disabled={friendLoading || friendStatus === 'sent'}
-                    className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                      friendStatus === 'accepted'
-                        ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400'
-                        : friendStatus === 'pending'
-                        ? 'gradient-bg text-white shadow-lg shadow-primary-500/25'
-                        : friendStatus === 'sent'
-                        ? 'bg-gray-100 dark:bg-surface-700 text-gray-500 cursor-not-allowed'
-                        : 'gradient-bg text-white shadow-lg shadow-primary-500/25 hover:shadow-xl'
-                    }`}
-                  >
-                    {friendLoading ? '...' :
-                      friendStatus === 'accepted' ? '✓ Friends' :
-                      friendStatus === 'pending' ? 'Accept Request' :
-                      friendStatus === 'sent' ? 'Request Sent' :
-                      '+ Add Friend'}
-                  </button>
-                  
-                  {friendStatus === 'accepted' && (
+              
+              <div className="flex flex-col sm:flex-row gap-2 shrink-0 pt-2 sm:pt-0">
+                {user && profileData?.id && user.id !== profileData.id && (
+                  <>
                     <button
-                      onClick={handleMessageUser}
-                      className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-all flex items-center justify-center gap-2"
+                      onClick={handleFriendAction}
+                      disabled={friendLoading || friendStatus === 'sent'}
+                      className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                        friendStatus === 'accepted'
+                          ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400'
+                          : friendStatus === 'pending'
+                          ? 'gradient-bg text-white shadow-lg shadow-primary-500/25'
+                          : friendStatus === 'sent'
+                          ? 'bg-gray-100 dark:bg-surface-700 text-gray-500 cursor-not-allowed'
+                          : 'gradient-bg text-white shadow-lg shadow-primary-500/25 hover:shadow-xl'
+                      }`}
                     >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                      </svg>
-                      Message
+                      {friendLoading ? '...' :
+                        friendStatus === 'accepted' ? '✓ Friends' :
+                        friendStatus === 'pending' ? 'Accept Request' :
+                        friendStatus === 'sent' ? 'Request Sent' :
+                        '+ Add Friend'}
                     </button>
-                  )}
-                </div>
-              )}
+                    
+                    {friendStatus === 'accepted' && (
+                      <button
+                        onClick={handleMessageUser}
+                        className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-all flex items-center justify-center gap-2"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        </svg>
+                        Message
+                      </button>
+                    )}
+                  </>
+                )}
+
+                <button
+                  onClick={handleCopyLink}
+                  className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-gray-100 dark:bg-surface-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-surface-600 transition-all flex items-center justify-center gap-2 relative"
+                >
+                  <AnimatePresence>
+                    {showCopied && (
+                      <motion.span 
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: -35 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute bg-gray-900 text-white text-[10px] px-2 py-1 rounded-md"
+                      >
+                        Link Copied!
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                  </svg>
+                  Share
+                </button>
+              </div>
             </div>
           </div>
         </motion.div>
+
 
         {/* About Section */}
         {profileData?.about && (
