@@ -425,146 +425,182 @@ export default function Dashboard() {
     { id: 'friends', label: 'Friends', icon: '🤝' },
   ]
 
-  // Only show the syncing screen during the VERY first load of the app
-  // or when an OAuth redirect is physically happening in the URL.
-  // Never show it if we are just logged out.
+  const [isEditing, setIsEditing] = useState(false)
   const isAuthFlow = window.location.hash.includes('access_token=') || window.location.hash.includes('error=');
-  
-  if (loading && isAuthFlow) {
+
+  if (loading && (isAuthFlow || !user)) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gradient-bg-subtle">
+      <div className="min-h-screen flex flex-col items-center justify-center dark:bg-black">
         <div className="w-16 h-16 rounded-full border-4 border-primary-200 border-t-primary-500 animate-spin mb-4"></div>
-        <h2 className="text-xl font-display font-bold text-gray-700 dark:text-gray-300">
-          Syncing your profile...
-        </h2>
-        <p className="text-gray-500 dark:text-gray-400 mt-2">
-          Please wait while we prepare your dashboard
-        </p>
+        <h2 className="text-xl font-bold dark:text-white">Syncing your profile...</h2>
       </div>
     )
   }
 
-
-
   return (
-    <div className="min-h-screen pt-20 pb-12 gradient-bg-subtle">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-display font-bold dark:text-white">Dashboard</h1>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <p className="text-gray-500 dark:text-gray-400 mt-1">Manage your digital profile</p>
-            
-            {/* Completion Progress Bar */}
-            <div className="w-full sm:w-64">
-              <div className="flex justify-between items-center mb-1.5">
-                <span className="text-[10px] font-black uppercase text-primary-500 tracking-wider">Profile Strength</span>
-                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{completionPercent}%</span>
-              </div>
-              <div className="h-2 w-full bg-gray-200 dark:bg-surface-700 rounded-full overflow-hidden">
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${completionPercent}%` }}
-                  className={`h-full ${completionPercent === 100 ? 'bg-green-500' : 'gradient-bg'}`}
-                />
-              </div>
-            </div>
-          </div>
-          
-          {/* New User Onboarding Banner */}
-          {!profile.username && !loading && (
+    <div className="min-h-screen pt-20 pb-12 bg-white dark:bg-black transition-colors duration-300">
+      <div className="max-w-[935px] mx-auto px-4 sm:px-6">
+        
+        {/* Message Toast */}
+        <AnimatePresence>
+          {message.text && (
             <motion.div 
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-6 p-6 rounded-2xl bg-gradient-to-r from-primary-600 to-indigo-600 text-white shadow-xl shadow-primary-500/20 relative overflow-hidden group"
+              exit={{ opacity: 0, y: -20 }}
+              className={`fixed top-24 left-1/2 -translate-x-1/2 z-50 px-6 py-2 rounded-lg text-sm font-bold shadow-2xl ${
+                message.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'
+              }`}
             >
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
-                </svg>
-              </div>
-              <div className="relative z-10">
-                <h3 className="text-xl font-bold mb-1">🎉 Welcome to your new profile!</h3>
-                <p className="text-primary-100 mb-4 max-w-lg">You've successfully signed up. Let's start by creating your unique username and adding your basic info.</p>
-                <button 
-                  onClick={() => setActiveTab('profile')}
-                  className="px-6 py-2 bg-white text-primary-600 rounded-xl font-bold hover:bg-primary-50 transition-colors shadow-lg"
-                >
-                  Complete My Profile
-                </button>
-              </div>
+              {message.text}
             </motion.div>
           )}
+        </AnimatePresence>
 
-          {profile.username && (
-            <div className="flex items-center gap-2 mt-2">
-               <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-               <p className="text-sm text-gray-400">
-                Live URL: <a href={`/student/${profile.username}`} className="font-medium text-primary-500 underline hover:text-primary-700" target="_blank" rel="noopener noreferrer">/student/{profile.username}</a>
-              </p>
-            </div>
-          )}
-        </div>
+        {!isEditing ? (
+          <>
+            {/* Instagram-style Profile Header */}
+            <header className="flex flex-col md:flex-row gap-8 md:gap-20 mb-11">
+              <div className="flex justify-center md:block">
+                <div className="w-[150px] h-[150px] rounded-full p-1 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                  <div className="w-full h-full rounded-full border-4 border-white dark:border-black overflow-hidden bg-gray-100 flex items-center justify-center">
+                    {profile.profile_photo ? (
+                      <img src={profile.profile_photo} className="w-full h-full object-cover" alt="profile" />
+                    ) : (
+                      <span className="text-4xl font-bold text-gray-400">{profile.name?.[0]}</span>
+                    )}
+                  </div>
+                </div>
+                <input type="file" ref={fileInputRef} onChange={handlePhotoUpload} accept="image/*" className="hidden" />
+              </div>
 
+              <div className="flex-1">
+                <div className="flex flex-col sm:flex-row items-center gap-4 mb-5">
+                  <h2 className="text-xl font-light dark:text-gray-100">{profile.username || 'username'}</h2>
+                  <div className="flex gap-2">
+                    <button onClick={() => setIsEditing(true)} className="px-4 py-1.5 bg-gray-100 dark:bg-surface-800 text-sm font-bold border rounded-lg hover:bg-gray-200 dark:text-white">
+                      Edit Profile
+                    </button>
+                    <a href={`/student/${profile.username}`} target="_blank" rel="noreferrer" className="px-4 py-1.5 bg-gray-100 dark:bg-surface-800 text-sm font-bold border rounded-lg hover:bg-gray-200 dark:text-white">
+                      View Public
+                    </a>
+                  </div>
+                </div>
 
-        {/* Message Toast */}
-        {message.text && (
-          <div className={`mb-6 px-6 py-3 rounded-xl text-sm font-medium animate-slide-up ${
-            message.type === 'success'
-              ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
-              : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
-          }`}>
-            {message.text}
-          </div>
-        )}
+                <div className="hidden sm:flex items-center gap-10 mb-5">
+                  <div className="flex items-center gap-1 text-[16px]"><span className="font-bold dark:text-white">{projects.length}</span> <span className="dark:text-gray-400">posts</span></div>
+                  <div className="flex items-center gap-1 text-[16px]"><span className="font-bold dark:text-white">{friends.length}</span> <span className="dark:text-gray-400">friends</span></div>
+                  <div className="flex items-center gap-1 text-[16px]"><span className="font-bold dark:text-white">{skills.length}</span> <span className="dark:text-gray-400">skills</span></div>
+                </div>
 
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Sidebar Tabs */}
-          <div className="lg:w-56 shrink-0">
-            <motion.div 
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="glass-card p-3 flex lg:flex-col gap-1 overflow-x-auto lg:overflow-x-visible shadow-xl"
-            >
-              {tabs.map((tab, i) => (
-                <motion.button
-                  key={tab.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 + 0.2 }}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
-                    activeTab === tab.id
-                      ? 'gradient-bg text-white shadow-lg shadow-primary-500/25'
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-surface-700'
-                  }`}
-                  whileHover={{ x: 5, backgroundColor: activeTab === tab.id ? undefined : 'rgba(0,0,0,0.05)' }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <span className="text-xl">{tab.icon}</span>
-                  {tab.label}
-                </motion.button>
-              ))}
-            </motion.div>
-          </div>
+                <div className="text-sm">
+                  <h1 className="font-bold dark:text-white mb-0.5">{profile.name || 'Your Name'}</h1>
+                  <p className="text-gray-500 font-medium mb-1">{profile.role || 'Professional Role'}</p>
+                  <p className="dark:text-gray-300 leading-tight whitespace-pre-wrap">{profile.about || 'Tell people about yourself...'}</p>
+                </div>
+              </div>
+            </header>
 
-          {/* Content Area */}
-          <div className="flex-1">
-            <AnimatePresence mode="wait">
-              <motion.div 
-                key={activeTab}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-                className="glass-card p-8"
+            {/* Highlights (Skills) */}
+            <section className="flex gap-6 mb-11 overflow-x-auto pb-4 scrollbar-hide">
+              <div 
+                onClick={() => { setIsEditing(true); setActiveTab('skills'); }}
+                className="flex flex-col items-center gap-2 min-w-[77px] cursor-pointer group"
               >
-                {/* Profile Tab */}
-                {activeTab === 'profile' && (
-                  <div>
-                  <h2 className="text-xl font-semibold mb-6 dark:text-white">Profile Information</h2>
+                <div className="w-[77px] h-[77px] rounded-full border border-gray-200 dark:border-surface-800 flex items-center justify-center p-1 group-hover:bg-gray-50 dark:group-hover:bg-surface-900 transition-colors">
+                  <div className="w-full h-full rounded-full border border-gray-200 dark:border-surface-700 flex items-center justify-center text-3xl font-light text-gray-400">+</div>
+                </div>
+                <span className="text-[12px] font-bold dark:text-gray-400">Add Skill</span>
+              </div>
+              {skills.slice(0, 10).map((skill, index) => (
+                <div key={index} className="flex flex-col items-center gap-2 min-w-[77px]">
+                  <div className="w-[77px] h-[77px] rounded-full p-0.5 border border-gray-200 dark:border-surface-800">
+                    <div className="w-full h-full rounded-full bg-gray-50 dark:bg-surface-900 border-4 border-white dark:border-black flex items-center justify-center text-xs font-bold text-gray-500 overflow-hidden text-center p-1">
+                      {skill.skill_name}
+                    </div>
+                  </div>
+                  <span className="text-[12px] font-medium dark:text-gray-300">{skill.skill_name.split(' ')[0]}</span>
+                </div>
+              ))}
+            </section>
 
-                  {/* Avatar Section */}
+            {/* Tabs */}
+            <div className="border-t border-gray-200 dark:border-surface-800 flex justify-center gap-14 -mt-px">
+              <button 
+                onClick={() => setActiveTab('profile')}
+                className={`flex items-center gap-1.5 h-[52px] text-[12px] font-bold tracking-widest uppercase border-t transition-all ${activeTab === 'profile' ? 'border-black dark:border-white text-black dark:text-white' : 'border-transparent text-gray-400'}`}
+              >
+                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                PROJECTS
+              </button>
+              <button 
+                onClick={() => { setIsEditing(true); setActiveTab('projects'); }}
+                className="flex items-center gap-1.5 h-[52px] text-[12px] font-bold tracking-widest uppercase text-primary-500 hover:text-primary-600 transition-colors"
+              >
+                + ADD POST
+              </button>
+            </div>
+
+            {/* Projects Grid */}
+            <div className="grid grid-cols-3 gap-1 sm:gap-7 mt-px">
+              {projects.map((project, index) => (
+                <motion.div 
+                  key={index} 
+                  initial={{opacity: 0, scale: 0.9}}
+                  animate={{opacity: 1, scale: 1}}
+                  className="relative aspect-square bg-gray-100 dark:bg-surface-800 overflow-hidden group cursor-pointer"
+                >
+                  {project.image_url ? (
+                    <img src={project.image_url} className="w-full h-full object-cover group-hover:opacity-75 transition-opacity" alt="post" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs font-bold p-2 text-center">{project.title}</div>
+                  )}
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-6 text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => deleteProject(project.id)} className="p-2 bg-red-500 rounded-full hover:bg-red-600">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+              {projects.length === 0 && (
+                <div className="col-span-3 py-10 flex flex-col items-center justify-center border-2 border-dashed border-gray-200 dark:border-surface-800 rounded-xl">
+                  <p className="text-gray-400">No projects yet. Add your first post!</p>
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          /* Profile Editing View (Current Dashboard Content) */
+          <div className="animate-fade-in">
+            <div className="flex items-center justify-between mb-8">
+              <button onClick={() => setIsEditing(false)} className="flex items-center gap-2 text-primary-600 font-bold">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                Back to Profile
+              </button>
+              <h1 className="text-2xl font-bold dark:text-white">Settings</h1>
+            </div>
+
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Sidebar Tabs */}
+              <div className="lg:w-48 shrink-0">
+                <div className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-x-visible items-center lg:items-start border-b lg:border-none mb-4 lg:mb-0">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`px-4 py-2 text-sm font-bold w-full text-left transition-all ${activeTab === tab.id ? 'border-l-2 border-black dark:border-white text-black dark:text-white' : 'text-gray-400'}`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Edit Forms Container */}
+              <div className="flex-1 min-h-[500px] border dark:border-surface-800 rounded p-8">
+                <AnimatePresence mode="wait">
+                  <motion.div key={activeTab} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
+                    {activeTab === 'profile' && (
                   <div className="flex flex-col items-center mb-10">
                     <div 
                       onClick={() => fileInputRef.current?.click()}
@@ -1413,10 +1449,12 @@ export default function Dashboard() {
                   </div>
                 </div>
               )}
-            </motion.div>
-          </AnimatePresence>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
-        </div>
+      )}
       </div>
     </div>
   )
