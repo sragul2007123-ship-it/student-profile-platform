@@ -55,7 +55,27 @@ export default function Navbar() {
             </span>
           </Link>
 
+          {/* Desktop Search Bar */}
+          {user && (
+            <div className="hidden lg:flex flex-1 max-w-sm mx-8 relative items-center">
+              <input
+                type="text"
+                placeholder="Search students..."
+                className="w-full bg-gray-100 dark:bg-surface-800 border-none rounded-xl py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary-500 transition-all dark:text-white"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    navigate(`/friends?search=${encodeURIComponent(e.target.value)}`)
+                  }
+                }}
+              />
+              <svg className="w-4 h-4 text-gray-400 absolute left-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          )}
+
           {/* Desktop Nav */}
+
           <div className="hidden md:flex items-center gap-2">
             <Link to="/" className="btn-ghost">Home</Link>
             {user && (

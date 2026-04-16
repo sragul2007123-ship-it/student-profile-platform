@@ -83,6 +83,10 @@ export const api = {
   // Posts
   getAllPosts: () => request('/posts/'),
   createPost: (data) => request('/posts/', { method: 'POST', body: data }),
+  likePost: (postId, userId) => request(`/posts/${postId}/like`, { method: 'POST', body: { user_id: userId } }),
+  getComments: (postId) => request(`/posts/${postId}/comments`),
+  addComment: (postId, data) => request(`/posts/${postId}/comments`, { method: 'POST', body: data }),
+
 
   // Messages
   getMessages: (userId, otherId) => request(`/messages/${userId}/${otherId}`),
