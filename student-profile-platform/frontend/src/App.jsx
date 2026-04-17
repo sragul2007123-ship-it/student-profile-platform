@@ -13,6 +13,7 @@ import AdminPanel from './pages/AdminPanel'
 import Posts from './pages/Posts'
 import RecruiterInsights from './pages/RecruiterInsights'
 import Messages from './pages/Messages'
+import LearningHub from './pages/LearningHub'
 import { AnimatePresence } from 'framer-motion'
 
 function AnimatedRoutes() {
@@ -32,6 +33,7 @@ function AnimatedRoutes() {
         <Route path="/insights" element={<RecruiterInsights />} />
         <Route path="/recruiter/:username" element={<RecruiterProfile />} />
         <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/learning" element={<LearningHub />} />
       </Routes>
     </AnimatePresence>
   )
