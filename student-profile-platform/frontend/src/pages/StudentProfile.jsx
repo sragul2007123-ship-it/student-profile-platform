@@ -114,7 +114,7 @@ export default function StudentProfile() {
 
   return (
     <div className="min-h-screen pt-20 pb-12 bg-white dark:bg-black transition-colors duration-300">
-      <div className="max-w-[935px] mx-auto px-4 sm:px-6">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         
         {/* Premium Profile Header Section */}
         <div className="glass-card mb-12 p-10 border-none shadow-2xl relative overflow-hidden group">
@@ -210,7 +210,8 @@ export default function StudentProfile() {
               </div>
             </div>
           </div>
-        </div>
+        </header>
+      </div>
 
         {/* Highlights Section */}
         <section className="flex gap-4 sm:gap-6 mb-12 overflow-x-auto pb-4 scrollbar-hide">
