@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./learning/learning.css";
-import ProgressRail from "../../components/learning/ProgressRail";
+import ProgressRail from "../components/learning/ProgressRail";
 import InputScreen  from "./learning/InputScreen";
 import NotesScreen  from "./learning/NotesScreen";
 import ExplainScreen from "./learning/ExplainScreen";

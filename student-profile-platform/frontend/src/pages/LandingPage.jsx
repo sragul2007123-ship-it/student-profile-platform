@@ -127,10 +127,10 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="text-xl sm:text-2xl text-gray-500 dark:text-gray-400 max-w-3xl mx-auto mb-10"
+            className="text-xl sm:text-2xl text-gray-500 dark:text-gray-400 max-w-3xl mx-auto mb-12 text-balance font-medium leading-relaxed"
           >
-            Showcase your skills, projects, and achievements online.
-            Create a professional portfolio that stands out.
+            The ultimate professional hub for modern students. 
+            Build a profile that recruiters can't ignore.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -218,12 +218,31 @@ export default function LandingPage() {
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span> New Skill Added
             </motion.div>
 
-             {/* Connection Line Decoration */}
-             <div className="absolute inset-0 flex items-center justify-center -z-10">
-                <div className="w-full max-w-md h-[1px] bg-gradient-to-r from-transparent via-primary-500/20 to-transparent rotate-12"></div>
-                <div className="w-full max-w-md h-[1px] bg-gradient-to-r from-transparent via-primary-500/20 to-transparent -rotate-12"></div>
+            {/* Connection Line Decoration */}
+             <div className="absolute inset-0 flex items-center justify-center -z-10 opacity-30">
+                <div className="w-full max-w-lg h-[2px] bg-gradient-to-r from-transparent via-primary-500/40 to-transparent rotate-12 blur-sm"></div>
+                <div className="w-full max-w-lg h-[2px] bg-gradient-to-r from-transparent via-accent-500/40 to-transparent -rotate-12 blur-sm"></div>
              </div>
           </div>
+
+          {/* New Active Learning Teaser */}
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-24 p-1 rounded-3xl bg-gradient-to-r from-primary-500/20 via-accent-500/20 to-primary-500/20 backdrop-blur-xl border border-white/10"
+          >
+            <div className="bg-white/80 dark:bg-black/40 rounded-[22px] p-8 flex flex-col md:flex-row items-center gap-8 text-left">
+              <div className="w-16 h-16 rounded-2xl gradient-bg flex items-center justify-center text-3xl shadow-xl">🧠</div>
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold dark:text-white mb-2">New: Mellow Active Learning Hub</h3>
+                <p className="text-gray-600 dark:text-gray-400">Master your course material with Socratic AI debate and high-fidelity study notes. Transform lectures into wisdom.</p>
+              </div>
+              <Link to="/learning" className="px-6 py-3 rounded-xl font-bold text-white bg-black dark:bg-white dark:text-black hover:scale-105 transition-transform whitespace-nowrap">
+                Try Active Learning
+              </Link>
+            </div>
+          </motion.div>
 
           {/* Simple Mobile Stats */}
           <div className="mt-16 sm:hidden grid grid-cols-3 gap-4">

@@ -438,8 +438,8 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen pt-20 pb-12 bg-white dark:bg-black transition-colors duration-300">
-      <div className="max-w-[935px] mx-auto px-4 sm:px-6">
+    <div className="min-h-screen pt-20 pb-12 bg-gray-50 dark:bg-black transition-colors duration-300">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
         
         {/* Message Toast */}
         <AnimatePresence>
@@ -459,47 +459,50 @@ export default function Dashboard() {
 
         {!isEditing ? (
           <>
-            {/* Instagram-style Profile Header */}
-            <header className="flex flex-col md:flex-row gap-8 md:gap-20 mb-11">
-              <div className="flex justify-center md:block">
-                <div className="w-[150px] h-[150px] rounded-full p-1 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                  <div className="w-full h-full rounded-full border-4 border-white dark:border-black overflow-hidden bg-gray-100 flex items-center justify-center">
-                    {profile.profile_photo ? (
-                      <img src={profile.profile_photo} className="w-full h-full object-cover" alt="profile" />
-                    ) : (
-                      <span className="text-4xl font-bold text-gray-400">{profile.name?.[0]}</span>
-                    )}
+            {/* Premium Profile Header Card */}
+            <div className="glass-card p-8 mb-8 border-none shadow-2xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/5 rounded-full -mr-32 -mt-32 filter blur-3xl group-hover:bg-primary-500/10 transition-colors"></div>
+              <header className="flex flex-col md:flex-row gap-8 items-center relative z-10">
+                <div className="shrink-0">
+                  <div className="w-[160px] h-[160px] rounded-[40px] p-1 bg-gradient-to-tr from-primary-500 via-accent-500 to-primary-500 shadow-2xl rotate-3 hover:rotate-0 transition-transform cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                    <div className="w-full h-full rounded-[36px] bg-white dark:bg-surface-900 overflow-hidden flex items-center justify-center p-1">
+                      {profile.profile_photo ? (
+                        <img src={profile.profile_photo} className="w-full h-full object-cover rounded-[34px]" alt="profile" />
+                      ) : (
+                        <span className="text-5xl font-display font-bold text-gray-200">{profile.name?.[0]}</span>
+                      )}
+                    </div>
+                  </div>
+                  <input type="file" ref={fileInputRef} onChange={handlePhotoUpload} accept="image/*" className="hidden" />
+                </div>
+
+                <div className="flex-1 text-center md:text-left">
+                  <div className="flex flex-col sm:flex-row items-center gap-4 mb-4">
+                    <h2 className="text-3xl font-display font-bold dark:text-gray-100">@{profile.username || 'username'}</h2>
+                    <div className="flex gap-2">
+                      <button onClick={() => setIsEditing(true)} className="btn-primary py-2 px-6 shadow-none text-sm">
+                        Edit Profile
+                      </button>
+                      <a href={`/student/${profile.username}`} target="_blank" rel="noreferrer" className="btn-ghost bg-gray-100 dark:bg-surface-800 border-none text-sm">
+                        View Live
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-center md:justify-start gap-8 mb-6 text-sm text-gray-500 dark:text-gray-400">
+                    <div className="flex flex-col items-center md:items-start"><span className="text-lg font-bold dark:text-white">{projects.length}</span> Post</div>
+                    <div className="flex flex-col items-center md:items-start"><span className="text-lg font-bold dark:text-white">{friends.length}</span> Friends</div>
+                    <div className="flex flex-col items-center md:items-start"><span className="text-lg font-bold dark:text-white">{skills.length}</span> Skills</div>
+                  </div>
+
+                  <div className="text-gray-600 dark:text-gray-300">
+                    <h1 className="text-xl font-bold dark:text-white mb-1">{profile.name || 'Your Name'}</h1>
+                    <p className="font-medium text-primary-500 mb-2">{profile.role || 'Professional Role'}</p>
+                    <p className="leading-relaxed max-w-xl line-clamp-2 md:line-clamp-none">{profile.about || 'Tell people about yourself...'}</p>
                   </div>
                 </div>
-                <input type="file" ref={fileInputRef} onChange={handlePhotoUpload} accept="image/*" className="hidden" />
-              </div>
-
-              <div className="flex-1">
-                <div className="flex flex-col sm:flex-row items-center gap-4 mb-5">
-                  <h2 className="text-xl font-light dark:text-gray-100">{profile.username || 'username'}</h2>
-                  <div className="flex gap-2">
-                    <button onClick={() => setIsEditing(true)} className="px-4 py-1.5 bg-gray-100 dark:bg-surface-800 text-sm font-bold border rounded-lg hover:bg-gray-200 dark:text-white">
-                      Edit Profile
-                    </button>
-                    <a href={`/student/${profile.username}`} target="_blank" rel="noreferrer" className="px-4 py-1.5 bg-gray-100 dark:bg-surface-800 text-sm font-bold border rounded-lg hover:bg-gray-200 dark:text-white">
-                      View Public
-                    </a>
-                  </div>
-                </div>
-
-                <div className="hidden sm:flex items-center gap-10 mb-5">
-                  <div className="flex items-center gap-1 text-[16px]"><span className="font-bold dark:text-white">{projects.length}</span> <span className="dark:text-gray-400">posts</span></div>
-                  <div className="flex items-center gap-1 text-[16px]"><span className="font-bold dark:text-white">{friends.length}</span> <span className="dark:text-gray-400">friends</span></div>
-                  <div className="flex items-center gap-1 text-[16px]"><span className="font-bold dark:text-white">{skills.length}</span> <span className="dark:text-gray-400">skills</span></div>
-                </div>
-
-                <div className="text-sm">
-                  <h1 className="font-bold dark:text-white mb-0.5">{profile.name || 'Your Name'}</h1>
-                  <p className="text-gray-500 font-medium mb-1">{profile.role || 'Professional Role'}</p>
-                  <p className="dark:text-gray-300 leading-tight whitespace-pre-wrap">{profile.about || 'Tell people about yourself...'}</p>
-                </div>
-              </div>
-            </header>
+              </header>
+            </div>
 
             {/* Highlights (Skills) */}
             <section className="flex gap-6 mb-11 overflow-x-auto pb-4 scrollbar-hide">
@@ -601,7 +604,8 @@ export default function Dashboard() {
                 <AnimatePresence mode="wait">
                   <motion.div key={activeTab} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
                     {activeTab === 'profile' && (
-                  <div className="flex flex-col items-center mb-10">
+                      <>
+                        <div className="flex flex-col items-center mb-10">
                     <div 
                       onClick={() => fileInputRef.current?.click()}
                       className="group relative w-32 h-32 rounded-full overflow-hidden gradient-bg flex items-center justify-center text-white text-5xl font-bold shadow-2xl cursor-pointer hover:scale-105 transition-all"
@@ -710,7 +714,7 @@ export default function Dashboard() {
                   <button onClick={saveProfile} disabled={saving} className="btn-primary mt-8 w-full md:w-auto">
                     {saving ? 'Saving...' : 'Save Profile Changes'}
                   </button>
-                </div>
+                </>
               )}
 
               {/* Education Tab */}

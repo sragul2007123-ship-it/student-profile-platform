@@ -116,22 +116,27 @@ export default function StudentProfile() {
     <div className="min-h-screen pt-20 pb-12 bg-white dark:bg-black transition-colors duration-300">
       <div className="max-w-[935px] mx-auto px-4 sm:px-6">
         
-        {/* Profile Header section (Instagram-styled) */}
-        <header className="flex flex-col md:flex-row gap-4 md:gap-20 mb-11">
-          {/* Profile Picture */}
-          <div className="flex justify-center md:block">
-            <div className="w-[150px] h-[150px] rounded-full p-1 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7]">
-              <div className="w-full h-full rounded-full border-4 border-white dark:border-black overflow-hidden bg-gray-100">
-                {profileData?.profile_photo ? (
-                  <img src={profileData.profile_photo} className="w-full h-full object-cover" alt="profile" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-gray-400">
-                    {profileData?.name?.[0]}
-                  </div>
-                )}
+        {/* Premium Profile Header Section */}
+        <div className="glass-card mb-12 p-10 border-none shadow-2xl relative overflow-hidden group">
+          {/* Background decoration */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-primary-500/5 rounded-full -mr-40 -mt-40 filter blur-3xl group-hover:bg-primary-500/10 transition-colors"></div>
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent-500/5 rounded-full -ml-32 -mb-32 filter blur-3xl group-hover:bg-accent-500/10 transition-colors"></div>
+
+          <header className="flex flex-col md:flex-row gap-8 md:gap-14 items-center relative z-10">
+            {/* Profile Picture */}
+            <div className="shrink-0">
+              <div className="w-[180px] h-[180px] rounded-[50px] p-1 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] shadow-2xl transition-all duration-500 hover:rotate-3 hover:scale-105">
+                <div className="w-full h-full rounded-[46px] border-4 border-white dark:border-black overflow-hidden bg-gray-100 p-1">
+                  {profileData?.profile_photo ? (
+                    <img src={profileData.profile_photo} className="w-full h-full object-cover rounded-[42px]" alt="profile" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-6xl font-display font-bold text-gray-200">
+                      {profileData?.name?.[0]}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
           {/* Profile Info */}
           <div className="flex-1">
@@ -186,29 +191,37 @@ export default function StudentProfile() {
             </div>
 
             {/* Bio */}
-            <div className="text-sm">
-              <h1 className="font-bold dark:text-white mb-0.5">{profileData?.name}</h1>
-              <p className="text-gray-500 font-medium mb-1">{profileData?.role}</p>
-              <p className="dark:text-gray-300 leading-tight whitespace-pre-wrap">{profileData?.about}</p>
-              {profileData?.linkedin && (
-                <a href={profileData.linkedin} target="_blank" rel="noreferrer" className="text-blue-900 dark:text-blue-400 font-bold hover:underline block mt-1">
-                  linkedin.com/{profileData.username}
-                </a>
-              )}
+            <div className="text-gray-600 dark:text-gray-300">
+              <h1 className="text-3xl font-display font-black dark:text-white mb-1 uppercase tracking-tight">{profileData?.name}</h1>
+              <p className="text-lg font-bold text-primary-500 mb-4">{profileData?.role}</p>
+              <p className="leading-relaxed text-base max-w-xl line-clamp-3 md:line-clamp-none mb-6">{profileData?.about}</p>
+              
+              <div className="flex flex-wrap gap-4 mt-2">
+                {profileData?.linkedin && (
+                    <a href={profileData.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl text-sm font-bold hover:bg-blue-100 transition-colors">
+                        LinkedIn
+                    </a>
+                )}
+                {profileData?.github && (
+                    <a href={profileData.github} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-bold hover:bg-gray-100 transition-colors">
+                        GitHub
+                    </a>
+                )}
+              </div>
             </div>
           </div>
-        </header>
+        </div>
 
         {/* Highlights Section */}
-        <section className="flex gap-4 sm:gap-10 mb-11 overflow-x-auto pb-4 scrollbar-hide">
-          {skills.slice(0, 6).map((skill, index) => (
-            <div key={index} className="flex flex-col items-center gap-2 min-w-[77px]">
-              <div className="w-[77px] h-[77px] rounded-full p-0.5 border border-gray-200 dark:border-surface-800">
-                <div className="w-full h-full rounded-full bg-gray-50 dark:bg-surface-900 border-4 border-white dark:border-black flex items-center justify-center text-xs font-bold text-gray-500 overflow-hidden text-center p-1">
-                  {skill.skill_name.slice(0, 8)}
+        <section className="flex gap-4 sm:gap-6 mb-12 overflow-x-auto pb-4 scrollbar-hide">
+          {skills.slice(0, 8).map((skill, index) => (
+            <div key={index} className="flex flex-col items-center gap-3 min-w-[90px] group cursor-default">
+              <div className="w-[85px] h-[85px] rounded-full p-1 bg-gradient-to-br from-primary-500/20 to-accent-500/20 group-hover:from-primary-500/40 group-hover:to-accent-500/40 transition-all shadow-lg">
+                <div className="w-full h-full rounded-full bg-white dark:bg-surface-900 border-2 border-white dark:border-black flex items-center justify-center text-[10px] font-black text-gray-800 dark:text-gray-200 overflow-hidden text-center p-2 uppercase tracking-tighter">
+                  {skill.skill_name}
                 </div>
               </div>
-              <span className="text-[12px] font-medium dark:text-gray-300">{skill.skill_name.split(' ')[0]}</span>
+              <span className="text-[12px] font-bold dark:text-gray-400 group-hover:text-primary-500 transition-colors">{skill.skill_name.split(' ')[0]}</span>
             </div>
           ))}
         </section>
