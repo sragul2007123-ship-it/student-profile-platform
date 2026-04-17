@@ -161,7 +161,7 @@ export default function InputScreen({ onNext }) {
             <strong>Upload a file</strong>
             <span>Drag & drop or click to browse</span>
           </div>
-          <div className="upbadge">TXT · PDF · DOCX</div>
+          <div className="upbadge">Text Files (.txt)</div>
         </button>
 
         <input

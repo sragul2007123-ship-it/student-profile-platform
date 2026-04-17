@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
 import { motion, AnimatePresence } from 'framer-motion'
+import { api } from '../services/api'
 
 export default function Navbar() {
   const { user, signOut } = useAuth()
@@ -25,9 +26,7 @@ export default function Navbar() {
     if (user) {
       // Immediate update on mount/login
       const update = () => {
-        import('../services/api').then(({ api }) => {
-          api.updatePresence(user.id).catch(() => {})
-        })
+        api.updatePresence(user.id).catch(() => {})
       }
       update()
       const interval = setInterval(update, 120000)
