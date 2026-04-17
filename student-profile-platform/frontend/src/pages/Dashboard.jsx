@@ -77,35 +77,33 @@ export default function Dashboard() {
     try {
       // Parallelize ALL data fetching for maximum speed
       // We wrap getProfile in its own try/catch to handle the "New User" race condition specifically
-      let profileResponse;
+      let profileResponse, skillsData, projectsData, certsData, friendsData, pendingData, sentData;
+      
       try {
-        profileResponse = await api.getProfile(user.id);
+        [
+          profileResponse,
+          skillsData, 
+          projectsData, 
+          certsData, 
+          friendsData, 
+          pendingData, 
+          sentData
+        ] = await Promise.all([
+          api.getProfile(user.id),
+          api.getSkills(user.id),
+          api.getProjects(user.id),
+          api.getCertificates(user.id),
+          api.getFriends(user.id),
+          api.getPendingRequests(user.id),
+          api.getSentRequests(user.id)
+        ]);
       } catch (err) {
-        // If it's a 404, it means the trigger hasn't finished creating the record
+        // Handle race condition where user record isn't ready in DB yet
         if (retryCount < 5) {
-          if (import.meta.env.DEV) {
-            console.log(`User record not found yet, retrying... (${retryCount + 1}/5)`);
-          }
           return setTimeout(() => loadData(retryCount + 1), 2000);
         }
         throw err;
       }
-
-      const [
-        skillsData, 
-        projectsData, 
-        certsData, 
-        friendsData, 
-        pendingData, 
-        sentData
-      ] = await Promise.all([
-        api.getSkills(user.id),
-        api.getProjects(user.id),
-        api.getCertificates(user.id),
-        api.getFriends(user.id),
-        api.getPendingRequests(user.id),
-        api.getSentRequests(user.id)
-      ])
 
       const userData = profileResponse.user
       const profileData = profileResponse.profile

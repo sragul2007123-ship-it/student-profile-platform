@@ -8,6 +8,7 @@
   --nav-h:64px;
   --ease-spring:cubic-bezier(.22,1,.36,1);
   --ease-smooth:cubic-bezier(.4,0,.2,1);
+  --card-bg: #ffffff;
   
   background: var(--bg);
   font-family: 'DM Sans', sans-serif;
@@ -15,6 +16,34 @@
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Dark Mode Overrides */
+.dark .learning-container {
+  --bg: #020617;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --card-bg: #0f172a;
+  --soft: rgba(248, 250, 252, 0.08);
+  --border: rgba(124, 108, 242, 0.3);
+}
+
+.learning-container .icard, 
+.learning-container .ncard,
+.learning-container .msg-bub,
+.learning-container .scard {
+    background: var(--card-bg) !important;
+}
+
+.learning-container .progress-rail {
+    background: var(--bg);
+    border-color: var(--soft);
+}
+
+.learning-container .lta {
+    background: var(--soft);
+    color: var(--text);
 }
 
 /* AMBIENT */
