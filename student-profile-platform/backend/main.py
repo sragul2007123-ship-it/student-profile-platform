@@ -8,8 +8,9 @@ backend_dir = os.path.dirname(os.path.abspath(__file__))
 if backend_dir not in sys.path:
     sys.path.insert(0, backend_dir)
 
-# Load environment variables
-load_dotenv()
+# Load environment variables from the same directory as main.py
+env_path = os.path.join(backend_dir, '.env')
+load_dotenv(env_path)
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

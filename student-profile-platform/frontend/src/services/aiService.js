@@ -36,8 +36,18 @@ async function aiH(sys, hist) {
 }
 
 const parse = (raw) => {
-  const clean = raw.replace(/```json|```/g, "").trim();
-  return JSON.parse(clean);
+  try {
+    const start = raw.indexOf('{');
+    const end = raw.lastIndexOf('}');
+    if (start === -1 || end === -1) throw new Error("No JSON found");
+    const jsonStr = raw.substring(start, end + 1);
+    return JSON.parse(jsonStr);
+  } catch (e) {
+    console.error("AI Parse Error:", e, "Raw:", raw);
+    // Fallback attempt with regex
+    const clean = raw.replace(/```json|```/g, "").trim();
+    return JSON.parse(clean);
+  }
 };
 
 export async function generateNotes(t) {

@@ -29,10 +29,10 @@ async def chat_proxy(request: Request):
 
         api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
-            # Fallback for testing/dev if not set in .env
-            logger.warning("GROQ_API_KEY not found in environment variables")
-            # You might want to return an error here in production
-            # raise HTTPException(status_code=500, detail="GROQ_API_KEY not configured")
+            logger.error("GROQ_API_KEY NOT FOUND in environment")
+            return {"error": {"message": "AI API Key is missing. Please check backend .env"}}
+
+        logger.info(f"Sending request to Groq for model: llama-3.3-70b-versatile")
 
         async with httpx.AsyncClient() as client:
             response = await client.post(
