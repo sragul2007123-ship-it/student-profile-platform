@@ -1,5 +1,5 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const PROXY_URL = `${API_URL}/api/learning/chat`;
+const API_URL = import.meta.env.VITE_API_URL || '/api';
+const PROXY_URL = API_URL.endsWith('/api') ? `${API_URL}/learning/chat` : `${API_URL}/api/learning/chat`;
 
 async function ai(sys, user) {
   const r = await fetch(PROXY_URL, {
