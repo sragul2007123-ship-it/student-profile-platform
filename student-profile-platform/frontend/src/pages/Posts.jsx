@@ -240,7 +240,7 @@ export default function Posts() {
             </svg>
             <input
               type="text"
-              className="w-full bg-transparent border-none focus:ring-0 text-[var(--text)] px-4 py-3 placeholder-gray-500 font-medium outline-none"
+              className="w-full bg-transparent border-none focus:ring-0 text-[var(--text)] px-4 py-3 placeholder-[var(--muted)] font-medium outline-none"
               placeholder="Search posts, hashtags, or users..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -336,9 +336,9 @@ export default function Posts() {
                       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" /></svg>
                     </button>
                     {dropdownOpen === post.id && (
-                      <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-surface-800 rounded-xl shadow-lg border border-gray-100 dark:border-surface-700 z-50 overflow-hidden">
-                        <button onClick={() => startEdit(post)} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-surface-700 transition-colors">Edit</button>
-                        <button onClick={() => handleDeletePost(post.id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">Delete</button>
+                      <div className="absolute right-0 mt-2 w-32 bg-[var(--surface-2)] rounded-xl shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-[var(--border)] z-50 overflow-hidden">
+                        <button onClick={() => startEdit(post)} className="w-full text-left px-4 py-2 text-sm text-[var(--text)] hover:bg-[var(--glass)] transition-colors">Edit</button>
+                        <button onClick={() => handleDeletePost(post.id)} className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 transition-colors">Delete</button>
                       </div>
                     )}
                   </div>

@@ -233,14 +233,14 @@ export default function Messages() {
             <div className="p-6 border-b border-[var(--border)]">
               <h2 className="text-xl font-bold text-[var(--text)] mb-4">Messages</h2>
               <div className="relative glass-card rounded-2xl p-1 bg-white/5 border border-white/10">
-                <input 
-                  type="text" 
-                  placeholder="Search friends..." 
-                  className="w-full bg-transparent text-sm py-2 px-10 border-none focus:ring-0 outline-none text-[var(--text)] placeholder-gray-500"
-                  value={convSearch}
-                  onChange={(e) => setConvSearch(e.target.value)}
-                />
-                <svg className="w-4 h-4 absolute left-4 top-3 text-[var(--muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <input 
+                    type="text" 
+                    placeholder="Search friends..." 
+                    className="w-full bg-transparent text-sm py-2 px-10 border-none focus:ring-0 outline-none text-[var(--text)] placeholder-[var(--muted)]"
+                    value={convSearch}
+                    onChange={(e) => setConvSearch(e.target.value)}
+                  />
+                  <svg className="w-4 h-4 absolute left-4 top-3 text-[var(--muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
@@ -253,7 +253,7 @@ export default function Messages() {
                 </div>
               ) : conversations.filter(c => c.name.toLowerCase().includes(convSearch.toLowerCase())).length === 0 ? (
                 <div className="text-center py-8 px-4">
-                  <p className="text-sm text-gray-500">No friends found matching "{convSearch}"</p>
+                  <p className="text-sm text-[var(--muted)]">No friends found matching "{convSearch}"</p>
                 </div>
               ) : (
                 conversations
@@ -279,7 +279,7 @@ export default function Messages() {
                         )}
                       </div>
                       {isUserActive(friend.last_seen) && (
-                        <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-surface-800 rounded-full"></div>
+                        <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-[var(--surface-2)] rounded-full"></div>
                       )}
                     </div>
                     <div className="text-left overflow-hidden">
@@ -311,7 +311,7 @@ export default function Messages() {
                       )}
                     </div>
                     {isUserActive(selectedFriend.last_seen) && (
-                      <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border border-white dark:border-surface-800 rounded-full"></div>
+                      <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border border-[var(--surface)] rounded-full"></div>
                     )}
                   </div>
                   <div>
@@ -338,13 +338,13 @@ export default function Messages() {
                       <div className={`group relative max-w-[75%] ${msg.sender_id === user.id ? 'items-end' : 'items-start'}`}>
                         {/* Reaction/Menu Trigger */}
                         <div 
-                          className={`absolute ${msg.sender_id === user.id ? '-left-8' : '-right-8'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer p-1 rounded-full hover:bg-gray-100 dark:hover:bg-surface-700`}
+                          className={`absolute ${msg.sender_id === user.id ? '-left-8' : '-right-8'} top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer p-1 rounded-full hover:bg-[var(--glass)]`}
                           onClick={(e) => {
                             e.stopPropagation()
                             setActiveMenu(activeMenu === msg.id ? null : msg.id)
                           }}
                         >
-                          <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-4 h-4 text-[var(--muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
                           </svg>
                         </div>
@@ -356,7 +356,7 @@ export default function Messages() {
                               initial={{ opacity: 0, y: 10, scale: 0.9 }}
                               animate={{ opacity: 1, y: 0, scale: 1 }}
                               exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                              className={`absolute z-30 bottom-full mb-2 ${msg.sender_id === user.id ? 'right-0' : 'left-0'} bg-white dark:bg-surface-800 shadow-xl rounded-2xl p-2 border border-gray-100 dark:border-surface-700 flex gap-1`}
+                              className={`absolute z-30 bottom-full mb-2 ${msg.sender_id === user.id ? 'right-0' : 'left-0'} bg-[var(--surface-2)] shadow-[0_0_15px_rgba(0,0,0,0.5)] rounded-2xl p-2 border border-[var(--border)] flex gap-1`}
                             >
                               {quickEmojis.map(emoji => (
                                 <button 
@@ -370,7 +370,7 @@ export default function Messages() {
                               {msg.sender_id === user.id && (
                                 <button 
                                   onClick={() => handleUnsend(msg.id)}
-                                  className="ml-2 pl-2 border-l border-gray-100 dark:border-surface-700 text-xs font-bold text-red-500 hover:text-red-600 px-2"
+                                  className="ml-2 pl-2 border-l border-[var(--border)] text-xs font-bold text-red-400 hover:text-red-500 px-2"
                                 >
                                   Unsend
                                 </button>
@@ -410,8 +410,8 @@ export default function Messages() {
                                   onClick={() => handleReact(msg.id, emoji)}
                                   className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] cursor-pointer transition-all ${
                                     users.includes(user.id) 
-                                      ? 'bg-primary-100 dark:bg-primary-900/40 border border-primary-500/30' 
-                                      : 'bg-gray-100 dark:bg-surface-800 border border-transparent'
+                                      ? 'bg-[var(--cyan)]/20 border border-[var(--cyan)]/50 text-[var(--cyan)]' 
+                                      : 'bg-[var(--surface-2)] border border-[var(--border)] text-[var(--text)]'
                                   }`}
                                 >
                                   <span>{emoji}</span>
@@ -459,7 +459,7 @@ export default function Messages() {
                     <div className="flex-1 relative glass-card rounded-full bg-white/5 border border-white/10 p-1 flex items-center">
                       <input
                         type="text"
-                        className="flex-1 bg-transparent border-none px-6 py-3 focus:ring-0 outline-none text-[var(--text)] text-sm placeholder-gray-500"
+                        className="flex-1 bg-transparent border-none px-6 py-3 focus:ring-0 outline-none text-[var(--text)] text-sm placeholder-[var(--muted)]"
                         placeholder="Type a message..."
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
