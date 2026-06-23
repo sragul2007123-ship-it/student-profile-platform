@@ -38,8 +38,28 @@ Notes:
 - Vercel also emails project owners by default — ensure the Vercel account email is one you monitor.
 - If you prefer centralized emails from GitHub and Vercel to the same inbox, use a webhook forwarder.
 
-## 3) Next Steps I can do for you
-- Configure a serverless `/api/vercel-webhook` endpoint that accepts Vercel webhooks and forwards email using SendGrid (requires SendGrid API key in secrets). I can implement and deploy it in this repo.
-- Set up a GitHub Action to create an issue when Vercel reports a failed deployment (requires a webhook-to-GitHub approach).
+## 3) Built-in forwarder (added)
 
-Tell me which option you prefer and I will implement it.
+This repo includes a serverless endpoint you can use to forward Vercel webhooks to email via SendGrid:
+
+- Endpoint: `/api/vercel-webhook`
+- Requires these repository secrets:
+	- `SENDGRID_API_KEY` — SendGrid API key with `mail.send` permission
+	- `SENDGRID_FROM` — From email address used in messages
+	- `SENDGRID_TO` — Recipient(s), comma-separated
+	- `VERCEL_WEBHOOK_SECRET` (optional) — If set, the endpoint expects the Vercel webhook to include header `x-vercel-signature` equal to this secret. This provides a simple verification check.
+
+How to configure Vercel:
+1. In your Vercel project > Settings > Git > Webhooks (or Integrations > Webhooks), create a webhook.
+2. Set the target URL to `https://<your-site>/api/vercel-webhook`.
+3. If you set a secret in Vercel, set the same value to `VERCEL_WEBHOOK_SECRET` in your repo secrets.
+
+Notes on security:
+- The endpoint performs a simple header equality check when `VERCEL_WEBHOOK_SECRET` is set. For stronger verification, you can implement HMAC verification using the raw request body and a secret.
+
+## 4) Next steps I can implement for you
+- Replace the simple signature check with HMAC-SHA256 verification using the raw request body.
+- Use SendGrid's dynamic templates for nicer emails.
+- Create a GitHub Action to open issues automatically when a Vercel deployment fails.
+
+Tell me which of these you want next and I will implement it.
