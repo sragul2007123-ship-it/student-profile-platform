@@ -40,9 +40,9 @@ const MICONS = {
 };
 
 const DIMS = [
-  { key: "clarity",       label: "Clarity",       icon: "🗣️", desc: "How clearly you expressed ideas",  bg: "rgba(124,108,242,0.09)", a: "#7C6CF2", b: "#9D8FF5" },
-  { key: "logic",         label: "Logic",         icon: "🔗", desc: "How well you connected reasoning", bg: "rgba(93,173,226,0.09)",  a: "#5DADE2", b: "#82C4ED" },
-  { key: "understanding", label: "Understanding", icon: "💡", desc: "How deeply you grasped concepts",  bg: "rgba(76,175,80,0.09)",   a: "#4CAF50", b: "#74C97A" },
+  { key: "clarity",       label: "Clarity",       icon: "🗣️", desc: "How clearly you expressed ideas",  bg: "rgba(0,212,255,0.09)", a: "#00D4FF", b: "#5DE0FF" },
+  { key: "logic",         label: "Logic",         icon: "🔗", desc: "How well you connected reasoning", bg: "rgba(255,209,102,0.09)",  a: "#FFD166", b: "#FFE099" },
+  { key: "understanding", label: "Understanding", icon: "💡", desc: "How deeply you grasped concepts",  bg: "rgba(0,255,198,0.09)",   a: "#00FFC6", b: "#5DFFD9" },
 ];
 
 const LOAD_MSGS = [
@@ -219,7 +219,7 @@ function SRing({ score, label }) {
   const r   = 20;
   const c   = 2 * Math.PI * r;
   const off = c - (score / 100) * c;
-  const col = score >= 75 ? "#10B981" : score >= 45 ? "#6366F1" : "#F97316";
+  const col = score >= 75 ? "#00FFC6" : score >= 45 ? "#00D4FF" : "#FFD166";
 
   const msgs = {
     Excellent:    "Solid thinking.",
@@ -440,7 +440,7 @@ function InputScreen({ onNext }) {
         </div>
       </div>
 
-      {err && <div className="mt-4 px-4 py-3 rounded-xl border border-red-200/50 bg-red-50/50 text-red-600 text-xs font-semibold">{err}</div>}
+      {err && <div className="mt-4 px-4 py-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-500 text-xs font-semibold">{err}</div>}
 
       <div className="flex justify-center gap-4 mt-6 flex-wrap">
         {!text && (
@@ -533,7 +533,7 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
           </div>
           <div className="flex flex-wrap gap-2">
             {notes.highlights.map((h, i) => (
-              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-50 bg-amber-950/20 text-amber-700 text-amber-400 text-xs rounded-xl font-medium" key={i}>
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[var(--gold)]/20 border border-[var(--gold)]/50 text-[var(--gold)] text-xs rounded-xl font-medium" key={i}>
                 ★ {h}
               </span>
             ))}
@@ -693,7 +693,7 @@ function ExplainScreen({ notes, onNext }) {
         )}
       </div>
 
-      {err && <div className="px-4 py-3 rounded-xl border border-red-200/50 bg-red-50/50 text-red-600 text-xs font-semibold">{err}</div>}
+      {err && <div className="px-4 py-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-500 text-xs font-semibold">{err}</div>}
 
       {/* Results */}
       {(fb || an) && (
@@ -715,20 +715,20 @@ function ExplainScreen({ notes, onNext }) {
             <div>
               <h4 className="text-xs font-bold text-[var(--muted)] uppercase tracking-widest mb-3">Thinking Patterns</h4>
               {an.mistakes?.length === 0 ? (
-                <div className="flex items-center gap-3 bg-emerald-50/30 bg-emerald-950/10 border border-emerald-100/50 border-emerald-900/50 p-4 rounded-xl">
+                <div className="flex items-center gap-3 bg-[var(--emerald)]/10 border border-[var(--emerald)]/30 p-4 rounded-xl">
                   <span className="text-xl">🎯</span>
                   <div>
-                    <h5 className="font-bold text-xs text-emerald-800 text-emerald-400">Excellent Logic!</h5>
+                    <h5 className="font-bold text-xs text-[var(--emerald)]">Excellent Logic!</h5>
                     <p className="text-xs text-[var(--muted)] text-[var(--muted)] mt-0.5 font-light">No structural gaps or definitions errors detected in your explanation.</p>
                   </div>
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
                   {an.mistakes.map((m, i) => (
-                    <div className="flex gap-3 bg-amber-50/20 bg-amber-950/5 border border-amber-100/30 border-amber-900/20 p-4 rounded-xl" key={i}>
+                    <div className="flex gap-3 bg-[var(--gold)]/10 border border-[var(--gold)]/30 p-4 rounded-xl" key={i}>
                       <span className="text-lg flex-shrink-0 mt-0.5">{MICONS[m.type] || "⚠️"}</span>
                       <div>
-                        <span className="text-[10px] font-bold text-amber-600 text-amber-400 uppercase block tracking-wider">{m.type}</span>
+                        <span className="text-[10px] font-bold text-[var(--gold)] uppercase block tracking-wider">{m.type}</span>
                         <h5 className="font-bold text-xs  text-[var(--text)] mt-1">{m.title}</h5>
                         <p className="text-xs text-[var(--muted)] text-[var(--muted)] mt-0.5 font-light leading-relaxed">{m.description}</p>
                         {m.hint && <p className="text-xs   font-semibold mt-2">💡 Tip: {m.hint}</p>}
@@ -889,7 +889,7 @@ function DebateScreen({ notes, onScore }) {
           </div>
         )}
 
-        {err && <div className="self-center bg-red-50 text-red-600 text-[10px] px-3 py-1.5 rounded-lg font-semibold">{err}</div>}
+        {err && <div className="self-center bg-red-500/10 text-red-500 border border-red-500/30 text-[10px] px-3 py-1.5 rounded-lg font-semibold">{err}</div>}
         <div ref={bot} />
       </div>
 

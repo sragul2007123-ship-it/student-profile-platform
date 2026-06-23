@@ -66,8 +66,8 @@ export default function Leaderboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
-        <div className="w-12 h-12 rounded-full border-4 border-[var(--emerald)]/20 border-t-[var(--cyan)] animate-spin"></div>
+      <div className="flex-1 p-8 flex items-center justify-center min-h-[500px]">
+        <div className="w-12 h-12 border-4 border-[var(--emerald)] border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(0,255,198,0.5)]"></div>
       </div>
     )
   }
@@ -87,10 +87,10 @@ export default function Leaderboard() {
               Hall of Fame
             </span>
           </motion.div>
-          <h1 className="text-5xl font-display font-extrabold mb-4 dark:text-white tracking-tight">
+          <h1 className="text-5xl font-display font-extrabold mb-4 text-[var(--text)] tracking-tight">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[var(--emerald)] to-[var(--cyan)]">Hall of Fame</span>
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+          <p className="text-[var(--muted)] max-w-2xl mx-auto">
             See how you stack up against your friends and the entire student community. 
             Earn points by showcasing your skills, projects, and certificates.
           </p>
@@ -105,8 +105,8 @@ export default function Leaderboard() {
               className="glass-card p-6 flex items-center justify-between border-l-4 border-[var(--emerald)]"
             >
               <div>
-                <p className="text-sm text-gray-400 font-medium">Global Ranking</p>
-                <h3 className="text-3xl font-bold dark:text-white">#{myStats.globalRank || 'N/A'}</h3>
+                <p className="text-sm text-[var(--muted)] font-medium">Global Ranking</p>
+                <h3 className="text-3xl font-bold text-[var(--text)]">#{myStats.globalRank || 'N/A'}</h3>
               </div>
               <div className="w-12 h-12 rounded-full bg-[var(--emerald)]/20 flex items-center justify-center text-[var(--emerald)] text-xl">
                 🌍
@@ -118,8 +118,8 @@ export default function Leaderboard() {
               className="glass-card p-6 flex items-center justify-between border-l-4 border-[var(--gold)]"
             >
               <div>
-                <p className="text-sm text-gray-400 font-medium">Friends Ranking</p>
-                <h3 className="text-3xl font-bold dark:text-white">#{myStats.friendsRank || 'N/A'}</h3>
+                <p className="text-sm text-[var(--muted)] font-medium">Friends Ranking</p>
+                <h3 className="text-3xl font-bold text-[var(--text)]">#{myStats.friendsRank || 'N/A'}</h3>
               </div>
               <div className="w-12 h-12 rounded-full bg-[var(--gold)]/20 flex items-center justify-center text-[var(--gold)] text-xl">
                 👥
@@ -130,7 +130,7 @@ export default function Leaderboard() {
 
         {/* Tabs Control */}
         <div className="flex justify-center mb-10">
-          <div className="bg-white/50 dark:bg-surface-800/50 backdrop-blur-md p-1.5 rounded-2xl flex gap-2 border border-white/20 dark:border-surface-700 shadow-xl">
+          <div className="bg-[var(--surface-2)]/50 backdrop-blur-md p-1.5 rounded-2xl flex gap-2 border border-white/20 dark:border-surface-700 shadow-xl">
             {user && (
               <button
                 onClick={() => setActiveTab('friends')}
@@ -177,22 +177,22 @@ export default function Leaderboard() {
                   <div className="glass-card p-4 w-32 md:w-40">
                     <div className="relative inline-block mb-3">
                       <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 p-1 flex items-center justify-center shadow-lg">
-                        <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-surface-600 flex items-center justify-center font-bold text-2xl relative">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-[var(--surface-2)] flex items-center justify-center font-bold text-2xl relative">
                           {currentStudents[1].profile_photo ? (
                             <img src={currentStudents[1].profile_photo} alt="" className="w-full h-full object-cover" />
                           ) : currentStudents[1].name?.[0]}
                           {/* Selected badge overlay */}
                           {currentStudents[1].selected_badge && currentStudents[1].badge_visibility !== false && (
-                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-white dark:bg-surface-800 rounded-full flex items-center justify-center shadow-md border border-white dark:border-surface-700">
+                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-[var(--surface-2)] border-[var(--border)] rounded-full flex items-center justify-center shadow-md border border-[var(--border)]">
                               <span className="text-xs">{getSelectedBadgeEmoji(currentStudents[1].selected_badge)}</span>
                             </div>
                           )}
                         </div>
                       </div>
-                      <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-sm shadow-md border-2 border-white dark:border-surface-800">🥈</div>
+                      <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-[var(--surface-2)] rounded-full flex items-center justify-center text-sm shadow-[0_0_15px_rgba(0,212,255,0.3)] border border-[var(--cyan)]">🥈</div>
                     </div>
-                    <Link to={`/student/${currentStudents[1].username}`} className="text-sm font-bold dark:text-white hover:text-[var(--cyan)] truncate block transition-colors uppercase tracking-tight">{currentStudents[1].name}</Link>
-                    <p className="text-xs text-gray-400 mt-1 font-black">{currentStudents[1].score} PTS</p>
+                    <Link to={`/student/${currentStudents[1].username}`} className="text-sm font-bold text-[var(--text)] hover:text-[var(--cyan)] truncate block transition-colors uppercase tracking-tight">{currentStudents[1].name}</Link>
+                    <p className="text-xs text-[var(--muted)] mt-1 font-black">{currentStudents[1].score} PTS</p>
                   </div>
                 </motion.div>
  
@@ -207,21 +207,21 @@ export default function Leaderboard() {
                     <div className="absolute top-0 right-0 p-2 opacity-20 text-4xl animate-bounce">👑</div>
                     <div className="relative inline-block mb-3 scale-110">
                       <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[var(--gold)] to-[var(--emerald)] p-1 flex items-center justify-center shadow-xl ring-4 ring-[var(--gold)]/30">
-                        <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-surface-600 flex items-center justify-center font-bold text-3xl relative">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-[var(--surface-2)] flex items-center justify-center font-bold text-3xl relative">
                           {currentStudents[0].profile_photo ? (
                             <img src={currentStudents[0].profile_photo} alt="" className="w-full h-full object-cover" />
                           ) : currentStudents[0].name?.[0]}
                           {/* Selected badge overlay */}
                           {currentStudents[0].selected_badge && currentStudents[0].badge_visibility !== false && (
-                            <div className="absolute -top-1 -right-1 w-6 h-6 bg-white dark:bg-surface-800 rounded-full flex items-center justify-center shadow-md border-2 border-white dark:border-surface-700">
+                            <div className="absolute -top-1 -right-1 w-6 h-6 bg-[var(--surface-2)] border-[var(--border)] rounded-full flex items-center justify-center shadow-md border-2 border-[var(--border)]">
                               <span className="text-sm">{getSelectedBadgeEmoji(currentStudents[0].selected_badge)}</span>
                             </div>
                           )}
                         </div>
                       </div>
-                      <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-lg shadow-md border-2 border-white dark:border-surface-800">🥇</div>
+                      <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-[var(--surface-2)] rounded-full flex items-center justify-center text-lg shadow-[0_0_20px_rgba(255,209,102,0.4)] border border-[var(--gold)]">🥇</div>
                     </div>
-                    <Link to={`/student/${currentStudents[0].username}`} className="text-base font-black dark:text-white hover:text-[var(--gold)] truncate block transition-colors uppercase tracking-wide">{currentStudents[0].name}</Link>
+                    <Link to={`/student/${currentStudents[0].username}`} className="text-base font-black text-[var(--text)] hover:text-[var(--gold)] truncate block transition-colors uppercase tracking-wide">{currentStudents[0].name}</Link>
                     <p className="text-sm font-black text-[var(--gold)] mt-1">{currentStudents[0].score} PTS</p>
                   </div>
                 </motion.div>
@@ -236,22 +236,22 @@ export default function Leaderboard() {
                   <div className="glass-card p-4 w-32 md:w-40">
                     <div className="relative inline-block mb-3">
                       <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-amber-600 to-orange-800 p-1 flex items-center justify-center shadow-lg">
-                        <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-surface-600 flex items-center justify-center font-bold text-2xl relative">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-[var(--surface-2)] flex items-center justify-center font-bold text-2xl relative">
                           {currentStudents[2].profile_photo ? (
                             <img src={currentStudents[2].profile_photo} alt="" className="w-full h-full object-cover" />
                           ) : currentStudents[2].name?.[0]}
                           {/* Selected badge overlay */}
                           {currentStudents[2].selected_badge && currentStudents[2].badge_visibility !== false && (
-                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-white dark:bg-surface-800 rounded-full flex items-center justify-center shadow-md border border-white dark:border-surface-700">
+                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-[var(--surface-2)] border-[var(--border)] rounded-full flex items-center justify-center shadow-md border border-[var(--border)]">
                               <span className="text-xs">{getSelectedBadgeEmoji(currentStudents[2].selected_badge)}</span>
                             </div>
                           )}
                         </div>
                       </div>
-                      <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-orange-700 text-white rounded-full flex items-center justify-center text-sm shadow-md border-2 border-white dark:border-surface-800">🥉</div>
+                      <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-[var(--surface-2)] text-[var(--text)] rounded-full flex items-center justify-center text-sm shadow-[0_0_15px_rgba(0,255,198,0.3)] border border-[var(--emerald)]">🥉</div>
                     </div>
-                    <Link to={`/student/${currentStudents[2].username}`} className="text-sm font-bold dark:text-white hover:text-[var(--gold)] truncate block transition-colors uppercase tracking-tight">{currentStudents[2].name}</Link>
-                    <p className="text-xs text-gray-400 mt-1 font-black">{currentStudents[2].score} PTS</p>
+                    <Link to={`/student/${currentStudents[2].username}`} className="text-sm font-bold text-[var(--text)] hover:text-[var(--gold)] truncate block transition-colors uppercase tracking-tight">{currentStudents[2].name}</Link>
+                    <p className="text-xs text-[var(--muted)] mt-1 font-black">{currentStudents[2].score} PTS</p>
                   </div>
                 </motion.div>
               </div>
@@ -263,11 +263,11 @@ export default function Leaderboard() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="bg-gray-50/50 dark:bg-surface-800/50 border-b border-gray-100 dark:border-surface-700">
-                      <th className="px-6 py-5 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">Rank</th>
-                      <th className="px-6 py-5 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">Student</th>
-                      <th className="px-6 py-5 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest hidden md:table-cell">Portfolio</th>
-                      <th className="px-6 py-5 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest">Score</th>
+                    <tr className="bg-[var(--surface-2)] border-b border-[var(--border)]">
+                      <th className="px-6 py-5 text-left text-xs font-bold text-[var(--muted)] uppercase tracking-widest">Rank</th>
+                      <th className="px-6 py-5 text-left text-xs font-bold text-[var(--muted)] uppercase tracking-widest">Student</th>
+                      <th className="px-6 py-5 text-center text-xs font-bold text-[var(--muted)] uppercase tracking-widest hidden md:table-cell">Portfolio</th>
+                      <th className="px-6 py-5 text-center text-xs font-bold text-[var(--muted)] uppercase tracking-widest">Score</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -289,7 +289,7 @@ export default function Leaderboard() {
                               {i < 3 ? (
                                 <span className="text-2xl">{badge.emoji}</span>
                               ) : (
-                                <span className="w-8 h-8 rounded-full bg-gray-100 dark:bg-surface-700 flex items-center justify-center text-xs font-bold dark:text-white">
+                                <span className="w-8 h-8 rounded-full bg-[var(--surface)] border-[var(--border)] flex items-center justify-center text-xs font-bold text-[var(--text)]">
                                   {i + 1}
                                 </span>
                               )}
@@ -301,7 +301,7 @@ export default function Leaderboard() {
                           <td className="px-6 py-4">
                             <Link to={`/student/${student.username}`} className="flex items-center gap-4 group">
                               <div className="relative shadow-md rounded-full">
-                                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white dark:border-surface-700">
+                                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[var(--border)]">
                                   {student.profile_photo ? (
                                     <img src={student.profile_photo} alt="" className="w-full h-full object-cover" />
                                   ) : (
@@ -312,30 +312,30 @@ export default function Leaderboard() {
                                 </div>
                                 {/* Display selected badge if available and visible */}
                                 {student.selected_badge && student.badge_visibility !== false && (
-                                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-white dark:bg-surface-800 rounded-full flex items-center justify-center shadow-md border-2 border-white dark:border-surface-700">
+                                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-[var(--surface-2)] border-[var(--border)] rounded-full flex items-center justify-center shadow-md border-2 border-[var(--border)]">
                                     <span className="text-sm">{getSelectedBadgeEmoji(student.selected_badge)}</span>
                                   </div>
                                 )}
                               </div>
                               <div>
-                                <p className="text-base font-bold dark:text-white group-hover:text-[var(--emerald)] transition-colors">{student.name}</p>
-                                <p className="text-xs text-gray-400 font-medium">{student.role || 'Student'}</p>
+                                <p className="text-base font-bold text-[var(--text)] group-hover:text-[var(--emerald)] transition-colors">{student.name}</p>
+                                <p className="text-xs text-[var(--muted)] font-medium">{student.role || 'Student'}</p>
                               </div>
                             </Link>
                           </td>
                           <td className="px-6 py-4 hidden md:table-cell">
                             <div className="flex justify-center gap-4">
-                              <div className="text-center px-3 py-1 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                                <p className="text-[10px] text-blue-400 font-bold uppercase">Skills</p>
-                                <p className="text-sm font-bold text-blue-600 dark:text-blue-300">{student.skillCount}</p>
+                              <div className="text-center px-3 py-1 bg-[var(--cyan)]/20 border border-[var(--cyan)]/50 rounded-lg">
+                                <p className="text-[10px] text-[var(--cyan)] font-bold uppercase">Skills</p>
+                                <p className="text-sm font-bold text-[var(--cyan)]">{student.skillCount}</p>
                               </div>
-                              <div className="text-center px-3 py-1 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                                <p className="text-[10px] text-purple-400 font-bold uppercase">Projects</p>
-                                <p className="text-sm font-bold text-purple-600 dark:text-purple-300">{student.projectCount}</p>
+                              <div className="text-center px-3 py-1 bg-[var(--accent)]/20 border border-[var(--accent)]/50 rounded-lg">
+                                <p className="text-[10px] text-[var(--accent)] font-bold uppercase">Projects</p>
+                                <p className="text-sm font-bold text-[var(--accent)]">{student.projectCount}</p>
                               </div>
-                              <div className="text-center px-3 py-1 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                                <p className="text-[10px] text-amber-400 font-bold uppercase">Certs</p>
-                                <p className="text-sm font-bold text-amber-600 dark:text-amber-300">{student.certCount}</p>
+                              <div className="text-center px-3 py-1 bg-[var(--gold)]/20 border border-[var(--gold)]/50 rounded-lg">
+                                <p className="text-[10px] text-[var(--gold)] font-bold uppercase">Certs</p>
+                                <p className="text-sm font-bold text-[var(--gold)]">{student.certCount}</p>
                               </div>
                             </div>
                           </td>
@@ -350,8 +350,8 @@ export default function Leaderboard() {
                         <td colSpan={5} className="px-6 py-20 text-center">
                           <div className="max-w-xs mx-auto">
                             <div className="text-5xl mb-4">🔍</div>
-                            <h3 className="text-lg font-bold dark:text-white mb-1">No students found</h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                            <h3 className="text-lg font-bold text-[var(--text)] mb-1">No students found</h3>
+                            <p className="text-sm text-[var(--muted)]">
                               {activeTab === 'friends' 
                                 ? "You haven't added any friends yet. Connect with other students to see them here!" 
                                 : "The leaderboard is currently empty."}
@@ -384,8 +384,8 @@ export default function Leaderboard() {
                 ⚡
               </div>
               <div>
-                <h2 className="text-2xl font-display font-bold dark:text-white">Friends activity</h2>
-                <p className="text-sm text-gray-500">See what your friends have been building</p>
+                <h2 className="text-2xl font-display font-bold text-[var(--text)]">Friends activity</h2>
+                <p className="text-sm text-[var(--muted)]">See what your friends have been building</p>
               </div>
             </div>
 
@@ -401,12 +401,12 @@ export default function Leaderboard() {
                   <div className="flex items-center gap-3 mb-3">
                     <img 
                       src={activity.user?.profile_photo || `https://ui-avatars.com/api/?name=${activity.user?.name}`} 
-                      className="w-8 h-8 rounded-full border border-white dark:border-surface-700" 
+                      className="w-8 h-8 rounded-full border border-[var(--border)]" 
                       alt="" 
                     />
                     <div className="min-w-0">
-                      <p className="text-xs font-bold dark:text-white truncate">{activity.user?.name}</p>
-                      <p className="text-[10px] text-gray-400">
+                      <p className="text-xs font-bold text-[var(--text)] truncate">{activity.user?.name}</p>
+                      <p className="text-[10px] text-[var(--muted)]">
                         {new Date(activity.created_at).toLocaleDateString()}
                       </p>
                     </div>
@@ -437,11 +437,11 @@ export default function Leaderboard() {
         )}
 
         {/* Scoring Rules Footer */}
-        <div className="mt-12 text-center text-gray-400 text-sm">
-          <div className="inline-flex flex-wrap justify-center gap-x-8 gap-y-2 border border-white/20 dark:border-surface-700 px-6 py-3 rounded-2xl bg-white/30 dark:bg-surface-800/30 backdrop-blur-sm">
-            <span className="flex items-center gap-2">🔹 Skills: <strong className="text-gray-600 dark:text-gray-300">2 pts</strong></span>
-            <span className="flex items-center gap-2">🔹 Projects: <strong className="text-gray-600 dark:text-gray-300">5 pts</strong></span>
-            <span className="flex items-center gap-2">🔹 Certificates: <strong className="text-gray-600 dark:text-gray-300">3 pts</strong></span>
+        <div className="mt-12 text-center text-[var(--muted)] text-sm">
+          <div className="inline-flex flex-wrap justify-center gap-x-8 gap-y-2 border border-white/20 dark:border-surface-700 px-6 py-3 rounded-2xl bg-[var(--surface-2)]/30 backdrop-blur-sm">
+            <span className="flex items-center gap-2">🔹 Skills: <strong className="text-[var(--muted)]">2 pts</strong></span>
+            <span className="flex items-center gap-2">🔹 Projects: <strong className="text-[var(--muted)]">5 pts</strong></span>
+            <span className="flex items-center gap-2">🔹 Certificates: <strong className="text-[var(--muted)]">3 pts</strong></span>
           </div>
         </div>
       </div>
