@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../services/supabaseClient'
 import LearningHub from './LearningHub'
 import SkillConstellation from '../components/SkillConstellation'
+import PostItem from '../components/PostItem'
 
 export default function StudentProfile() {
   const { username } = useParams()
@@ -25,6 +26,7 @@ export default function StudentProfile() {
   const [skills, setSkills] = useState([])
   const [projects, setProjects] = useState([])
   const [certificates, setCertificates] = useState([])
+  const [userPosts, setUserPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [friendStatus, setFriendStatus] = useState(null)
@@ -52,6 +54,16 @@ export default function StudentProfile() {
       setSkills(data.skills || [])
       setProjects(data.projects || [])
       setCertificates(data.certificates || [])
+      
+      // Fetch user posts
+      try {
+        const allPosts = await api.getAllPosts()
+        const filteredPosts = allPosts.filter(post => post.user_id === data.user.id)
+        setUserPosts(filteredPosts)
+      } catch (err) {
+        console.error("Failed to load user posts", err)
+      }
+
       // Increment views
       api.incrementViews(username).catch(() => {})
     } catch (err) {
@@ -242,11 +254,11 @@ export default function StudentProfile() {
             className="col-span-1 flex gap-4"
           >
             <div className="flex-1 glass-card p-6 border-white/5 flex flex-col justify-center items-center group cursor-default">
-              <span className="text-3xl font-display font-black text-white group-hover:text-primary-400 transition-colors">{projects.length}</span>
+              <span className="text-3xl font-display font-black text-white group-hover:text-[var(--emerald)] transition-colors">{userPosts.length}</span>
               <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Posts</span>
             </div>
             <div className="flex-1 glass-card p-6 border-white/5 flex flex-col justify-center items-center group cursor-default">
-              <span className="text-3xl font-display font-black text-white group-hover:text-accent-400 transition-colors">{profileData?.views || 0}</span>
+              <span className="text-3xl font-display font-black text-white group-hover:text-[var(--cyan)] transition-colors">{profileData?.views || 0}</span>
               <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">Views</span>
             </div>
           </motion.div>
@@ -301,9 +313,15 @@ export default function StudentProfile() {
                 <div className="glass-card border-white/5 p-2 sm:p-6 shadow-2xl">
                   <LearningHub embedded={true} />
                 </div>
+              ) : activeTab === 'posts' ? (
+                <div className="space-y-6 max-w-3xl mx-auto">
+                  {userPosts.map((post, index) => (
+                    <PostItem key={post.id || index} initialPost={post} />
+                  ))}
+                </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {(activeTab === 'posts' ? projects : certificates).map((item, index) => (
+                  {certificates.map((item, index) => (
                     <motion.div 
                       whileHover={{ y: -5 }}
                       key={index} 
@@ -311,29 +329,25 @@ export default function StudentProfile() {
                     >
                       {item.image_url ? (
                         <div className="h-48 w-full bg-[#111111] overflow-hidden relative">
-                          <img src={item.image_url} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" alt="post" />
+                          <img src={item.image_url} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" alt="cert" />
                           <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
                         </div>
                       ) : (
                         <div className="h-40 w-full bg-gradient-to-br from-[#111111] to-[#1a1a24] flex items-center justify-center p-6 border-b border-white/5 relative overflow-hidden">
                           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay"></div>
                           <p className="text-gray-400 font-medium text-sm text-center italic line-clamp-3 relative z-10 group-hover:text-white transition-colors">
-                            {item.content || item.title || item.certificate_name || "Text post"}
+                            {item.certificate_name || "Certificate"}
                           </p>
                         </div>
                       )}
                       <div className="p-6 flex flex-col flex-1 bg-[#0f111a]/80 backdrop-blur-md">
                         <h3 className="font-bold text-white text-lg mb-2 leading-tight line-clamp-2">
-                          {item.title || item.certificate_name || (item.content ? item.content.split('\n')[0] : 'Untitled')}
+                          {item.certificate_name}
                         </h3>
                         <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
                           <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">
                             {new Date(item.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                           </p>
-                          <div className="flex items-center gap-1.5 text-gray-500 group-hover:text-primary-400 transition-colors">
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-                            <span className="text-xs font-bold">{item.likes_count || 0}</span>
-                          </div>
                         </div>
                       </div>
                     </motion.div>
@@ -342,7 +356,7 @@ export default function StudentProfile() {
               )}
 
               {/* Empty state */}
-              {activeTab !== 'learning' && (activeTab === 'posts' ? projects : certificates).length === 0 && (
+              {activeTab !== 'learning' && (activeTab === 'posts' ? userPosts : certificates).length === 0 && (
                 <div className="py-24 flex flex-col items-center justify-center glass-card border-white/5 border-dashed mt-4 text-center px-4">
                   <div className="w-20 h-20 rounded-2xl bg-[#111111] border border-white/5 flex items-center justify-center mb-6 shadow-xl">
                     <svg className="w-10 h-10 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
