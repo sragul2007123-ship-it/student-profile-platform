@@ -66,8 +66,8 @@ export default function Leaderboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center gradient-bg-subtle">
-        <div className="w-12 h-12 rounded-full border-4 border-primary-200 border-t-primary-500 animate-spin"></div>
+      <div className="min-h-screen flex items-center justify-center bg-[var(--background)]">
+        <div className="w-12 h-12 rounded-full border-4 border-[var(--emerald)]/20 border-t-[var(--cyan)] animate-spin"></div>
       </div>
     )
   }

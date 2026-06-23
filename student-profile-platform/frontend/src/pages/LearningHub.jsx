@@ -184,7 +184,7 @@ function ProgressRail({ view }) {
         return (
           <div className="flex items-center gap-1 sm:gap-2" key={s.label}>
             {i > 0 && (
-              <div className="w-8 sm:w-16 h-0.5 bg-slate-200 bg-[var(--surface-2)] rounded">
+              <div className="w-8 sm:w-16 h-0.5  bg-[var(--surface-2)] rounded">
                 <div className={`h-full bg-[var(--emerald)] transition-all duration-500 ${done ? 'w-full' : 'w-0'}`} />
               </div>
             )}
@@ -267,7 +267,7 @@ function ABar({ pct, from, to, delay = 0 }) {
   }, [pct, delay]);
 
   return (
-    <div className="w-full bg-slate-100 bg-[var(--surface-2)] h-2 rounded-full overflow-hidden mt-2">
+    <div className="w-full  bg-[var(--surface-2)] h-2 rounded-full overflow-hidden mt-2">
       <div
         className="h-full rounded-full transition-all duration-1000"
         style={{
@@ -355,14 +355,14 @@ function InputScreen({ onNext }) {
           <h2 className="text-xl font-bold text-[var(--text)]">Structuring Study Notes</h2>
           <p className="text-xs text-[var(--muted)] mt-1">{LOAD_MSGS[loadStep]}</p>
         </div>
-        <div className="w-full max-w-xs bg-slate-200 bg-[var(--surface-2)] h-1 rounded-full overflow-hidden">
+        <div className="w-full max-w-xs  bg-[var(--surface-2)] h-1 rounded-full overflow-hidden">
           <div className="bg-[var(--cyan)] h-full rounded-full transition-all duration-1000" style={{ width: `${((loadStep + 1) / LOAD_MSGS.length) * 100}%` }} />
         </div>
         <div className="flex flex-col gap-2 mt-4 text-left w-full max-w-sm px-4">
           {LOAD_MSGS.map((s, i) => (
             <div key={i} className={`flex items-center gap-3 transition-opacity duration-300 ${i <= loadStep ? 'opacity-100' : 'opacity-30'}`}>
               <div className={`w-2.5 h-2.5 rounded-full ${
-                i < loadStep ? 'bg-[var(--emerald)]' : i === loadStep ? 'bg-indigo-600 animate-ping' : 'bg-slate-300 bg-slate-700'
+                i < loadStep ? 'bg-[var(--emerald)]' : i === loadStep ? ' animate-ping' : ' '
               }`} />
               <span className={`text-xs ${i === loadStep ? 'text-[var(--cyan)] font-semibold' : 'text-[var(--muted)] text-[var(--muted)]'}`}>{s}</span>
             </div>
@@ -375,7 +375,7 @@ function InputScreen({ onNext }) {
   return (
     <div className="animate-reveal max-w-2xl mx-auto">
       <div className="text-center mb-8">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 bg-indigo-950/50 text-[var(--cyan)] text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-3">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full   text-[var(--cyan)]  text-xs font-semibold uppercase tracking-wider mb-3">
           ✨ Lecture Input
         </span>
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
@@ -386,7 +386,7 @@ function InputScreen({ onNext }) {
         </p>
       </div>
 
-      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 shadow-slate-100/50 shadow-none flex flex-col gap-4">
+      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6  shadow-none flex flex-col gap-4">
         <div className="flex justify-between items-center text-xs font-semibold text-[var(--muted)]">
           <span>LECTURE TEXT</span>
           {wc > 0 && <span>{wc} words</span>}
@@ -400,19 +400,19 @@ function InputScreen({ onNext }) {
         />
 
         <div className="flex items-center my-2 text-xs font-bold text-[var(--muted)]">
-          <div className="flex-grow h-px bg-slate-100 bg-[var(--surface-2)]" />
+          <div className="flex-grow h-px  bg-[var(--surface-2)]" />
           <span className="px-3">OR UPLOAD FILE</span>
-          <div className="flex-grow h-px bg-slate-100 bg-[var(--surface-2)]" />
+          <div className="flex-grow h-px  bg-[var(--surface-2)]" />
         </div>
 
         <button
-          className="border-2 border-dashed border-slate-202 border-[var(--border)] hover:border-indigo-500 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 hover:bg-indigo-50/20 hover:bg-indigo-950/10 transition-colors cursor-pointer"
+          className="border-2 border-dashed  border-[var(--border)] hover: rounded-2xl p-4 flex flex-col items-center justify-center gap-2 hover: hover: transition-colors cursor-pointer"
           onClick={() => fileRef.current?.click()}
         >
-          <svg className="w-6 h-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-6 h-6 " fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
           </svg>
-          <span className="text-xs font-semibold text-slate-600 text-[var(--text)]">
+          <span className="text-xs font-semibold  text-[var(--text)]">
             {extracting ? "Extracting text..." : "Click to browse or drag file (.pdf, .docx, .txt)"}
           </span>
         </button>
@@ -427,7 +427,7 @@ function InputScreen({ onNext }) {
 
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-2">
           <div className="text-xs text-[var(--muted)] flex items-center gap-1.5">
-            <span className={`w-2 h-2 rounded-full ${wc > 10 ? 'bg-[var(--emerald)]' : 'bg-slate-300'}`} />
+            <span className={`w-2 h-2 rounded-full ${wc > 10 ? 'bg-[var(--emerald)]' : ''}`} />
             {wc < 10 ? "Requires at least a few sentences" : "Lecture loaded and ready!"}
           </div>
           <button
@@ -446,7 +446,7 @@ function InputScreen({ onNext }) {
         {!text && (
           <button
             onClick={() => setText(SAMPLE)}
-            className="px-3.5 py-1.5 border border-slate-202 border-[var(--border)] rounded-full text-xs font-semibold text-[var(--muted)] hover:bg-indigo-50/20 hover:text-[var(--cyan)] hover:text-indigo-400 transition-colors cursor-pointer"
+            className="px-3.5 py-1.5 border  border-[var(--border)] rounded-full text-xs font-semibold text-[var(--muted)] hover: hover:text-[var(--cyan)] hover: transition-colors cursor-pointer"
           >
             ✨ Try a sample lecture
           </button>
@@ -470,14 +470,14 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
   return (
     <div className="animate-reveal flex flex-col gap-6">
       {/* Header */}
-      <div className="flex justify-between items-center gap-4 border-b border-slate-100 border-[var(--border)] pb-4">
+      <div className="flex justify-between items-center gap-4 border-b  border-[var(--border)] pb-4">
         <div>
-          <span className="text-[10px] uppercase font-bold tracking-widest text-indigo-500">YOUR STUDY NOTES</span>
+          <span className="text-[10px] uppercase font-bold tracking-widest ">YOUR STUDY NOTES</span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--cyan)] italic font-serif leading-none mt-1">
             {notes.title}
           </h1>
         </div>
-        <button onClick={handleCopy} className="px-4 py-2 border border-[var(--border)] hover:hover:bg-[var(--surface-2)] rounded-xl text-xs font-semibold text-slate-600 text-[var(--text)] transition-colors cursor-pointer">
+        <button onClick={handleCopy} className="px-4 py-2 border border-[var(--border)] hover:hover:bg-[var(--surface-2)] rounded-xl text-xs font-semibold  text-[var(--text)] transition-colors cursor-pointer">
           📋 Copy Notes
         </button>
       </div>
@@ -488,7 +488,7 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
         <div className="bg-[var(--surface)] border border-[var(--border)] p-5 rounded-2xl shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-lg">📖</span>
-            <h3 className="font-bold text-sm text-slate-700 text-[var(--text)]">Overview</h3>
+            <h3 className="font-bold text-sm  text-[var(--text)]">Overview</h3>
           </div>
           <p className="text-sm text-[var(--muted)] text-[var(--muted)] leading-relaxed font-light">{notes.summary}</p>
         </div>
@@ -497,13 +497,13 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
         <div className="bg-[var(--surface)] border border-[var(--border)] p-5 rounded-2xl shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-lg">🧩</span>
-            <h3 className="font-bold text-sm text-slate-700 text-[var(--text)]">Key Concepts</h3>
+            <h3 className="font-bold text-sm  text-[var(--text)]">Key Concepts</h3>
           </div>
           <div className="flex flex-col gap-3">
             {notes.keyConcepts.map((c, i) => (
               <div className="flex items-start gap-2.5" key={i}>
                 <span className="w-1.5 h-1.5 rounded-full bg-[var(--cyan)] mt-2 flex-shrink-0" />
-                <span className="text-xs text-slate-600 text-[var(--text)] leading-relaxed">{rc(c)}</span>
+                <span className="text-xs  text-[var(--text)] leading-relaxed">{rc(c)}</span>
               </div>
             ))}
           </div>
@@ -513,13 +513,13 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
         <div className="bg-[var(--surface)] border border-[var(--border)] p-5 rounded-2xl shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-lg">💡</span>
-            <h3 className="font-bold text-sm text-slate-700 text-[var(--text)]">Explanations</h3>
+            <h3 className="font-bold text-sm  text-[var(--text)]">Explanations</h3>
           </div>
           <div className="flex flex-col gap-4">
             {notes.explanations.map((e, i) => (
               <div className="border-l-2 border-[var(--cyan)] pl-3 py-0.5" key={i}>
                 <h4 className="font-bold text-xs text-[var(--cyan)]">{e.term}</h4>
-                <p className="text-xs text-slate-505 text-[var(--muted)] mt-1 leading-relaxed">{e.definition}</p>
+                <p className="text-xs  text-[var(--muted)] mt-1 leading-relaxed">{e.definition}</p>
               </div>
             ))}
           </div>
@@ -529,7 +529,7 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
         <div className="bg-[var(--surface)] border border-[var(--border)] p-5 rounded-2xl shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-lg">⭐</span>
-            <h3 className="font-bold text-sm text-slate-700 text-[var(--text)]">Key Highlights</h3>
+            <h3 className="font-bold text-sm  text-[var(--text)]">Key Highlights</h3>
           </div>
           <div className="flex flex-wrap gap-2">
             {notes.highlights.map((h, i) => (
@@ -545,10 +545,10 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
       <div className="bg-[var(--surface-2)] text-white rounded-3xl p-6 flex flex-col md:flex-row justify-between items-center gap-6 border border-[var(--border)]">
         <div>
           <h3 className="text-lg font-bold">Ready to test your thinking?</h3>
-          <p className="text-xs text-indigo-200 mt-1">Explain the key concepts in your own words, or jump straight into the debate mode.</p>
+          <p className="text-xs  mt-1">Explain the key concepts in your own words, or jump straight into the debate mode.</p>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
-          <button onClick={onNext} className="flex-1 md:flex-initial px-5 py-3 rounded-xl text-indigo-950 hover:bg-slate-100 font-bold text-sm transition-colors cursor-pointer text-center">
+          <button onClick={onNext} className="flex-1 md:flex-initial px-5 py-3 rounded-xl  hover: font-bold text-sm transition-colors cursor-pointer text-center">
             Explain Back
           </button>
           <button onClick={onNextDebate} className="flex-1 md:flex-initial px-5 py-3 rounded-xl bg-[var(--cyan)] hover:opacity-90 text-[var(--background)] font-bold text-sm transition-colors cursor-pointer text-center">
@@ -611,7 +611,7 @@ function ExplainScreen({ notes, onNext }) {
   return (
     <div className="animate-reveal flex flex-col gap-6">
       <div className="text-center mb-2">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 bg-indigo-950/50 text-[var(--cyan)] text-indigo-400 text-xs font-semibold uppercase tracking-wider mb-2">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full   text-[var(--cyan)]  text-xs font-semibold uppercase tracking-wider mb-2">
           💬 Explain Back
         </span>
         <h1 className="text-3xl font-extrabold tracking-tight">Put it in your <span className="text-[var(--cyan)] italic font-serif">own words.</span></h1>
@@ -619,7 +619,7 @@ function ExplainScreen({ notes, onNext }) {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-1.5 border-b border-slate-100 border-[var(--border)]">
+      <div className="flex gap-2 overflow-x-auto pb-1.5 border-b  border-[var(--border)]">
         {notes.keyConcepts.map((c, i) => (
           <button
             key={i}
@@ -627,7 +627,7 @@ function ExplainScreen({ notes, onNext }) {
             className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
               sel === i 
                 ? 'bg-[var(--cyan)] text-[var(--background)] shadow-md' 
-                : 'bg-[var(--surface)] border border-slate-202/50 border-[var(--border)] text-slate-505 text-[var(--muted)] hover:'
+                : 'bg-[var(--surface)] border  border-[var(--border)]  text-[var(--muted)] hover:'
             }`}
           >
             {gcn(c)}
@@ -636,14 +636,14 @@ function ExplainScreen({ notes, onNext }) {
       </div>
 
       {/* Reference Card */}
-      <div className="bg-slate-100/50 bg-[var(--surface)]/50 border border-[var(--border)]/80 p-4 rounded-xl">
+      <div className=" bg-[var(--surface)]/50 border border-[var(--border)]/80 p-4 rounded-xl">
         <span className="text-[10px] font-bold text-[var(--muted)] uppercase tracking-widest block mb-1">📖 CONTEXT FROM LECTURE</span>
-        <p className="text-xs text-slate-600 text-[var(--text)] leading-relaxed font-light">{rc(concept)}</p>
+        <p className="text-xs  text-[var(--text)] leading-relaxed font-light">{rc(concept)}</p>
       </div>
 
       {/* Input Form */}
-      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-5 shadow-lg shadow-slate-100/20 shadow-none relative">
-        <h3 className="font-bold text-sm text-slate-700 text-[var(--text)] mb-3">Explain "{name}"</h3>
+      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-5 shadow-lg  shadow-none relative">
+        <h3 className="font-bold text-sm  text-[var(--text)] mb-3">Explain "{name}"</h3>
         <textarea
           ref={ta}
           disabled={checking}
@@ -658,7 +658,7 @@ function ExplainScreen({ notes, onNext }) {
 
         <div className="flex justify-between items-center mt-3 text-xs">
           <div className="flex items-center gap-2">
-            <div className="w-20 bg-slate-100 bg-[var(--surface-2)] h-1.5 rounded-full overflow-hidden">
+            <div className="w-20  bg-[var(--surface-2)] h-1.5 rounded-full overflow-hidden">
               <div className="bg-[var(--cyan)] h-full rounded-full transition-all duration-300" style={{ width: `${pct}%` }} />
             </div>
             <span className={`font-semibold ${text.length >= min ? 'text-emerald-500' : 'text-[var(--muted)]'}`}>
@@ -666,13 +666,13 @@ function ExplainScreen({ notes, onNext }) {
             </span>
           </div>
           {text.length > 0 && (
-            <button onClick={retry} className="text-[var(--muted)] hover:text-slate-600 font-semibold cursor-pointer">
+            <button onClick={retry} className="text-[var(--muted)] hover: font-semibold cursor-pointer">
               Clear
             </button>
           )}
         </div>
 
-        <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-100 border-[var(--border)] gap-4">
+        <div className="flex justify-between items-center mt-4 pt-4 border-t  border-[var(--border)] gap-4">
           <span className="text-[10px] text-[var(--muted)]">💡 Tip: Avoid copied phrasing to build true memory</span>
           <button
             onClick={check}
@@ -688,7 +688,7 @@ function ExplainScreen({ notes, onNext }) {
             <svg className="w-5 h-5 text-[var(--cyan)] animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.2" />
             </svg>
-            <span className="text-xs font-semibold text-slate-600 text-[var(--text)]">Evaluating your thinking...</span>
+            <span className="text-xs font-semibold  text-[var(--text)]">Evaluating your thinking...</span>
           </div>
         )}
       </div>
@@ -701,12 +701,12 @@ function ExplainScreen({ notes, onNext }) {
           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
             {an && <SRing score={an.score} label={an.scoreLabel} />}
             {fb && (
-              <div className="flex-1 bg-indigo-50/30 bg-indigo-950/10 border border-indigo-100/50 border-indigo-900/50 rounded-2xl p-4">
+              <div className="flex-1   border   rounded-2xl p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-[var(--cyan)]">✦</span>
-                  <span className="text-xs font-bold text-[var(--cyan)] text-indigo-400 uppercase tracking-wider">Mellow's KIND FEEDBACK</span>
+                  <span className="text-xs font-bold text-[var(--cyan)]  uppercase tracking-wider">Mellow's KIND FEEDBACK</span>
                 </div>
-                <p className="text-sm text-slate-600 text-[var(--text)] leading-relaxed font-light">{fb}</p>
+                <p className="text-sm  text-[var(--text)] leading-relaxed font-light">{fb}</p>
               </div>
             )}
           </div>
@@ -729,9 +729,9 @@ function ExplainScreen({ notes, onNext }) {
                       <span className="text-lg flex-shrink-0 mt-0.5">{MICONS[m.type] || "⚠️"}</span>
                       <div>
                         <span className="text-[10px] font-bold text-amber-600 text-amber-400 uppercase block tracking-wider">{m.type}</span>
-                        <h5 className="font-bold text-xs text-slate-700 text-[var(--text)] mt-1">{m.title}</h5>
+                        <h5 className="font-bold text-xs  text-[var(--text)] mt-1">{m.title}</h5>
                         <p className="text-xs text-[var(--muted)] text-[var(--muted)] mt-0.5 font-light leading-relaxed">{m.description}</p>
-                        {m.hint && <p className="text-xs text-indigo-500 text-indigo-400 font-semibold mt-2">💡 Tip: {m.hint}</p>}
+                        {m.hint && <p className="text-xs   font-semibold mt-2">💡 Tip: {m.hint}</p>}
                       </div>
                     </div>
                   ))}
@@ -740,12 +740,12 @@ function ExplainScreen({ notes, onNext }) {
             </div>
           )}
 
-          <div className="flex gap-3 border-t border-slate-100 border-[var(--border)] pt-4">
-            <button onClick={retry} className="px-4 py-2 border border-slate-202 border-[var(--border)] rounded-xl text-xs font-semibold text-[var(--muted)] text-[var(--muted)] hover:cursor-pointer">
+          <div className="flex gap-3 border-t  border-[var(--border)] pt-4">
+            <button onClick={retry} className="px-4 py-2 border  border-[var(--border)] rounded-xl text-xs font-semibold text-[var(--muted)] text-[var(--muted)] hover:cursor-pointer">
               Try Again ↺
             </button>
             {sel < notes.keyConcepts.length - 1 ? (
-              <button onClick={() => setSel((i) => i + 1)} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 bg-[var(--surface-2)] hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-700 text-[var(--text)] cursor-pointer ml-auto">
+              <button onClick={() => setSel((i) => i + 1)} className="px-4 py-2  hover: bg-[var(--surface-2)] hover: rounded-xl text-xs font-semibold  text-[var(--text)] cursor-pointer ml-auto">
                 Next Concept →
               </button>
             ) : (
@@ -835,14 +835,14 @@ function DebateScreen({ notes, onScore }) {
   }
 
   return (
-    <div className="animate-reveal flex flex-col flex-1 bg-[var(--surface)] border border-slate-202/50 border-[var(--border)] rounded-3xl overflow-hidden h-[460px] sm:h-[520px]">
+    <div className="animate-reveal flex flex-col flex-1 bg-[var(--surface)] border  border-[var(--border)] rounded-3xl overflow-hidden h-[460px] sm:h-[520px]">
       {/* Topic Header */}
-      <div className="flex justify-between items-center px-5 py-4 border-b border-slate-100 border-[var(--border)] bg-[var(--background)]/20 gap-3">
+      <div className="flex justify-between items-center px-5 py-4 border-b  border-[var(--border)] bg-[var(--background)]/20 gap-3">
         <div className="flex items-center gap-2 truncate">
           <span className="text-base flex-shrink-0">⚡</span>
           <div className="truncate">
             <h4 className="font-bold text-xs text-[var(--muted)] uppercase tracking-wider leading-none">DEBATE HUB</h4>
-            <span className="text-xs text-slate-600 text-[var(--text)] font-medium truncate block mt-1">{notes.title}</span>
+            <span className="text-xs  text-[var(--text)] font-medium truncate block mt-1">{notes.title}</span>
           </div>
         </div>
         <button
@@ -851,7 +851,7 @@ function DebateScreen({ notes, onScore }) {
           className={`px-3.5 py-1.5 rounded-full text-[10px] font-bold shadow-sm transition-colors cursor-pointer whitespace-nowrap ${
             canScore 
               ? 'bg-[var(--emerald)] hover:bg-emerald-600 text-white' 
-              : 'bg-slate-100 bg-[var(--surface-2)] text-[var(--muted)]'
+              : ' bg-[var(--surface-2)] text-[var(--muted)]'
           }`}
         >
           {canScore ? "📊 Score Debate" : `${3 - umc} more required`}
@@ -863,17 +863,17 @@ function DebateScreen({ notes, onScore }) {
         {msgs.map((m, i) => (
           <div key={i} className={`flex items-start gap-3 max-w-[85%] ${m.role === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}>
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-              m.role === 'user' ? 'bg-slate-100 bg-[var(--surface-2)] text-slate-600' : 'bg-[var(--cyan)] text-[var(--background)]'
+              m.role === 'user' ? ' bg-[var(--surface-2)] ' : 'bg-[var(--cyan)] text-[var(--background)]'
             }`}>
               {m.role === 'user' ? "🙋" : "✦"}
             </div>
             <div className={`p-3 rounded-2xl text-xs leading-relaxed ${
               m.role === 'user' 
                 ? 'bg-[var(--cyan)] text-[var(--background)] rounded-tr-none' 
-                : 'bg-slate-100 bg-[var(--surface-2)] text-[var(--text)] rounded-tl-none border border-[var(--border)]'
+                : ' bg-[var(--surface-2)] text-[var(--text)] rounded-tl-none border border-[var(--border)]'
             }`}>
               {m.content}
-              <div className={`text-[8px] text-right mt-1.5 block opacity-50 ${m.role === 'user' ? 'text-indigo-100' : 'text-[var(--muted)]'}`}>{m.time}</div>
+              <div className={`text-[8px] text-right mt-1.5 block opacity-50 ${m.role === 'user' ? '' : 'text-[var(--muted)]'}`}>{m.time}</div>
             </div>
           </div>
         ))}
@@ -881,10 +881,10 @@ function DebateScreen({ notes, onScore }) {
         {typing && (
           <div className="flex items-start gap-3 max-w-[80%] self-start animate-pulse">
             <div className="w-7 h-7 rounded-full bg-[var(--cyan)] text-[var(--background)] flex items-center justify-center text-xs font-bold">✦</div>
-            <div className="bg-slate-100 bg-[var(--surface-2)] p-3 rounded-2xl rounded-tl-none text-[var(--muted)] flex gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" />
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce delay-100" />
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce delay-200" />
+            <div className=" bg-[var(--surface-2)] p-3 rounded-2xl rounded-tl-none text-[var(--muted)] flex gap-1">
+              <span className="w-1.5 h-1.5 rounded-full  animate-bounce" />
+              <span className="w-1.5 h-1.5 rounded-full  animate-bounce delay-100" />
+              <span className="w-1.5 h-1.5 rounded-full  animate-bounce delay-200" />
             </div>
           </div>
         )}
@@ -895,12 +895,12 @@ function DebateScreen({ notes, onScore }) {
 
       {/* Suggested replies */}
       {showQR && !typing && msgs[msgs.length - 1]?.role === 'assistant' && (
-        <div className="px-5 py-2 flex gap-1.5 overflow-x-auto border-t border-slate-100 border-[var(--border)] ">
+        <div className="px-5 py-2 flex gap-1.5 overflow-x-auto border-t  border-[var(--border)] ">
           {QREPS.slice(0, 3).map((q, i) => (
             <button
               key={i}
               onClick={() => send(q)}
-              className="px-3 py-1 border border-slate-202 border-[var(--border)] rounded-full text-[10px] font-semibold text-[var(--muted)] hover:border-indigo-500 hover:text-[var(--cyan)] whitespace-nowrap cursor-pointer transition-colors bg-[var(--surface)]"
+              className="px-3 py-1 border  border-[var(--border)] rounded-full text-[10px] font-semibold text-[var(--muted)] hover: hover:text-[var(--cyan)] whitespace-nowrap cursor-pointer transition-colors bg-[var(--surface)]"
             >
               {q}
             </button>
@@ -909,7 +909,7 @@ function DebateScreen({ notes, onScore }) {
       )}
 
       {/* Input bar */}
-      <div className="p-3 border-t border-slate-100 border-[var(--border)] bg-[var(--surface)]">
+      <div className="p-3 border-t  border-[var(--border)] bg-[var(--surface)]">
         <div className="flex gap-2 items-center">
           <textarea
             ref={inpRef}
@@ -953,7 +953,7 @@ function ScoreScreen({ scores, notes, onDebateAgain }) {
       <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 shadow-lg text-center flex flex-col items-center gap-3">
         <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--cyan)] to-[var(--emerald)] p-0.5 shadow-lg flex items-center justify-center">
           <div className="w-full h-full bg-[var(--surface)] rounded-full flex flex-col items-center justify-center leading-none">
-            <span className="text-2xl font-extrabold text-[var(--cyan)] text-indigo-400">{total.toFixed(1)}</span>
+            <span className="text-2xl font-extrabold text-[var(--cyan)] ">{total.toFixed(1)}</span>
             <span className="text-[9px] font-bold text-[var(--muted)] block mt-1">OUT OF 10</span>
           </div>
         </div>
@@ -969,14 +969,14 @@ function ScoreScreen({ scores, notes, onDebateAgain }) {
           const s = scores[d.key];
           const fk = d.key + "Feedback";
           const pct = (s / 10) * 100;
-          const col = s >= 8 ? "text-emerald-500" : s >= 5 ? "text-[var(--cyan)] text-indigo-400" : "text-orange-500";
+          const col = s >= 8 ? "text-emerald-500" : s >= 5 ? "text-[var(--cyan)] " : "text-orange-500";
           return (
             <div className="bg-[var(--surface)] border border-[var(--border)] p-4 rounded-2xl shadow-sm" key={d.key}>
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-sm">{d.icon}</span>
                   <div>
-                    <h4 className="font-bold text-xs text-slate-700 text-[var(--text)]">{d.label}</h4>
+                    <h4 className="font-bold text-xs  text-[var(--text)]">{d.label}</h4>
                     <p className="text-[10px] text-[var(--muted)] font-light">{d.desc}</p>
                   </div>
                 </div>
@@ -993,12 +993,12 @@ function ScoreScreen({ scores, notes, onDebateAgain }) {
       </div>
 
       {/* Overall feedback */}
-      <div className="bg-indigo-50/30 bg-indigo-950/10 border border-indigo-100/50 border-indigo-900/50 rounded-2xl p-5">
+      <div className="  border   rounded-2xl p-5">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-[var(--cyan)]">✦</span>
-          <span className="text-xs font-bold text-[var(--cyan)] text-indigo-400 uppercase tracking-wider">Mellow's Coach Summary</span>
+          <span className="text-xs font-bold text-[var(--cyan)]  uppercase tracking-wider">Mellow's Coach Summary</span>
         </div>
-        <p className="text-sm text-slate-600 text-[var(--text)] leading-relaxed font-light">{scores.overallFeedback}</p>
+        <p className="text-sm  text-[var(--text)] leading-relaxed font-light">{scores.overallFeedback}</p>
       </div>
 
       {/* Next steps */}
@@ -1008,8 +1008,8 @@ function ScoreScreen({ scores, notes, onDebateAgain }) {
           <div className="flex flex-col gap-3">
             {scores.nextSteps.map((s, i) => (
               <div className="flex gap-3" key={i}>
-                <span className="w-5 h-5 rounded-full bg-slate-100 bg-[var(--surface-2)] text-[10px] font-bold text-[var(--muted)] flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
-                <span className="text-xs text-slate-600 text-[var(--text)] leading-relaxed">{s}</span>
+                <span className="w-5 h-5 rounded-full  bg-[var(--surface-2)] text-[10px] font-bold text-[var(--muted)] flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
+                <span className="text-xs  text-[var(--text)] leading-relaxed">{s}</span>
               </div>
             ))}
           </div>
@@ -1017,11 +1017,11 @@ function ScoreScreen({ scores, notes, onDebateAgain }) {
       )}
 
       {/* Actions */}
-      <div className="flex gap-3 border-t border-slate-100 border-[var(--border)] pt-4">
+      <div className="flex gap-3 border-t  border-[var(--border)] pt-4">
         <button onClick={onDebateAgain} className="flex-1 px-4 py-3 bg-[var(--cyan)] hover:opacity-90 text-[var(--background)] font-bold text-xs rounded-xl shadow-md transition-colors cursor-pointer text-center">
           ⚡ Debate Again
         </button>
-        <button onClick={() => window.location.reload()} className="flex-1 px-4 py-3 border border-slate-202 border-[var(--border)] hover:rounded-xl text-xs font-semibold text-slate-600 text-[var(--muted)] transition-colors cursor-pointer text-center">
+        <button onClick={() => window.location.reload()} className="flex-1 px-4 py-3 border  border-[var(--border)] hover:rounded-xl text-xs font-semibold  text-[var(--muted)] transition-colors cursor-pointer text-center">
           New Lecture
         </button>
       </div>
@@ -1056,17 +1056,17 @@ export default function LearningHub() {
   return (
     <div className="min-h-screen bg-[var(--background)] font-sans text-[var(--text)] transition-colors duration-300 relative overflow-hidden">
       {/* Background ambient light blobs */}
-      <div className="absolute -top-40 -right-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 -left-20 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-40 -right-40 w-96 h-96 bg-[var(--emerald)]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 -left-20 w-96 h-96 bg-[var(--cyan)]/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Sticky Inner Navigation Bar */}
-      <div className="flex justify-between items-center px-6 py-4 sticky top-0 bg-[var(--surface)]/80 backdrop-blur-md z-[100] border-b border-slate-100 border-[var(--border)]/80">
+      <div className="flex justify-between items-center px-6 py-4 sticky top-0 bg-[var(--surface)]/80 backdrop-blur-md z-[100] border-b  border-[var(--border)]/80">
         <div className="text-xl font-bold cursor-pointer hover:opacity-70 transition-all" onClick={() => go("input")}>
-          <span className="text-[var(--cyan)] text-indigo-400">Mellow</span> Hub
+          <span className="text-[var(--cyan)] ">Mellow</span> Hub
         </div>
         <div className="flex gap-4">
           {BACK[view] && (
-            <button className="px-4 py-2 border border-[var(--border)] rounded-full text-xs font-semibold text-[var(--muted)] text-[var(--muted)] hover:border-indigo-500 hover:text-indigo-500 hover:border-indigo-400 hover:text-indigo-400 transition-all cursor-pointer" onClick={BACK[view]}>
+            <button className="px-4 py-2 border border-[var(--border)] rounded-full text-xs font-semibold text-[var(--muted)] text-[var(--muted)] hover: hover: hover: hover: transition-all cursor-pointer" onClick={BACK[view]}>
               ← Back
             </button>
           )}
