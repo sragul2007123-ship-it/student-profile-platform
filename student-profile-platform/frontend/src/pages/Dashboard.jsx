@@ -418,7 +418,6 @@ export default function Dashboard() {
     { id: 'skills', label: 'Skills', icon: '⚡' },
     { id: 'projects', label: 'Projects', icon: '🚀' },
     { id: 'certificates', label: 'Certificates', icon: '📜' },
-    { id: 'customization', label: 'Customize', icon: '🎨' },
     { id: 'badges', label: 'Badges', icon: '⭐' },
     { id: 'friends', label: 'Friends', icon: '🤝' },
   ]
@@ -660,7 +659,7 @@ export default function Dashboard() {
               </div>
 
               {/* Edit Forms Container */}
-              <div className="flex-1 min-h-[500px] border dark:border-surface-800 rounded p-8">
+              <div className="flex-1 min-h-[500px] glass-card p-8 border border-[var(--border)]">
                 <AnimatePresence mode="wait">
                   <motion.div key={activeTab} initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
                     {activeTab === 'profile' && (
@@ -825,8 +824,8 @@ export default function Dashboard() {
                   <h2 className="text-xl font-semibold mb-6 dark:text-white">Skills</h2>
 
                   {/* Add Skill Form */}
-                  <div className="p-6 rounded-xl bg-gray-50 dark:bg-surface-700/50 border border-gray-100 dark:border-surface-600 mb-8">
-                    <h3 className="font-medium mb-4 dark:text-gray-200">Add New Skill</h3>
+                  <div className="glass-card p-6 mb-8">
+                    <h3 className="font-medium mb-4 text-[var(--text)]">Add New Skill</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
                       <div className="lg:col-span-1">
                         <label className="block text-sm text-gray-500 mb-1">Skill Name</label>
@@ -874,10 +873,10 @@ export default function Dashboard() {
                           <h3 className="text-sm font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400 mb-4">{category}</h3>
                           <div className="space-y-4">
                             {catSkills.map(skill => (
-                              <div key={skill.id} className="flex items-center gap-4 p-4 rounded-xl bg-white dark:bg-surface-800 border border-gray-100 dark:border-surface-700 group shadow-sm">
+                              <div key={skill.id} className="flex items-center gap-4 glass-card p-4 group card-hover">
                                 <div className="flex-1">
                                   <div className="flex justify-between mb-1">
-                                    <span className="font-medium dark:text-gray-200">{skill.skill_name}</span>
+                                    <span className="font-medium text-[var(--text)]">{skill.skill_name}</span>
                                     <span className="text-sm text-primary-500 font-semibold">{skill.skill_level}%</span>
                                   </div>
                                   <div className="w-full h-2 bg-gray-100 dark:bg-surface-700 rounded-full overflow-hidden">
@@ -911,8 +910,8 @@ export default function Dashboard() {
                   <h2 className="text-xl font-semibold mb-6 dark:text-white">Projects</h2>
 
                   {/* Add Project Form */}
-                  <div className="p-6 rounded-xl bg-gray-50 dark:bg-surface-700/50 border border-gray-100 dark:border-surface-600 mb-6">
-                    <h3 className="font-medium mb-4 dark:text-gray-200">Add New Project</h3>
+                  <div className="glass-card p-6 mb-6">
+                    <h3 className="font-medium mb-4 text-[var(--text)]">Add New Project</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm text-gray-500 mb-1">Title</label>
@@ -986,9 +985,9 @@ export default function Dashboard() {
                       <p className="text-center text-gray-400 dark:text-gray-500 py-8 md:col-span-2">No projects added yet.</p>
                     )}
                     {projects.map(project => (
-                      <div key={project.id} className="p-5 rounded-xl bg-white dark:bg-surface-800 border border-gray-100 dark:border-surface-700 group card-hover">
+                      <div key={project.id} className="glass-card p-5 group card-hover">
                         <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-semibold dark:text-white">{project.title}</h4>
+                          <h4 className="font-semibold text-[var(--text)]">{project.title}</h4>
                           <button
                             onClick={() => deleteProject(project.id)}
                             className="opacity-0 group-hover:opacity-100 p-1 text-red-400 hover:text-red-600 rounded transition-all"
@@ -1018,8 +1017,8 @@ export default function Dashboard() {
                 <div className="animate-fade-in">
                   <h2 className="text-xl font-semibold mb-6 dark:text-white">Certificates</h2>
 
-                  <div className="p-6 rounded-xl bg-gray-50 dark:bg-surface-700/50 border border-gray-100 dark:border-surface-600 mb-8">
-                    <h3 className="font-medium mb-4 dark:text-gray-200">Add New Certificate</h3>
+                  <div className="glass-card p-6 mb-8">
+                    <h3 className="font-medium mb-4 text-[var(--text)]">Add New Certificate</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
                       <div className="md:col-span-2">
                         <label className="block text-sm text-gray-500 mb-1">Certificate Title</label>
@@ -1072,8 +1071,8 @@ export default function Dashboard() {
                       <p className="text-center text-gray-400 dark:text-gray-500 py-8 md:col-span-2">No certificates added yet.</p>
                     )}
                     {certificates.map(cert => (
-                      <div key={cert.id} className="flex items-center gap-4 p-5 rounded-xl bg-white dark:bg-surface-800 border border-gray-100 dark:border-surface-700 group card-hover">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white shrink-0 shadow-lg">
+                      <div key={cert.id} className="flex items-center gap-4 glass-card p-5 group card-hover">
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white shrink-0 shadow-[0_0_15px_rgba(251,191,36,0.3)]">
                           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
                           </svg>
@@ -1101,11 +1100,11 @@ export default function Dashboard() {
               {/* Badges Tab */}
               {activeTab === 'badges' && (
                 <div className="animate-fade-in">
-                  <h2 className="text-xl font-semibold mb-6 dark:text-white">Customize Your Badge</h2>
+                  <h2 className="text-xl font-semibold mb-6 text-[var(--text)]">Customize Your Badge</h2>
                   
-                  <div className="mb-8 p-6 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-                    <h3 className="font-semibold text-blue-900 dark:text-blue-200 mb-2">🎖️ How to Get Badges</h3>
-                    <ul className="text-sm text-blue-800 dark:text-blue-300 space-y-1">
+                  <div className="glass-card p-6 mb-8 border-[var(--cyan)]">
+                    <h3 className="font-semibold text-[var(--text)] mb-2">🎖️ How to Get Badges</h3>
+                    <ul className="text-sm text-[var(--muted)] space-y-1">
                       <li>✅ <strong>Elite Scholar 👑</strong> - Reach Top 10 in the Leaderboard</li>
                       <li>✅ <strong>Master Scholar 🏆</strong> - Reach Top 50 in the Leaderboard</li>
                       <li>💡 Keep adding skills, projects, and certificates to improve your ranking!</li>
@@ -1208,20 +1207,20 @@ export default function Dashboard() {
                   </div>
 
                   {/* Badge Visibility Settings */}
-                  <div className="mb-8 p-6 rounded-xl bg-gray-50 dark:bg-surface-700/50 border border-gray-200 dark:border-surface-600">
-                    <h3 className="text-lg font-semibold mb-4 dark:text-white">Badge Visibility</h3>
+                  <div className="glass-card p-6 mb-8">
+                    <h3 className="text-lg font-semibold mb-4 text-[var(--text)]">Badge Visibility</h3>
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input 
                         type="checkbox" 
                         checked={badgeVisibility} 
                         onChange={(e) => setBadgeVisibility(e.target.checked)}
-                        className="w-5 h-5 rounded accent-primary-500"
+                        className="w-5 h-5 rounded accent-[var(--cyan)]"
                       />
-                      <span className="text-gray-700 dark:text-gray-300">
+                      <span className="text-[var(--text)]">
                         Show my badge on my profile and in the leaderboard
                       </span>
                     </label>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                    <p className="text-sm text-[var(--muted)] mt-2">
                       {badgeVisibility 
                         ? '✅ Your badge will be visible to others' 
                         : '🔒 Your badge will be hidden from public view'}
@@ -1253,110 +1252,7 @@ export default function Dashboard() {
                 </div>
               )}
 
-              {/* Customization Tab */}
-              {activeTab === 'customization' && (
-                <div className="animate-fade-in">
-                  <h2 className="text-2xl font-display font-bold mb-6 dark:text-white">🎨 Profile Customization</h2>
-                  <p className="text-gray-600 dark:text-gray-300 mb-8">Make your profile unique with custom themes, layouts, and media.</p>
-
-
-
-                  {/* Theme Color */}
-                  <div className="mb-8">
-                    <h3 className="text-lg font-semibold mb-4 dark:text-white">Theme Color</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {[
-                        { id: 'primary', name: 'Primary', color: 'from-blue-500 to-purple-600' },
-                        { id: 'emerald', name: 'Emerald', color: 'from-emerald-500 to-teal-600' },
-                        { id: 'rose', name: 'Rose', color: 'from-rose-500 to-pink-600' },
-                        { id: 'amber', name: 'Amber', color: 'from-amber-500 to-orange-600' },
-                        { id: 'violet', name: 'Violet', color: 'from-violet-500 to-purple-600' },
-                        { id: 'cyan', name: 'Cyan', color: 'from-cyan-500 to-blue-600' },
-                        { id: 'lime', name: 'Lime', color: 'from-lime-500 to-green-600' },
-                        { id: 'indigo', name: 'Indigo', color: 'from-indigo-500 to-blue-600' }
-                      ].map(theme => (
-                        <button
-                          key={theme.id}
-                          onClick={() => setThemeColor(theme.id)}
-                          className={`p-4 rounded-xl border-2 transition-all ${
-                            themeColor === theme.id
-                              ? 'border-primary-500 shadow-lg shadow-primary-500/25'
-                              : 'border-gray-200 dark:border-surface-700 hover:border-primary-400'
-                          }`}
-                        >
-                          <div className={`w-full h-8 rounded-lg bg-gradient-to-r ${theme.color} mb-2`}></div>
-                          <p className="text-sm font-medium dark:text-white">{theme.name}</p>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Layout Style */}
-                  <div className="mb-8">
-                    <h3 className="text-lg font-semibold mb-4 dark:text-white">Layout Style</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {[
-                        { id: 'default', name: 'Default', description: 'Clean and professional layout' },
-                        { id: 'minimal', name: 'Minimal', description: 'Simple and focused design' },
-                        { id: 'creative', name: 'Creative', description: 'Bold and artistic presentation' },
-                        { id: 'professional', name: 'Professional', description: 'Corporate-style layout' }
-                      ].map(layout => (
-                        <button
-                          key={layout.id}
-                          onClick={() => setLayoutStyle(layout.id)}
-                          className={`p-6 rounded-xl border-2 text-left transition-all ${
-                            layoutStyle === layout.id
-                              ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-lg shadow-primary-500/25'
-                              : 'border-gray-200 dark:border-surface-700 hover:border-primary-400 bg-white dark:bg-surface-800'
-                          }`}
-                        >
-                          <h4 className="font-semibold dark:text-white mb-1">{layout.name}</h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">{layout.description}</p>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Gallery Images */}
-                  <div className="mb-8">
-                    <h3 className="text-lg font-semibold mb-4 dark:text-white">Gallery Images</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">Add up to 6 images to showcase your work or personality</p>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                      {galleryImages.map((image, index) => (
-                        <div key={index} className="relative group">
-                          <div className="aspect-square rounded-xl overflow-hidden border-2 border-gray-200 dark:border-surface-700">
-                            <img src={image} alt={`Gallery ${index + 1}`} className="w-full h-full object-cover" />
-                          </div>
-                          <button
-                            onClick={() => setGalleryImages(prev => prev.filter((_, i) => i !== index))}
-                            className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                      {galleryImages.length < 6 && (
-                        <div className="aspect-square rounded-xl border-2 border-dashed border-gray-300 dark:border-surface-600 flex items-center justify-center cursor-pointer hover:border-primary-400 transition-colors"
-                             onClick={() => {
-                               const url = prompt('Enter image URL:');
-                               if (url) setGalleryImages(prev => [...prev, url]);
-                             }}>
-                          <div className="text-center">
-                            <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                            <p className="text-xs text-gray-500">Add Image</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <button onClick={saveProfile} disabled={saving} className="btn-primary w-full shadow-lg shadow-primary-500/20">
-                    {saving ? 'Saving...' : 'Save Customization'}
-                  </button>
-                </div>
-              )}
+                  )}
 
               {/* Friends Tab */}
               {activeTab === 'friends' && (
