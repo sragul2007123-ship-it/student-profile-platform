@@ -98,5 +98,10 @@ export const api = {
   updatePresence: (userId) => request(`/messages/presence/${userId}`, { method: 'POST' }),
   deleteMessage: (messageId) => request(`/messages/${messageId}`, { method: 'DELETE' }),
   reactToMessage: (messageId, emoji, userId) => request(`/messages/${messageId}/react`, { method: 'PATCH', body: { emoji, user_id: userId } }),
+  checkUnreadMessages: (userId, since) => {
+    let url = `/messages/unread/${userId}`;
+    if (since) url += `?since=${encodeURIComponent(since)}`;
+    return request(url);
+  },
 }
 

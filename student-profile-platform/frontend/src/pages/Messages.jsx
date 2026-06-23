@@ -221,23 +221,26 @@ export default function Messages() {
 
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] pt-16 pb-0 gradient-bg-subtle h-[calc(100vh-4rem)] overflow-hidden">
-      <div className="max-w-7xl mx-auto h-full px-0 sm:px-4">
-        <div className="glass-card sm:rounded-3xl shadow-2xl overflow-hidden flex h-[90vh] border border-white/20 dark:border-surface-700/50">
+    <div className="min-h-[calc(100vh-4rem)] pt-24 pb-0 relative overflow-hidden h-[calc(100vh-4rem)]">
+      <div className="absolute top-40 left-10 w-72 h-72 bg-[var(--emerald)]/20 rounded-full blur-3xl pointer-events-none mix-blend-screen"></div>
+      <div className="absolute bottom-20 right-10 w-80 h-80 bg-[var(--cyan)]/20 rounded-full blur-3xl pointer-events-none mix-blend-screen"></div>
+      
+      <div className="max-w-7xl mx-auto h-full px-0 sm:px-4 relative z-10">
+        <div className="glass-card sm:rounded-3xl shadow-[0_0_50px_rgba(0,255,198,0.1)] overflow-hidden flex h-[85vh] border border-white/10 dark:border-[var(--border)] bg-[var(--surface-2)]/60 backdrop-blur-2xl">
           
           {/* sidebar - Conversations */}
-          <div className="w-80 border-r border-gray-100 dark:border-surface-700/50 flex flex-col bg-white/40 dark:bg-surface-800/40 backdrop-blur-xl">
-            <div className="p-6 border-b border-gray-100 dark:border-surface-700/50">
-              <h2 className="text-xl font-bold dark:text-white mb-4">Messages</h2>
-              <div className="relative">
+          <div className="w-80 border-r border-[var(--border)] flex flex-col bg-[var(--surface)]/40 backdrop-blur-xl">
+            <div className="p-6 border-b border-[var(--border)]">
+              <h2 className="text-xl font-bold text-[var(--text)] mb-4">Messages</h2>
+              <div className="relative glass-card rounded-2xl p-1 bg-white/5 border border-white/10">
                 <input 
                   type="text" 
                   placeholder="Search friends..." 
-                  className="w-full bg-gray-50 dark:bg-surface-700/50 text-xs py-2 px-8 rounded-xl border-none focus:ring-1 focus:ring-primary-500 outline-none dark:text-white"
+                  className="w-full bg-transparent text-sm py-2 px-10 border-none focus:ring-0 outline-none text-[var(--text)] placeholder-gray-500"
                   value={convSearch}
                   onChange={(e) => setConvSearch(e.target.value)}
                 />
-                <svg className="w-3.5 h-3.5 absolute left-3 top-2.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-4 h-4 absolute left-4 top-3 text-[var(--muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
@@ -261,16 +264,16 @@ export default function Messages() {
                     onClick={() => setSelectedFriend(friend)}
                     className={`w-full flex items-center gap-3 p-3 rounded-2xl transition-all ${
                       selectedFriend?.id === friend.id 
-                        ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/30' 
-                        : 'hover:bg-white/60 dark:hover:bg-surface-700/50 dark:text-gray-300'
+                        ? 'bg-[var(--emerald)]/20 border border-[var(--emerald)]/50 shadow-[0_0_15px_rgba(0,255,198,0.2)]' 
+                        : 'hover:bg-white/5 border border-transparent text-[var(--muted)] hover:text-[var(--text)]'
                     }`}
                   >
                     <div className="relative shrink-0">
-                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/20">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[var(--border)] bg-[var(--surface-2)]">
                         {friend.profile_photo ? (
                           <img src={friend.profile_photo} className="w-full h-full object-cover" alt={friend.name} />
                         ) : (
-                          <div className="w-full h-full bg-gray-200 dark:bg-surface-600 flex items-center justify-center font-bold text-gray-500">
+                          <div className="w-full h-full flex items-center justify-center font-bold text-[var(--emerald)]">
                             {friend.name?.[0]}
                           </div>
                         )}
@@ -280,8 +283,8 @@ export default function Messages() {
                       )}
                     </div>
                     <div className="text-left overflow-hidden">
-                      <p className="font-bold truncate text-sm">{friend.name}</p>
-                      <p className={`text-xs truncate ${selectedFriend?.id === friend.id ? 'text-white/80' : 'text-gray-500'}`}>
+                      <p className={`font-bold truncate text-sm ${selectedFriend?.id === friend.id ? 'text-[var(--emerald)]' : 'text-[var(--text)]'}`}>{friend.name}</p>
+                      <p className={`text-xs truncate ${selectedFriend?.id === friend.id ? 'text-[var(--cyan)]' : 'text-[var(--muted)]'}`}>
                         {isUserActive(friend.last_seen) ? 'Active now' : 'Offline'}
                       </p>
                     </div>
@@ -292,17 +295,17 @@ export default function Messages() {
           </div>
 
           {/* Chat Area */}
-          <div className="flex-1 flex flex-col relative bg-white/20 dark:bg-surface-900/40">
+          <div className="flex-1 flex flex-col relative bg-[var(--surface-2)]/30 backdrop-blur-md">
             {selectedFriend ? (
               <>
                 {/* Header */}
-                <div className="p-4 border-b border-gray-100 dark:border-surface-700/50 flex items-center gap-3 backdrop-blur-md sticky top-0 z-10">
+                <div className="p-4 border-b border-[var(--border)] flex items-center gap-3 backdrop-blur-md sticky top-0 z-10 bg-[var(--surface)]/50">
                   <div className="relative">
-                    <div className="w-10 h-10 rounded-full overflow-hidden border border-primary-500/20">
+                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[var(--emerald)]">
                       {selectedFriend.profile_photo ? (
                         <img src={selectedFriend.profile_photo} className="w-full h-full object-cover" alt={selectedFriend.name} />
                       ) : (
-                        <div className="w-full h-full bg-gray-100 dark:bg-surface-700 flex items-center justify-center text-primary-500 font-bold">
+                        <div className="w-full h-full bg-[var(--surface-2)] flex items-center justify-center text-[var(--emerald)] font-bold">
                           {selectedFriend.name?.[0]}
                         </div>
                       )}
@@ -312,8 +315,8 @@ export default function Messages() {
                     )}
                   </div>
                   <div>
-                    <h3 className="font-bold dark:text-white leading-none text-base">{selectedFriend.name}</h3>
-                    <p className={`text-[10px] font-medium ${isUserActive(selectedFriend.last_seen) ? 'text-green-500' : 'text-gray-400'}`}>
+                    <h3 className="font-bold text-[var(--text)] leading-none text-base">{selectedFriend.name}</h3>
+                    <p className={`text-[10px] font-medium ${isUserActive(selectedFriend.last_seen) ? 'text-[var(--emerald)]' : 'text-[var(--muted)]'}`}>
                       {isUserActive(selectedFriend.last_seen) ? 'Active Now' : 'Offline'}
                     </p>
                   </div>
@@ -376,10 +379,10 @@ export default function Messages() {
                           )}
                         </AnimatePresence>
 
-                        <div className={`p-3 rounded-2xl shadow-sm ${
+                        <div className={`p-4 rounded-3xl shadow-sm border border-white/5 backdrop-blur-sm ${
                           msg.sender_id === user.id 
-                            ? 'bg-primary-500 text-white rounded-tr-none' 
-                            : 'bg-white dark:bg-surface-700 dark:text-gray-200 rounded-tl-none'
+                            ? 'bg-gradient-to-br from-[var(--emerald)] to-[var(--cyan)] text-[#030303] rounded-tr-none' 
+                            : 'bg-[var(--surface-2)] text-[var(--text)] rounded-tl-none border-[var(--border)]'
                         }`}>
                           {msg.content && <p className="text-sm whitespace-pre-wrap">{msg.content}</p>}
                           
@@ -436,14 +439,14 @@ export default function Messages() {
                 </div>
 
                 {/* Input Area */}
-                <div className="p-4 bg-white/40 dark:bg-surface-800/40 backdrop-blur-md">
-                  <form onSubmit={handleSendMessage} className="flex gap-2 items-center">
+                <div className="p-4 bg-[var(--surface)]/50 backdrop-blur-xl border-t border-[var(--border)]">
+                  <form onSubmit={handleSendMessage} className="flex gap-3 items-center">
                     <button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
-                      className="w-10 h-10 shrink-0 rounded-full hover:bg-gray-100 dark:hover:bg-surface-700 flex items-center justify-center transition-colors text-gray-500 dark:text-gray-400"
+                      className="w-12 h-12 shrink-0 rounded-full hover:bg-white/5 flex items-center justify-center transition-colors text-[var(--muted)] hover:text-[var(--cyan)]"
                     >
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                       </svg>
                     </button>
@@ -453,32 +456,37 @@ export default function Messages() {
                       className="hidden"
                       onChange={handleFileSelect}
                     />
-                    <input
-                      type="text"
-                      className="flex-1 bg-gray-50 dark:bg-surface-800 rounded-full px-5 py-2.5 border border-gray-200 dark:border-surface-600 focus:ring-2 focus:ring-primary-500 outline-none transition-all dark:text-white text-sm"
-                      placeholder="Message..."
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                    />
-                    <button
-                      type="submit"
-                      disabled={!newMessage.trim() || uploading}
-                      className="w-10 h-10 shrink-0 rounded-full gradient-bg text-white flex items-center justify-center shadow-lg shadow-primary-500/20 hover:scale-110 active:scale-90 transition-all outline-none disabled:opacity-50"
-                    >
-                      <svg className="w-5 h-5 transform rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                      </svg>
-                    </button>
+                    <div className="flex-1 relative glass-card rounded-full bg-white/5 border border-white/10 p-1 flex items-center">
+                      <input
+                        type="text"
+                        className="flex-1 bg-transparent border-none px-6 py-3 focus:ring-0 outline-none text-[var(--text)] text-sm placeholder-gray-500"
+                        placeholder="Type a message..."
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                      />
+                      <button
+                        type="submit"
+                        disabled={!newMessage.trim() || uploading}
+                        className="w-10 h-10 mr-1 shrink-0 rounded-full bg-gradient-to-br from-[var(--emerald)] to-[var(--cyan)] text-[#030303] flex items-center justify-center shadow-[0_0_15px_rgba(0,255,198,0.3)] hover:scale-110 active:scale-90 transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <svg className="w-5 h-5 transform rotate-90 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                      </button>
+                    </div>
                   </form>
                 </div>
               </>
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center opacity-30">
-                <div className="w-20 h-20 rounded-full gradient-bg flex items-center justify-center text-white text-4xl mb-6">
-                  ✉️
+              <div className="flex-1 flex flex-col items-center justify-center opacity-50 relative">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[var(--cyan)]/20 blur-3xl rounded-full"></div>
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--emerald)] to-[var(--cyan)] flex items-center justify-center text-white text-5xl mb-6 shadow-[0_0_30px_rgba(0,255,198,0.3)] relative z-10">
+                  <svg className="w-12 h-12 text-[#030303]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                  </svg>
                 </div>
-                <h3 className="text-2xl font-bold dark:text-white">Your Messages</h3>
-                <p className="dark:text-gray-400 mt-2">Send photos and messages to a friend.</p>
+                <h3 className="text-3xl font-bold text-[var(--text)] font-display relative z-10">Communicate</h3>
+                <p className="text-[var(--muted)] mt-2 relative z-10">Select a friend to start chatting</p>
               </div>
             )}
           </div>

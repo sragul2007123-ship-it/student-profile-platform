@@ -117,3 +117,16 @@ async def react_to_message(message_id: str, reaction_data: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/unread/{user_id}")
+async def check_unread(user_id: str, since: Optional[str] = None):
+    try:
+        query = supabase.table("messages").select("id", count="exact").eq("receiver_id", user_id)
+        if since:
+            query = query.gt("created_at", since)
+        res = query.execute()
+        return {"has_new": res.count > 0, "count": res.count}
+    except Exception as e:
+        print(f"Error checking unread messages: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+

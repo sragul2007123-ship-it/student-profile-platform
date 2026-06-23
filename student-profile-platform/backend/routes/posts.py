@@ -98,10 +98,16 @@ async def delete_post(post_id: str, user_id: str):
         if not post.data or post.data[0]["user_id"] != user_id:
             raise HTTPException(status_code=403, detail="Not authorized to delete this post")
             
-        # Supabase will handle cascading deletes for likes and comments if foreign keys are set correctly.
-        # Otherwise, we might need to delete them manually:
-        supabase.table("post_comments").delete().eq("post_id", post_id).execute()
-        supabase.table("post_likes").delete().eq("post_id", post_id).execute()
+        # Attempt to delete comments and likes manually, ignoring errors if tables missing
+        try:
+            supabase.table("post_comments").delete().eq("post_id", post_id).execute()
+        except Exception:
+            pass
+            
+        try:
+            supabase.table("post_likes").delete().eq("post_id", post_id).execute()
+        except Exception:
+            pass
         
         res = supabase.table("posts").delete().eq("id", post_id).execute()
         return {"status": "deleted"}
