@@ -386,7 +386,7 @@ function InputScreen({ onNext }) {
         </p>
       </div>
 
-      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6  shadow-none flex flex-col gap-4">
+      <div className="glass-card p-6 flex flex-col gap-4">
         <div className="flex justify-between items-center text-xs font-semibold text-[var(--muted)]">
           <span>LECTURE TEXT</span>
           {wc > 0 && <span>{wc} words</span>}
@@ -406,7 +406,7 @@ function InputScreen({ onNext }) {
         </div>
 
         <button
-          className="border-2 border-dashed  border-[var(--border)] hover: rounded-2xl p-4 flex flex-col items-center justify-center gap-2 hover: hover: transition-colors cursor-pointer"
+          className="border-2 border-dashed border-[var(--border)] rounded-2xl p-6 flex flex-col items-center justify-center gap-2 hover:bg-[var(--surface-2)] hover:border-[var(--cyan)] transition-colors cursor-pointer"
           onClick={() => fileRef.current?.click()}
         >
           <svg className="w-6 h-6 " fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -446,7 +446,7 @@ function InputScreen({ onNext }) {
         {!text && (
           <button
             onClick={() => setText(SAMPLE)}
-            className="px-3.5 py-1.5 border  border-[var(--border)] rounded-full text-xs font-semibold text-[var(--muted)] hover: hover:text-[var(--cyan)] hover: transition-colors cursor-pointer"
+            className="px-4 py-2 border border-[var(--border)] rounded-full text-xs font-semibold text-[var(--text)] hover:bg-[var(--surface-2)] hover:border-[var(--cyan)] hover:text-[var(--cyan)] transition-all cursor-pointer"
           >
             ✨ Try a sample lecture
           </button>
@@ -485,7 +485,7 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
       {/* Grid of Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Overview */}
-        <div className="bg-[var(--surface)] border border-[var(--border)] p-5 rounded-2xl shadow-sm">
+        <div className="glass-card p-6 card-hover">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-lg">📖</span>
             <h3 className="font-bold text-sm  text-[var(--text)]">Overview</h3>
@@ -494,7 +494,7 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
         </div>
 
         {/* Key Concepts */}
-        <div className="bg-[var(--surface)] border border-[var(--border)] p-5 rounded-2xl shadow-sm">
+        <div className="glass-card p-6 card-hover">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-lg">🧩</span>
             <h3 className="font-bold text-sm  text-[var(--text)]">Key Concepts</h3>
@@ -510,7 +510,7 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
         </div>
 
         {/* Explanations */}
-        <div className="bg-[var(--surface)] border border-[var(--border)] p-5 rounded-2xl shadow-sm">
+        <div className="glass-card p-6 card-hover">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-lg">💡</span>
             <h3 className="font-bold text-sm  text-[var(--text)]">Explanations</h3>
@@ -526,7 +526,7 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
         </div>
 
         {/* Highlights */}
-        <div className="bg-[var(--surface)] border border-[var(--border)] p-5 rounded-2xl shadow-sm">
+        <div className="glass-card p-6 card-hover">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-lg">⭐</span>
             <h3 className="font-bold text-sm  text-[var(--text)]">Key Highlights</h3>
@@ -548,10 +548,10 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
           <p className="text-xs  mt-1">Explain the key concepts in your own words, or jump straight into the debate mode.</p>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
-          <button onClick={onNext} className="flex-1 md:flex-initial px-5 py-3 rounded-xl  hover: font-bold text-sm transition-colors cursor-pointer text-center">
+          <button onClick={onNext} className="btn-secondary flex-1 md:flex-initial text-sm text-center">
             Explain Back
           </button>
-          <button onClick={onNextDebate} className="flex-1 md:flex-initial px-5 py-3 rounded-xl bg-[var(--cyan)] hover:opacity-90 text-[var(--background)] font-bold text-sm transition-colors cursor-pointer text-center">
+          <button onClick={onNextDebate} className="btn-primary flex-1 md:flex-initial text-sm text-center">
             ⚡ Debate
           </button>
         </div>
@@ -627,7 +627,7 @@ function ExplainScreen({ notes, onNext }) {
             className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
               sel === i 
                 ? 'bg-[var(--cyan)] text-[var(--background)] shadow-md' 
-                : 'bg-[var(--surface)] border  border-[var(--border)]  text-[var(--muted)] hover:'
+                : 'glass-card border border-[var(--border)] text-[var(--text)] hover:bg-[var(--surface-2)]'
             }`}
           >
             {gcn(c)}
@@ -642,7 +642,7 @@ function ExplainScreen({ notes, onNext }) {
       </div>
 
       {/* Input Form */}
-      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-5 shadow-lg  shadow-none relative">
+      <div className="glass-card p-6 relative">
         <h3 className="font-bold text-sm  text-[var(--text)] mb-3">Explain "{name}"</h3>
         <textarea
           ref={ta}
@@ -741,11 +741,11 @@ function ExplainScreen({ notes, onNext }) {
           )}
 
           <div className="flex gap-3 border-t  border-[var(--border)] pt-4">
-            <button onClick={retry} className="px-4 py-2 border  border-[var(--border)] rounded-xl text-xs font-semibold text-[var(--muted)] text-[var(--muted)] hover:cursor-pointer">
+            <button onClick={retry} className="btn-ghost border border-[var(--border)] cursor-pointer">
               Try Again ↺
             </button>
             {sel < notes.keyConcepts.length - 1 ? (
-              <button onClick={() => setSel((i) => i + 1)} className="px-4 py-2  hover: bg-[var(--surface-2)] hover: rounded-xl text-xs font-semibold  text-[var(--text)] cursor-pointer ml-auto">
+              <button onClick={() => setSel((i) => i + 1)} className="btn-secondary cursor-pointer ml-auto">
                 Next Concept →
               </button>
             ) : (
@@ -835,7 +835,7 @@ function DebateScreen({ notes, onScore }) {
   }
 
   return (
-    <div className="animate-reveal flex flex-col flex-1 bg-[var(--surface)] border  border-[var(--border)] rounded-3xl overflow-hidden h-[460px] sm:h-[520px]">
+    <div className="animate-reveal flex flex-col flex-1 glass-card overflow-hidden h-[460px] sm:h-[520px]">
       {/* Topic Header */}
       <div className="flex justify-between items-center px-5 py-4 border-b  border-[var(--border)] bg-[var(--background)]/20 gap-3">
         <div className="flex items-center gap-2 truncate">
@@ -900,7 +900,7 @@ function DebateScreen({ notes, onScore }) {
             <button
               key={i}
               onClick={() => send(q)}
-              className="px-3 py-1 border  border-[var(--border)] rounded-full text-[10px] font-semibold text-[var(--muted)] hover: hover:text-[var(--cyan)] whitespace-nowrap cursor-pointer transition-colors bg-[var(--surface)]"
+              className="px-3 py-1 border border-[var(--border)] rounded-full text-[10px] font-semibold text-[var(--text)] hover:bg-[var(--surface-2)] hover:border-[var(--cyan)] hover:text-[var(--cyan)] whitespace-nowrap cursor-pointer transition-all bg-[var(--surface)]"
             >
               {q}
             </button>
@@ -950,7 +950,7 @@ function ScoreScreen({ scores, notes, onDebateAgain }) {
   return (
     <div className="animate-reveal flex flex-col gap-6">
       {/* Orb Card */}
-      <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-6 shadow-lg text-center flex flex-col items-center gap-3">
+      <div className="glass-card p-8 text-center flex flex-col items-center gap-3">
         <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[var(--cyan)] to-[var(--emerald)] p-0.5 shadow-lg flex items-center justify-center">
           <div className="w-full h-full bg-[var(--surface)] rounded-full flex flex-col items-center justify-center leading-none">
             <span className="text-2xl font-extrabold text-[var(--cyan)] ">{total.toFixed(1)}</span>
@@ -971,7 +971,7 @@ function ScoreScreen({ scores, notes, onDebateAgain }) {
           const pct = (s / 10) * 100;
           const col = s >= 8 ? "text-emerald-500" : s >= 5 ? "text-[var(--cyan)] " : "text-orange-500";
           return (
-            <div className="bg-[var(--surface)] border border-[var(--border)] p-4 rounded-2xl shadow-sm" key={d.key}>
+            <div className="glass-card p-5 card-hover" key={d.key}>
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-sm">{d.icon}</span>
@@ -1003,7 +1003,7 @@ function ScoreScreen({ scores, notes, onDebateAgain }) {
 
       {/* Next steps */}
       {scores.nextSteps?.length > 0 && (
-        <div className="bg-[var(--surface)] border border-[var(--border)] p-5 rounded-2xl shadow-sm">
+        <div className="glass-card p-6 card-hover">
           <h4 className="text-xs font-bold text-[var(--muted)] uppercase tracking-widest mb-3">Suggested Next Steps</h4>
           <div className="flex flex-col gap-3">
             {scores.nextSteps.map((s, i) => (
@@ -1063,11 +1063,11 @@ export default function LearningHub() {
         </div>
         <div className="flex gap-4">
           {BACK[view] && (
-            <button className="px-4 py-2 border border-[var(--border)] rounded-full text-xs font-semibold text-[var(--muted)] text-[var(--muted)] hover: hover: hover: hover: transition-all cursor-pointer" onClick={BACK[view]}>
+            <button className="px-4 py-2 border border-[var(--border)] rounded-full text-xs font-semibold text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)] transition-all cursor-pointer" onClick={BACK[view]}>
               ← Back
             </button>
           )}
-          <button className="px-4 py-2 border border-[var(--border)] rounded-full text-xs font-semibold text-[var(--muted)] text-[var(--muted)] hover:border-orange-500 hover:text-orange-600 hover:border-orange-400 hover:text-orange-400 transition-all cursor-pointer" onClick={() => go("input")}>
+          <button className="px-4 py-2 border border-[var(--border)] rounded-full text-xs font-semibold text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--surface-2)] transition-all cursor-pointer" onClick={() => go("input")}>
             New Session
           </button>
         </div>
