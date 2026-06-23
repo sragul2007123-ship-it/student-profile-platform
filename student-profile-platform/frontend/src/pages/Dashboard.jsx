@@ -733,7 +733,7 @@ export default function Dashboard() {
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
                       <input
                         type="email"
-                        className="input-field bg-gray-50 dark:bg-surface-700 cursor-not-allowed"
+                        className="input-field cursor-not-allowed text-[var(--muted)] bg-[var(--surface-2)]"
                         value={user?.email || ''}
                         disabled
                       />
@@ -1119,16 +1119,16 @@ export default function Dashboard() {
                         onClick={() => setSelectedBadge('elite')}
                         className={`p-6 rounded-xl border-2 cursor-pointer transition-all transform hover:scale-105 ${
                           selectedBadge === 'elite'
-                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-lg shadow-primary-500/20'
-                            : 'border-gray-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-primary-400'
+                            ? 'border-primary-500 bg-primary-500/10 shadow-[0_0_15px_rgba(0,255,198,0.2)]'
+                            : 'border-[var(--border)] bg-[var(--surface-2)] text-[var(--text)] hover:border-[var(--cyan)]'
                         }`}
                       >
                         <div className="text-4xl mb-2">👑</div>
-                        <h4 className="font-bold dark:text-white">Elite Scholar</h4>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">Top 10 Student</p>
+                        <h4 className="font-bold text-[var(--text)]">Elite Scholar</h4>
+                        <p className="text-xs text-[var(--muted)]">Top 10 Student</p>
                         <div className="mt-3 flex justify-between items-center">
-                          <span className="text-xs font-semibold text-gray-400">Status</span>
-                          <span className="px-2 py-1 rounded text-xs font-semibold bg-yellow-100 text-yellow-700">Locked</span>
+                          <span className="text-xs font-semibold text-[var(--muted)]">Status</span>
+                          <span className="px-2 py-1 rounded text-xs font-semibold bg-yellow-500/20 text-yellow-500 border border-yellow-500/50">Locked</span>
                         </div>
                       </div>
 
@@ -1137,16 +1137,16 @@ export default function Dashboard() {
                         onClick={() => setSelectedBadge('master')}
                         className={`p-6 rounded-xl border-2 cursor-pointer transition-all transform hover:scale-105 ${
                           selectedBadge === 'master'
-                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-lg shadow-primary-500/20'
-                            : 'border-gray-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-primary-400'
+                            ? 'border-primary-500 bg-primary-500/10 shadow-[0_0_15px_rgba(0,255,198,0.2)]'
+                            : 'border-[var(--border)] bg-[var(--surface-2)] text-[var(--text)] hover:border-[var(--cyan)]'
                         }`}
                       >
                         <div className="text-4xl mb-2">🏆</div>
-                        <h4 className="font-bold dark:text-white">Master Scholar</h4>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">Top 50 Student</p>
+                        <h4 className="font-bold text-[var(--text)]">Master Scholar</h4>
+                        <p className="text-xs text-[var(--muted)]">Top 50 Student</p>
                         <div className="mt-3 flex justify-between items-center">
-                          <span className="text-xs font-semibold text-gray-400">Status</span>
-                          <span className="px-2 py-1 rounded text-xs font-semibold bg-yellow-100 text-yellow-700">Locked</span>
+                          <span className="text-xs font-semibold text-[var(--muted)]">Status</span>
+                          <span className="px-2 py-1 rounded text-xs font-semibold bg-yellow-500/20 text-yellow-500 border border-yellow-500/50">Locked</span>
                         </div>
                       </div>
 
@@ -1155,16 +1155,16 @@ export default function Dashboard() {
                         onClick={() => setSelectedBadge('diamond')}
                         className={`p-6 rounded-xl border-2 cursor-pointer transition-all transform hover:scale-105 ${
                           selectedBadge === 'diamond'
-                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-lg shadow-primary-500/20'
-                            : 'border-gray-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-primary-400'
+                            ? 'border-primary-500 bg-primary-500/10 shadow-[0_0_15px_rgba(0,255,198,0.2)]'
+                            : 'border-[var(--border)] bg-[var(--surface-2)] text-[var(--text)] hover:border-[var(--cyan)]'
                         }`}
                       >
                         <div className="text-4xl mb-2">💎</div>
-                        <h4 className="font-bold dark:text-white">Diamond Scholar</h4>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">Exceptional Achiever</p>
+                        <h4 className="font-bold text-[var(--text)]">Diamond Scholar</h4>
+                        <p className="text-xs text-[var(--muted)]">Exceptional Achiever</p>
                         <div className="mt-3 flex justify-between items-center">
-                          <span className="text-xs font-semibold text-gray-400">Status</span>
-                          <span className="px-2 py-1 rounded text-xs font-semibold bg-emerald-100 text-emerald-700">Available</span>
+                          <span className="text-xs font-semibold text-[var(--muted)]">Status</span>
+                          <span className="px-2 py-1 rounded text-xs font-semibold bg-[var(--emerald)]/20 text-[var(--emerald)] border border-[var(--emerald)]/50">Available</span>
                         </div>
                       </div>
 
@@ -1173,16 +1173,16 @@ export default function Dashboard() {
                         onClick={() => setSelectedBadge('star')}
                         className={`p-6 rounded-xl border-2 cursor-pointer transition-all transform hover:scale-105 ${
                           selectedBadge === 'star'
-                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-lg shadow-primary-500/20'
-                            : 'border-gray-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-primary-400'
+                            ? 'border-[var(--emerald)] bg-[var(--emerald)]/10 shadow-[0_0_15px_rgba(0,255,198,0.2)]'
+                            : 'border-[var(--border)] bg-[var(--surface-2)] text-[var(--text)] hover:border-[var(--cyan)]'
                         }`}
                       >
                         <div className="text-4xl mb-2">⭐</div>
-                        <h4 className="font-bold dark:text-white">Star Scholar</h4>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">Rising Star</p>
+                        <h4 className="font-bold text-[var(--text)]">Star Scholar</h4>
+                        <p className="text-xs text-[var(--muted)]">Rising Star</p>
                         <div className="mt-3 flex justify-between items-center">
-                          <span className="text-xs font-semibold text-gray-400">Status</span>
-                          <span className="px-2 py-1 rounded text-xs font-semibold bg-emerald-100 text-emerald-700">Available</span>
+                          <span className="text-xs font-semibold text-[var(--muted)]">Status</span>
+                          <span className="px-2 py-1 rounded text-xs font-semibold bg-[var(--emerald)]/20 text-[var(--emerald)] border border-[var(--emerald)]/50">Available</span>
                         </div>
                       </div>
 
@@ -1191,16 +1191,16 @@ export default function Dashboard() {
                         onClick={() => setSelectedBadge('rocket')}
                         className={`p-6 rounded-xl border-2 cursor-pointer transition-all transform hover:scale-105 ${
                           selectedBadge === 'rocket'
-                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-lg shadow-primary-500/20'
-                            : 'border-gray-200 dark:border-surface-700 bg-white dark:bg-surface-800 hover:border-primary-400'
+                            ? 'border-[var(--cyan)] bg-[var(--cyan)]/10 shadow-[0_0_15px_rgba(0,212,255,0.2)]'
+                            : 'border-[var(--border)] bg-[var(--surface-2)] text-[var(--text)] hover:border-[var(--cyan)]'
                         }`}
                       >
                         <div className="text-4xl mb-2">🚀</div>
-                        <h4 className="font-bold dark:text-white">Rocket Scholar</h4>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">Fast Progress</p>
+                        <h4 className="font-bold text-[var(--text)]">Rocket Scholar</h4>
+                        <p className="text-xs text-[var(--muted)]">Fast Progress</p>
                         <div className="mt-3 flex justify-between items-center">
-                          <span className="text-xs font-semibold text-gray-400">Status</span>
-                          <span className="px-2 py-1 rounded text-xs font-semibold bg-emerald-100 text-emerald-700">Available</span>
+                          <span className="text-xs font-semibold text-[var(--muted)]">Status</span>
+                          <span className="px-2 py-1 rounded text-xs font-semibold bg-[var(--emerald)]/20 text-[var(--emerald)] border border-[var(--emerald)]/50">Available</span>
                         </div>
                       </div>
                     </div>
@@ -1252,7 +1252,7 @@ export default function Dashboard() {
                 </div>
               )}
 
-                  )}
+
 
               {/* Friends Tab */}
               {activeTab === 'friends' && (
@@ -1308,14 +1308,14 @@ export default function Dashboard() {
                         <p className="text-sm text-gray-500 dark:text-gray-400 py-4 italic">You haven't added any friends yet.</p>
                       )}
                       {friends.map(friend => (
-                        <div key={friend.friendship_id} className="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-surface-800 border border-gray-100 dark:border-surface-700 group hover:shadow-md transition-all">
+                        <div key={friend.friendship_id} className="flex items-center justify-between p-4 rounded-xl glass-card group hover:shadow-[0_0_15px_rgba(0,255,198,0.2)] transition-all">
                           <a href={`/student/${friend.username}`} className="flex items-center gap-3 flex-1 min-w-0">
-                            <div className="w-10 h-10 rounded-full gradient-bg flex items-center justify-center text-white text-lg font-bold shrink-0">
+                            <div className="w-10 h-10 rounded-full gradient-bg flex items-center justify-center text-[var(--background)] text-lg font-bold shrink-0">
                               {friend.profile_photo ? <img src={friend.profile_photo} className="w-full h-full object-cover rounded-full" /> : friend.name?.[0]}
                             </div>
                             <div className="min-w-0">
-                              <p className="font-semibold dark:text-white truncate">{friend.name}</p>
-                              <p className="text-xs text-primary-500">@{friend.username}</p>
+                              <p className="font-semibold text-[var(--text)] truncate">{friend.name}</p>
+                              <p className="text-xs text-[var(--cyan)]">@{friend.username}</p>
                             </div>
                           </a>
                           <button
@@ -1336,26 +1336,28 @@ export default function Dashboard() {
                         <h3 className="text-sm font-bold uppercase tracking-wider text-amber-500 mb-4 flex items-center gap-2">
                           Pending Requests
                           {pendingRequests.length > 0 && (
-                            <span className="bg-amber-100 text-amber-600 px-2 py-0.5 rounded-full text-[10px]">{pendingRequests.length}</span>
+                            <span className="bg-[var(--accent)]/20 text-[var(--accent)] px-2 py-0.5 rounded-full text-[10px]">{pendingRequests.length}</span>
                           )}
                         </h3>
                         {pendingRequests.length === 0 && (
-                           <p className="text-sm text-gray-500 py-2 italic font-medium">No incoming requests.</p>
+                           <p className="text-sm text-[var(--muted)] py-2 italic font-medium">No incoming requests.</p>
                         )}
                         <div className="space-y-3">
                           {pendingRequests.map(req => (
-                            <div key={req.friendship_id} className="flex items-center gap-3 p-3 rounded-xl bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20">
-                              <div className="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-white text-xs font-bold shrink-0">
-                                {req.profile_photo ? <img src={req.profile_photo} className="w-full h-full object-cover rounded-full" /> : req.name?.[0]}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-xs font-bold dark:text-white truncate">{req.name}</p>
-                                <p className="text-[10px] text-gray-500">wants to be friends</p>
+                            <div key={req.friendship_id} className="flex items-center justify-between p-3 rounded-xl bg-[var(--surface-2)] border border-[var(--border)] group">
+                              <div className="flex items-center gap-3 min-w-0 flex-1">
+                                <div className="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-[var(--background)] text-xs font-bold shrink-0">
+                                  {req.profile_photo ? <img src={req.profile_photo} className="w-full h-full object-cover rounded-full" /> : req.name?.[0]}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs font-bold text-[var(--text)] truncate">{req.name}</p>
+                                  <p className="text-[10px] text-[var(--muted)]">wants to be friends</p>
+                                </div>
                               </div>
                               <div className="flex gap-1">
                                 <button
                                   onClick={() => acceptFriendRequest(req.friendship_id)}
-                                  className="p-1.5 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition-colors"
+                                  className="p-1.5 rounded-lg bg-[var(--emerald)]/20 text-[var(--emerald)] hover:bg-[var(--emerald)] hover:text-[var(--background)] transition-colors"
                                   title="Accept"
                                 >
                                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1364,7 +1366,7 @@ export default function Dashboard() {
                                 </button>
                                 <button
                                   onClick={() => rejectFriendRequest(req.friendship_id)}
-                                  className="p-1.5 rounded-lg bg-gray-200 dark:bg-surface-700 text-gray-600 dark:text-gray-400 hover:bg-red-500 hover:text-white transition-colors"
+                                  className="p-1.5 rounded-lg bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-[var(--background)] transition-colors"
                                   title="Reject"
                                 >
                                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1383,17 +1385,17 @@ export default function Dashboard() {
                           <h3 className="text-sm font-bold uppercase tracking-wider text-gray-400 mb-4">Sent Requests</h3>
                           <div className="space-y-3">
                             {sentRequests.map(req => (
-                              <div key={req.friendship_id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-surface-700/30 border border-gray-100 dark:border-surface-700/50 opacity-75">
-                                <div className="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-white text-xs font-bold shrink-0">
+                              <div key={req.friendship_id} className="flex items-center gap-3 p-3 rounded-xl bg-[var(--surface-2)] border-[var(--border)]/50 border opacity-75">
+                                <div className="w-8 h-8 rounded-full gradient-bg flex items-center justify-center text-[var(--background)] text-xs font-bold shrink-0">
                                   {req.profile_photo ? <img src={req.profile_photo} className="w-full h-full object-cover rounded-full" /> : req.name?.[0]}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-xs font-bold dark:text-white truncate">{req.name}</p>
-                                  <p className="text-[10px] text-gray-500 italic">Waiting for response...</p>
+                                  <p className="text-xs font-bold text-[var(--text)] truncate">{req.name}</p>
+                                  <p className="text-[10px] text-[var(--muted)] italic">Waiting for response...</p>
                                 </div>
                                 <button
                                    onClick={() => unfriend(req.friendship_id)}
-                                   className="p-1.5 text-gray-400 hover:text-red-500"
+                                   className="p-1.5 text-[var(--muted)] hover:text-red-500"
                                    title="Cancel Request"
                                 >
                                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
