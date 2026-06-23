@@ -177,7 +177,7 @@ function ProgressRail({ view }) {
   const cur = VIEWS.indexOf(view === "loading" ? "notes" : view);
 
   return (
-    <div className="bg-white/95 dark:bg-slate-905/95 border-b border-slate-200/50 dark:border-slate-800/80 py-3 flex items-center justify-center gap-1 sm:gap-4 overflow-x-auto">
+    <div className="bg-white/95 dark:bg-slate-900/95 border-b border-slate-200/50 dark:border-slate-800/80 py-3 flex items-center justify-center gap-1 sm:gap-4 overflow-x-auto">
       {RAIL.map((s, i) => {
         const done   = i < cur;
         const active = i === cur;
@@ -249,7 +249,7 @@ function SRing({ score, label }) {
         <div className="absolute text-sm font-black text-slate-800 dark:text-slate-100">{score}</div>
       </div>
       <div>
-        <h4 className="text-xs font-bold text-slate-850 dark:text-slate-205">
+        <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200">
           {score >= 75 ? "🌟" : score >= 45 ? "💪" : "🌱"} {label}
         </h4>
         <p className="text-[10px] text-slate-400 mt-0.5">{msgs[label] || "Keep going."}</p>
@@ -355,7 +355,7 @@ function InputScreen({ onNext }) {
           <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Structuring Study Notes</h2>
           <p className="text-xs text-slate-400 mt-1">{LOAD_MSGS[loadStep]}</p>
         </div>
-        <div className="w-full max-w-xs bg-slate-205 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
+        <div className="w-full max-w-xs bg-slate-200 dark:bg-slate-800 h-1 rounded-full overflow-hidden">
           <div className="bg-indigo-600 h-full rounded-full transition-all duration-1000" style={{ width: `${((loadStep + 1) / LOAD_MSGS.length) * 100}%` }} />
         </div>
         <div className="flex flex-col gap-2 mt-4 text-left w-full max-w-sm px-4">
@@ -364,7 +364,7 @@ function InputScreen({ onNext }) {
               <div className={`w-2.5 h-2.5 rounded-full ${
                 i < loadStep ? 'bg-emerald-500' : i === loadStep ? 'bg-indigo-600 animate-ping' : 'bg-slate-300 dark:bg-slate-700'
               }`} />
-              <span className={`text-xs ${i === loadStep ? 'text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-405'}`}>{s}</span>
+              <span className={`text-xs ${i === loadStep ? 'text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400'}`}>{s}</span>
             </div>
           ))}
         </div>
@@ -381,7 +381,7 @@ function InputScreen({ onNext }) {
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
           Drop your <span className="text-indigo-600 dark:text-indigo-400 italic font-serif">lecture.</span> We'll study it.
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-404 mt-2 max-w-lg mx-auto">
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-lg mx-auto">
           Paste any transcript, notes, or copy-paste text. Mellow turns it into beautifully structured study summaries.
         </p>
       </div>
@@ -393,7 +393,7 @@ function InputScreen({ onNext }) {
         </div>
 
         <textarea
-          className="w-full h-48 p-4 rounded-2xl border border-slate-205 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm leading-relaxed"
+          className="w-full h-48 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm leading-relaxed"
           placeholder="Paste lecture content, book paragraphs, or video transcript..."
           value={text}
           onChange={(e) => { setText(e.target.value); setErr(""); }}
@@ -440,7 +440,7 @@ function InputScreen({ onNext }) {
         </div>
       </div>
 
-      {err && <div className="mt-4 px-4 py-3 rounded-xl border border-red-200/50 bg-red-50/50 text-red-650 text-xs font-semibold">{err}</div>}
+      {err && <div className="mt-4 px-4 py-3 rounded-xl border border-red-200/50 bg-red-50/50 text-red-600 text-xs font-semibold">{err}</div>}
 
       <div className="flex justify-center gap-4 mt-6 flex-wrap">
         {!text && (
@@ -472,12 +472,12 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
       {/* Header */}
       <div className="flex justify-between items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
         <div>
-          <span className="text-[10px] uppercase font-bold tracking-widest text-indigo-505">YOUR STUDY NOTES</span>
+          <span className="text-[10px] uppercase font-bold tracking-widest text-indigo-500">YOUR STUDY NOTES</span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400 italic font-serif leading-none mt-1">
             {notes.title}
           </h1>
         </div>
-        <button onClick={handleCopy} className="px-4 py-2 border border-slate-200 dark:border-slate-850 hover:bg-slate-50 dark:hover:bg-slate-850 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-350 transition-colors cursor-pointer">
+        <button onClick={handleCopy} className="px-4 py-2 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 transition-colors cursor-pointer">
           📋 Copy Notes
         </button>
       </div>
@@ -519,7 +519,7 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
             {notes.explanations.map((e, i) => (
               <div className="border-l-2 border-indigo-500 pl-3 py-0.5" key={i}>
                 <h4 className="font-bold text-xs text-indigo-600 dark:text-indigo-400">{e.term}</h4>
-                <p className="text-xs text-slate-505 dark:text-slate-404 mt-1 leading-relaxed">{e.definition}</p>
+                <p className="text-xs text-slate-505 dark:text-slate-400 mt-1 leading-relaxed">{e.definition}</p>
               </div>
             ))}
           </div>
@@ -533,7 +533,7 @@ function NotesScreen({ notes, onNext, onNextDebate }) {
           </div>
           <div className="flex flex-wrap gap-2">
             {notes.highlights.map((h, i) => (
-              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-50 dark:bg-amber-955/20 text-amber-700 dark:text-amber-400 text-xs rounded-xl font-medium" key={i}>
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 text-xs rounded-xl font-medium" key={i}>
                 ★ {h}
               </span>
             ))}
@@ -615,7 +615,7 @@ function ExplainScreen({ notes, onNext }) {
           💬 Explain Back
         </span>
         <h1 className="text-3xl font-extrabold tracking-tight">Put it in your <span className="text-indigo-600 dark:text-indigo-400 italic font-serif">own words.</span></h1>
-        <p className="text-xs text-slate-500 dark:text-slate-404 mt-2">Pick a concept tab, write your explanation, and get kind suggestions on your logic gaps.</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Pick a concept tab, write your explanation, and get kind suggestions on your logic gaps.</p>
       </div>
 
       {/* Tabs */}
@@ -647,7 +647,7 @@ function ExplainScreen({ notes, onNext }) {
         <textarea
           ref={ta}
           disabled={checking}
-          className="w-full h-32 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-55/50 dark:bg-slate-950/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm leading-relaxed"
+          className="w-full h-32 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm leading-relaxed"
           placeholder="Write your explanation here..."
           value={text}
           onChange={(e) => {
@@ -688,7 +688,7 @@ function ExplainScreen({ notes, onNext }) {
             <svg className="w-5 h-5 text-indigo-600 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.2" />
             </svg>
-            <span className="text-xs font-semibold text-slate-600 dark:text-slate-350">Evaluating your thinking...</span>
+            <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">Evaluating your thinking...</span>
           </div>
         )}
       </div>
@@ -704,9 +704,9 @@ function ExplainScreen({ notes, onNext }) {
               <div className="flex-1 bg-indigo-50/30 dark:bg-indigo-950/10 border border-indigo-100/50 dark:border-indigo-900/50 rounded-2xl p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-indigo-600">✦</span>
-                  <span className="text-xs font-bold text-indigo-600 dark:text-indigo-404 uppercase tracking-wider">Mellow's KIND FEEDBACK</span>
+                  <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Mellow's KIND FEEDBACK</span>
                 </div>
-                <p className="text-sm text-slate-600 dark:text-slate-350 leading-relaxed font-light">{fb}</p>
+                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-light">{fb}</p>
               </div>
             )}
           </div>
@@ -718,14 +718,14 @@ function ExplainScreen({ notes, onNext }) {
                 <div className="flex items-center gap-3 bg-emerald-50/30 dark:bg-emerald-950/10 border border-emerald-100/50 dark:border-emerald-900/50 p-4 rounded-xl">
                   <span className="text-xl">🎯</span>
                   <div>
-                    <h5 className="font-bold text-xs text-emerald-800 dark:text-emerald-450">Excellent Logic!</h5>
+                    <h5 className="font-bold text-xs text-emerald-800 dark:text-emerald-400">Excellent Logic!</h5>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-light">No structural gaps or definitions errors detected in your explanation.</p>
                   </div>
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
                   {an.mistakes.map((m, i) => (
-                    <div className="flex gap-3 bg-amber-50/20 dark:bg-amber-955/5 border border-amber-100/30 dark:border-amber-900/20 p-4 rounded-xl" key={i}>
+                    <div className="flex gap-3 bg-amber-50/20 dark:bg-amber-950/5 border border-amber-100/30 dark:border-amber-900/20 p-4 rounded-xl" key={i}>
                       <span className="text-lg flex-shrink-0 mt-0.5">{MICONS[m.type] || "⚠️"}</span>
                       <div>
                         <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase block tracking-wider">{m.type}</span>
@@ -741,11 +741,11 @@ function ExplainScreen({ notes, onNext }) {
           )}
 
           <div className="flex gap-3 border-t border-slate-100 dark:border-slate-800 pt-4">
-            <button onClick={retry} className="px-4 py-2 border border-slate-202 dark:border-slate-800 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-404 hover:bg-slate-55 cursor-pointer">
+            <button onClick={retry} className="px-4 py-2 border border-slate-202 dark:border-slate-800 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-50 cursor-pointer">
               Try Again ↺
             </button>
             {sel < notes.keyConcepts.length - 1 ? (
-              <button onClick={() => setSel((i) => i + 1)} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-305 cursor-pointer ml-auto">
+              <button onClick={() => setSel((i) => i + 1)} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 cursor-pointer ml-auto">
                 Next Concept →
               </button>
             ) : (
@@ -827,7 +827,7 @@ function DebateScreen({ notes, onScore }) {
           </svg>
         </div>
         <div>
-          <h2 className="text-xl font-bold text-slate-850 dark:text-slate-100">Analyzing Your Thinking</h2>
+          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Analyzing Your Thinking</h2>
           <p className="text-xs text-slate-400 mt-1">Grading {umc} responses on Clarity, Logic, and Comprehension...</p>
         </div>
       </div>
@@ -863,14 +863,14 @@ function DebateScreen({ notes, onScore }) {
         {msgs.map((m, i) => (
           <div key={i} className={`flex items-start gap-3 max-w-[85%] ${m.role === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}>
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
-              m.role === 'user' ? 'bg-slate-100 dark:bg-slate-805 text-slate-605' : 'bg-indigo-500 text-white'
+              m.role === 'user' ? 'bg-slate-100 dark:bg-slate-800 text-slate-600' : 'bg-indigo-500 text-white'
             }`}>
               {m.role === 'user' ? "🙋" : "✦"}
             </div>
             <div className={`p-3 rounded-2xl text-xs leading-relaxed ${
               m.role === 'user' 
                 ? 'bg-indigo-600 text-white rounded-tr-none' 
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-205 rounded-tl-none border border-slate-200/20 dark:border-none'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-tl-none border border-slate-200/20 dark:border-none'
             }`}>
               {m.content}
               <div className={`text-[8px] text-right mt-1.5 block opacity-50 ${m.role === 'user' ? 'text-indigo-100' : 'text-slate-400'}`}>{m.time}</div>
@@ -881,7 +881,7 @@ function DebateScreen({ notes, onScore }) {
         {typing && (
           <div className="flex items-start gap-3 max-w-[80%] self-start animate-pulse">
             <div className="w-7 h-7 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs font-bold">✦</div>
-            <div className="bg-slate-100 dark:bg-slate-805 p-3 rounded-2xl rounded-tl-none text-slate-400 flex gap-1">
+            <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-2xl rounded-tl-none text-slate-400 flex gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce" />
               <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce delay-100" />
               <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce delay-200" />
@@ -889,13 +889,13 @@ function DebateScreen({ notes, onScore }) {
           </div>
         )}
 
-        {err && <div className="self-center bg-red-50 text-red-650 text-[10px] px-3 py-1.5 rounded-lg font-semibold">{err}</div>}
+        {err && <div className="self-center bg-red-50 text-red-600 text-[10px] px-3 py-1.5 rounded-lg font-semibold">{err}</div>}
         <div ref={bot} />
       </div>
 
       {/* Suggested replies */}
       {showQR && !typing && msgs[msgs.length - 1]?.role === 'assistant' && (
-        <div className="px-5 py-2 flex gap-1.5 overflow-x-auto border-t border-slate-100 dark:border-slate-850 bg-slate-50/20">
+        <div className="px-5 py-2 flex gap-1.5 overflow-x-auto border-t border-slate-100 dark:border-slate-800 bg-slate-50/20">
           {QREPS.slice(0, 3).map((q, i) => (
             <button
               key={i}
@@ -921,7 +921,7 @@ function DebateScreen({ notes, onScore }) {
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
             }}
-            className="flex-1 p-2.5 text-xs bg-slate-55 dark:bg-slate-950 rounded-xl border border-slate-202 dark:border-slate-800/80 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none leading-relaxed"
+            className="flex-1 p-2.5 text-xs bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-202 dark:border-slate-800/80 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none leading-relaxed"
           />
           <button
             onClick={() => send()}
@@ -969,14 +969,14 @@ function ScoreScreen({ scores, notes, onDebateAgain }) {
           const s = scores[d.key];
           const fk = d.key + "Feedback";
           const pct = (s / 10) * 100;
-          const col = s >= 8 ? "text-emerald-500" : s >= 5 ? "text-indigo-600 dark:text-indigo-400" : "text-orange-550";
+          const col = s >= 8 ? "text-emerald-500" : s >= 5 ? "text-indigo-600 dark:text-indigo-400" : "text-orange-500";
           return (
             <div className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800 p-4 rounded-2xl shadow-sm" key={d.key}>
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-2">
                   <span className="text-sm">{d.icon}</span>
                   <div>
-                    <h4 className="font-bold text-xs text-slate-750 dark:text-slate-350">{d.label}</h4>
+                    <h4 className="font-bold text-xs text-slate-700 dark:text-slate-300">{d.label}</h4>
                     <p className="text-[10px] text-slate-400 font-light">{d.desc}</p>
                   </div>
                 </div>
@@ -986,7 +986,7 @@ function ScoreScreen({ scores, notes, onDebateAgain }) {
                 </div>
               </div>
               <ABar pct={pct} from={d.a} to={d.b} delay={i * 110} />
-              {scores[fk] && <p className="text-xs text-slate-500 dark:text-slate-404 mt-2.5 font-light leading-relaxed">{scores[fk]}</p>}
+              {scores[fk] && <p className="text-xs text-slate-500 dark:text-slate-400 mt-2.5 font-light leading-relaxed">{scores[fk]}</p>}
             </div>
           );
         })}
@@ -995,10 +995,10 @@ function ScoreScreen({ scores, notes, onDebateAgain }) {
       {/* Overall feedback */}
       <div className="bg-indigo-50/30 dark:bg-indigo-950/10 border border-indigo-100/50 dark:border-indigo-900/50 rounded-2xl p-5">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-indigo-650">✦</span>
+          <span className="text-indigo-600">✦</span>
           <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Mellow's Coach Summary</span>
         </div>
-        <p className="text-sm text-slate-650 dark:text-slate-300 leading-relaxed font-light">{scores.overallFeedback}</p>
+        <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-light">{scores.overallFeedback}</p>
       </div>
 
       {/* Next steps */}
@@ -1008,8 +1008,8 @@ function ScoreScreen({ scores, notes, onDebateAgain }) {
           <div className="flex flex-col gap-3">
             {scores.nextSteps.map((s, i) => (
               <div className="flex gap-3" key={i}>
-                <span className="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-850 text-[10px] font-bold text-slate-500 flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
-                <span className="text-xs text-slate-650 dark:text-slate-300 leading-relaxed">{s}</span>
+                <span className="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-slate-500 flex items-center justify-center flex-shrink-0 mt-0.5">{i + 1}</span>
+                <span className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{s}</span>
               </div>
             ))}
           </div>
@@ -1018,7 +1018,7 @@ function ScoreScreen({ scores, notes, onDebateAgain }) {
 
       {/* Actions */}
       <div className="flex gap-3 border-t border-slate-100 dark:border-slate-800 pt-4">
-        <button onClick={onDebateAgain} className="flex-1 px-4 py-3 bg-indigo-600 hover:bg-indigo-705 text-white font-bold text-xs rounded-xl shadow-md transition-colors cursor-pointer text-center">
+        <button onClick={onDebateAgain} className="flex-1 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition-colors cursor-pointer text-center">
           ⚡ Debate Again
         </button>
         <button onClick={() => window.location.reload()} className="flex-1 px-4 py-3 border border-slate-202 dark:border-slate-800 hover:bg-slate-50 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 transition-colors cursor-pointer text-center">
@@ -1070,7 +1070,7 @@ export default function LearningHub() {
               ← Back
             </button>
           )}
-          <button className="px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-full text-xs font-semibold text-slate-500 dark:text-slate-404 hover:border-orange-500 hover:text-orange-600 dark:hover:border-orange-400 dark:hover:text-orange-400 transition-all cursor-pointer" onClick={() => go("input")}>
+          <button className="px-4 py-2 border border-slate-200 dark:border-slate-800 rounded-full text-xs font-semibold text-slate-500 dark:text-slate-400 hover:border-orange-500 hover:text-orange-600 dark:hover:border-orange-400 dark:hover:text-orange-400 transition-all cursor-pointer" onClick={() => go("input")}>
             New Session
           </button>
         </div>

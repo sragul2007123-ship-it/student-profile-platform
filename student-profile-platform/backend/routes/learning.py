@@ -75,22 +75,27 @@ async def upload_file(file: UploadFile = File(...)):
         filename = file.filename.lower()
         extracted_text = ""
 
+        safe_limit = 60000
+
         if filename.endswith(".pdf"):
             import PyPDF2
             pdf_reader = PyPDF2.PdfReader(io.BytesIO(content))
             for page in pdf_reader.pages:
                 extracted_text += page.extract_text() + "\n"
+                if len(extracted_text) > safe_limit:
+                    break
         elif filename.endswith(".docx"):
             import docx
             doc = docx.Document(io.BytesIO(content))
             for para in doc.paragraphs:
                 extracted_text += para.text + "\n"
+                if len(extracted_text) > safe_limit:
+                    break
         elif filename.endswith(".txt"):
             extracted_text = content.decode("utf-8", errors="ignore")
         else:
             extracted_text = content.decode("utf-8", errors="ignore")
 
-        safe_limit = 60000
         if len(extracted_text) > safe_limit:
             extracted_text = extracted_text[:safe_limit] + "\n\n[Note: Document was truncated because it exceeded the length limit.]"
 
