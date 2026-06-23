@@ -1,0 +1,31 @@
+{
+  "name": "Neo Aurora Luxury",
+  "colors": {
+    "background": "#030303",
+    "surface": "#08111F",
+    "card": "rgba(255,255,255,0.04)",
+    "emerald": "#00FFC6",
+    "cyan": "#00D4FF",
+    "gold": "#FFD166",
+    "text": "#F8FAFC",
+    "muted": "#94A3B8",
+    "borders": "rgba(255,255,255,0.08)"
+  },
+  "typography": {
+    "heading": "Space Grotesk",
+    "body": "Inter",
+    "heroSize": "96px",
+    "scales": ["12px","14px","16px","20px","24px","32px","40px","56px","72px"]
+  },
+  "spacing": {
+    "xs": "4px",
+    "sm": "8px",
+    "md": "16px",
+    "lg": "24px",
+    "xl": "48px"
+  },
+  "elevation": {
+    "glassBlur": "8px",
+    "shadowSoft": "0 6px 30px rgba(2,6,23,0.6)"
+  }
+}
