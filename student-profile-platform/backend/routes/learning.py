@@ -26,8 +26,8 @@ async def chat_proxy(request: Request):
             role = "assistant" if c.get("role") == "model" else "user"
             content = "\n".join([p.get("text", "") for p in c.get("parts", [])])
             # Hard cap input to Groq to prevent 413 Payload Too Large
-            if len(content) > 14000:
-                content = content[:14000] + "\n\n[System Note: Content truncated due to length limits.]"
+            if len(content) > 6000:
+                content = content[:6000] + "\n\n[System Note: Content truncated due to length limits.]"
             messages.append({"role": role, "content": content})
 
         api_key = os.getenv("GROQ_API_KEY")

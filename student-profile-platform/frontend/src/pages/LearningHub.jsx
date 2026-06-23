@@ -84,7 +84,7 @@ async function ai(sys, user) {
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: sys }] },
       contents: [{ role: "user", parts: [{ text: user }] }],
-      generationConfig: { maxOutputTokens: 2000, temperature: 0.4 },
+      generationConfig: { maxOutputTokens: 1000, temperature: 0.4 },
     }),
   });
   const d = await r.json();
