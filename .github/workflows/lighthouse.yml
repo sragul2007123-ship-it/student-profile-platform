@@ -34,12 +34,50 @@ jobs:
       - name: Run Lighthouse
         run: npx lighthouse http://localhost:3000 --output=json --output-path=lhreport.json --only-categories=performance,accessibility,best-practices,seo --chrome-flags="--no-sandbox --headless"
 
-      - name: Upload report
+      - name: Upload lighthouse report
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-report
           path: lhreport.json
 
-      - name: Print summary
+      - name: Print Lighthouse summary
         run: |
           jq '.categories | map_values(.score) | to_entries[] | "Category: \(.key) - Score: \(.value * 100)"' lhreport.json || true
+
+      - name: Run pa11y accessibility scan
+        run: npx pa11y http://localhost:3000 --reporter json > pa11y.json || true
+
+      - name: Upload pa11y report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pa11y-report
+          path: pa11y.json
+
+      - name: Check thresholds (fail if accessibility < 90)
+        run: |
+          ACCESS_SCORE=$(jq '.categories.accessibility.score' lhreport.json)
+          ACCESS_PCT=$(awk "BEGIN {printf \"%.0f\", $ACCESS_SCORE*100}")
+          echo "Accessibility score: $ACCESS_PCT"
+          if [ "$ACCESS_PCT" -lt 90 ]; then
+            echo "Accessibility below threshold (90)"
+            exit 1
+          fi
+
+      - name: Comment on PR with summary (if PR)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs')
+            const jq = JSON.parse(fs.readFileSync('lhreport.json','utf8'))
+            const categories = jq.categories
+            const lines = []
+            for (const k of Object.keys(categories)){
+              lines.push(`- **${k}**: ${(categories[k].score*100).toFixed(0)}`)
+            }
+            let pa11y = []
+            try{ pa11y = JSON.parse(fs.readFileSync('pa11y.json','utf8')) } catch(e){}
+            let pa11ySummary = pa11y.length ? `Found ${pa11y.length} accessibility issues (see artifact).` : 'No pa11y issues found.'
+            const body = `### Lighthouse results\n${lines.join('\n')}\n\n**pa11y:** ${pa11ySummary}`
+            github.rest.issues.createComment({owner: context.repo.owner, repo: context.repo.repo, issue_number: context.payload.pull_request.number, body})
