@@ -83,6 +83,8 @@ export const api = {
   // Posts
   getAllPosts: () => request('/posts/'),
   createPost: (data) => request('/posts/', { method: 'POST', body: data }),
+  updatePost: (postId, data) => request(`/posts/${postId}`, { method: 'PUT', body: data }),
+  deletePost: (postId, userId) => request(`/posts/${postId}?user_id=${userId}`, { method: 'DELETE' }),
   likePost: (postId, userId) => request(`/posts/${postId}/like`, { method: 'POST', body: { user_id: userId } }),
   getComments: (postId) => request(`/posts/${postId}/comments`),
   addComment: (postId, data) => request(`/posts/${postId}/comments`, { method: 'POST', body: data }),

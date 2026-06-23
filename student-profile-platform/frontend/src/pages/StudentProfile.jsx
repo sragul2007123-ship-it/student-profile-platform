@@ -114,197 +114,206 @@ export default function StudentProfile() {
   )
 
   return (
-    <div className="min-h-screen pt-20 pb-12 bg-white dark:bg-black transition-colors duration-300">
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
+    <div className="min-h-screen pt-20 pb-12 bg-slate-50 dark:bg-[#0a0a0a] transition-colors duration-300">
+      <div className="max-w-[1000px] mx-auto px-4 sm:px-6">
         
-        {/* Premium Profile Header Section */}
-        <div className="glass-card mb-12 p-10 border-none shadow-2xl relative overflow-hidden group">
-          {/* Background decoration */}
-          <div className="absolute top-0 right-0 w-80 h-80 bg-primary-500/5 rounded-full -mr-40 -mt-40 filter blur-3xl group-hover:bg-primary-500/10 transition-colors"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent-500/5 rounded-full -ml-32 -mb-32 filter blur-3xl group-hover:bg-accent-500/10 transition-colors"></div>
-
-          <header className="flex flex-col md:flex-row gap-8 md:gap-14 items-center relative z-10">
-            {/* Profile Picture */}
-            <div className="shrink-0">
-              <div className="w-[180px] h-[180px] rounded-[50px] p-1 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] shadow-2xl transition-all duration-500 hover:rotate-3 hover:scale-105">
-                <div className="w-full h-full rounded-[46px] border-4 border-white dark:border-black overflow-hidden bg-gray-100 p-1">
+        {/* Cover Image & Profile Header */}
+        <div className="bg-white dark:bg-[#111111] rounded-3xl border border-slate-200/50 dark:border-slate-800/80 shadow-sm overflow-hidden mb-8">
+          {/* Cover Image */}
+          <div className="h-48 w-full bg-gradient-to-r from-primary-600 via-indigo-500 to-sky-400 relative">
+            <div className="absolute inset-0 bg-black/10"></div>
+          </div>
+          
+          <div className="px-8 pb-8 relative">
+            {/* Avatar overlapping cover */}
+            <div className="flex justify-between items-end -mt-16 mb-4 relative z-10">
+              <div className="w-32 h-32 rounded-2xl p-1.5 bg-white dark:bg-[#111111] shadow-xl">
+                <div className="w-full h-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200/50 dark:border-slate-700/50 flex items-center justify-center text-4xl font-black text-slate-300">
                   {profileData?.profile_photo ? (
-                    <img src={profileData.profile_photo} className="w-full h-full object-cover rounded-[42px]" alt="profile" />
+                    <img src={profileData.profile_photo} className="w-full h-full object-cover" alt="profile" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-6xl font-display font-bold text-gray-200">
-                      {profileData?.name?.[0]}
-                    </div>
+                    profileData?.name?.[0]
                   )}
                 </div>
               </div>
-            </div>
-
-          {/* Profile Info */}
-          <div className="flex-1">
-            <div className="flex flex-col sm:flex-row items-center gap-4 mb-5">
-              <h2 className="text-xl font-light dark:text-gray-100">{profileData?.username}</h2>
-              <div className="flex gap-2">
+              
+              <div className="flex gap-3 mb-2">
                 {user && user.id === profileData?.id ? (
-                  <Link to="/dashboard" className="px-4 py-1.5 bg-gray-100 dark:bg-surface-800 text-sm font-bold border rounded-lg hover:bg-gray-200">
+                  <Link to="/dashboard" className="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm">
                     Edit Profile
                   </Link>
                 ) : (
                   <>
                     <button 
                       onClick={handleFriendAction}
-                      className={`px-4 py-1.5 text-sm font-bold rounded-lg transition-colors ${
+                      className={`px-5 py-2.5 text-sm font-bold rounded-xl transition-colors shadow-sm ${
                         friendStatus === 'accepted' 
-                        ? 'bg-gray-100 dark:bg-surface-800 text-black dark:text-white' 
-                        : 'bg-primary-600 text-white'
+                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700' 
+                        : 'bg-primary-600 hover:bg-primary-700 text-white'
                       }`}
                     >
                       {friendStatus === 'accepted' ? 'Following' : friendLoading ? '...' : friendStatus === 'sent' ? 'Requested' : 'Follow'}
                     </button>
                     <button 
                       onClick={() => navigate(`/messages?user=${profileData.id}`)}
-                      className="px-4 py-1.5 bg-gray-100 dark:bg-surface-800 text-sm font-bold border rounded-lg hover:bg-gray-200 dark:text-white"
+                      className="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm"
                     >
                       Message
                     </button>
                   </>
                 )}
-                <button 
-                  onClick={handleCopyLink}
-                  className="p-2 bg-gray-100 dark:bg-surface-800 rounded-lg relative"
-                >
+                <button onClick={handleCopyLink} className="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors relative shadow-sm">
                   <AnimatePresence>
                     {showCopied && (
-                      <motion.span initial={{opacity:0, y:-10}} animate={{opacity:1, y:-25}} exit={{opacity:0}} className="absolute bg-gray-900 text-white text-[10px] px-2 py-1 rounded">
+                      <motion.span initial={{opacity:0, y:-10}} animate={{opacity:1, y:-25}} exit={{opacity:0}} className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] px-2.5 py-1 rounded-md font-medium whitespace-nowrap">
                         Link Copied!
                       </motion.span>
                     )}
                   </AnimatePresence>
-                  <svg className="w-4 h-4 dark:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
                 </button>
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="hidden sm:flex items-center gap-10 mb-5">
-              <div className="flex items-center gap-1 text-[16px]"><span className="font-bold dark:text-white">{projects.length}</span> <span className="dark:text-gray-400">posts</span></div>
-              <div className="flex items-center gap-1 text-[16px]"><span className="font-bold dark:text-white">{profileData?.views || 0}</span> <span className="dark:text-gray-400">views</span></div>
-              <div className="flex items-center gap-1 text-[16px]"><span className="font-bold dark:text-white">{skills.length}</span> <span className="dark:text-gray-400">skills</span></div>
-            </div>
-
-            {/* Bio */}
-            <div className="text-gray-600 dark:text-gray-300">
-              <h1 className="text-3xl font-display font-black dark:text-white mb-1 uppercase tracking-tight">{profileData?.name}</h1>
-              <p className="text-lg font-bold text-primary-500 mb-4">{profileData?.role}</p>
-              <p className="leading-relaxed text-base max-w-xl line-clamp-3 md:line-clamp-none mb-6">{profileData?.about}</p>
+            {/* User Details */}
+            <div>
+              <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                {profileData?.name}
+              </h1>
+              <p className="text-slate-500 dark:text-slate-400 font-medium text-sm mb-4">
+                @{profileData?.username} • <span className="text-primary-600 dark:text-primary-400">{profileData?.role}</span>
+              </p>
               
-              <div className="flex flex-wrap gap-4 mt-2">
+              <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed max-w-2xl mb-6 font-medium">
+                {profileData?.about}
+              </p>
+
+              {/* Social Links */}
+              <div className="flex gap-3">
                 {profileData?.linkedin && (
-                    <a href={profileData.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl text-sm font-bold hover:bg-blue-100 transition-colors">
-                        LinkedIn
-                    </a>
+                  <a href={profileData.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-3 py-1.5 bg-sky-50 dark:bg-sky-900/20 text-sky-600 dark:text-sky-400 rounded-lg text-xs font-bold hover:bg-sky-100 dark:hover:bg-sky-900/40 transition-colors">
+                    LinkedIn
+                  </a>
                 )}
                 {profileData?.github && (
-                    <a href={profileData.github} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-bold hover:bg-gray-100 transition-colors">
-                        GitHub
-                    </a>
+                  <a href={profileData.github} target="_blank" rel="noreferrer" className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    GitHub
+                  </a>
                 )}
               </div>
             </div>
           </div>
-        </header>
-      </div>
+        </div>
 
-        {/* Highlights Section */}
-        <section className="flex gap-4 sm:gap-6 mb-12 overflow-x-auto pb-4 scrollbar-hide">
-          {skills.slice(0, 8).map((skill, index) => (
-            <div key={index} className="flex flex-col items-center gap-3 min-w-[90px] group cursor-default">
-              <div className="w-[85px] h-[85px] rounded-full p-1 bg-gradient-to-br from-primary-500/20 to-accent-500/20 group-hover:from-primary-500/40 group-hover:to-accent-500/40 transition-all shadow-lg">
-                <div className="w-full h-full rounded-full bg-white dark:bg-surface-900 border-2 border-white dark:border-black flex items-center justify-center text-[10px] font-black text-gray-800 dark:text-gray-200 overflow-hidden text-center p-2 uppercase tracking-tighter">
+        {/* Stats & Skills Row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="col-span-1 flex gap-4">
+            <div className="flex-1 bg-white dark:bg-[#111111] p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-sm flex flex-col justify-center items-center">
+              <span className="text-2xl font-black text-slate-900 dark:text-white">{projects.length}</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-1">Posts</span>
+            </div>
+            <div className="flex-1 bg-white dark:bg-[#111111] p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-sm flex flex-col justify-center items-center">
+              <span className="text-2xl font-black text-slate-900 dark:text-white">{profileData?.views || 0}</span>
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider mt-1">Views</span>
+            </div>
+          </div>
+
+          <div className="col-span-2 bg-white dark:bg-[#111111] p-5 rounded-2xl border border-slate-200/50 dark:border-slate-800/80 shadow-sm flex items-center overflow-x-auto scrollbar-hide gap-2">
+            {skills.length === 0 ? (
+              <span className="text-sm text-slate-400 italic">No skills listed yet.</span>
+            ) : (
+              skills.map((skill, index) => (
+                <div key={index} className="px-3 py-1.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap">
                   {skill.skill_name}
                 </div>
-              </div>
-              <span className="text-[12px] font-bold dark:text-gray-400 group-hover:text-primary-500 transition-colors">{skill.skill_name.split(' ')[0]}</span>
-            </div>
-          ))}
-        </section>
+              ))
+            )}
+          </div>
+        </div>
 
-        {/* Tabs */}
-        <div className="border-t border-gray-200 dark:border-surface-800 flex justify-center gap-6 sm:gap-14 -mt-px flex-wrap">
+        {/* Pill Navigation Tabs */}
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
           <button 
             onClick={() => setActiveTab('posts')}
-            className={`flex items-center gap-1.5 h-[52px] text-[12px] font-bold tracking-widest uppercase border-t transition-all ${activeTab === 'posts' ? 'border-black dark:border-white text-black dark:text-white' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+            className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === 'posts' ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md' : 'bg-white dark:bg-[#111111] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200/50 dark:border-slate-800/80'}`}
           >
-            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            POSTS
+            Posts & Projects
           </button>
           <button 
             onClick={() => setActiveTab('reels')}
-            className={`flex items-center gap-1.5 h-[52px] text-[12px] font-bold tracking-widest uppercase border-t transition-all ${activeTab === 'reels' ? 'border-black dark:border-white text-black dark:text-white' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+            className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === 'reels' ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md' : 'bg-white dark:bg-[#111111] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200/50 dark:border-slate-800/80'}`}
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-            CERTIFICATES
+            Certificates
           </button>
           <button 
             onClick={() => setActiveTab('learning')}
-            className={`flex items-center gap-1.5 h-[52px] text-[12px] font-bold tracking-widest uppercase border-t transition-all ${activeTab === 'learning' ? 'border-black dark:border-white text-black dark:text-white' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
+            className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${activeTab === 'learning' ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md' : 'bg-white dark:bg-[#111111] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border border-slate-200/50 dark:border-slate-800/80'}`}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-            LEARNING HUB
+            Learning Hub
           </button>
         </div>
 
-        {/* Content Grid */}
-        <div className="mt-8">
+        {/* Content Section */}
+        <div>
           {activeTab === 'learning' ? (
-            <div className="py-4">
+            <div className="bg-white dark:bg-[#111111] rounded-3xl border border-slate-200/50 dark:border-slate-800/80 p-2 sm:p-6 shadow-sm">
               <LearningHub embedded={true} />
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-1 sm:gap-7 mt-px">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {(activeTab === 'posts' ? projects : certificates).map((item, index) => (
                 <motion.div 
                   key={index} 
-                  initial={{opacity: 0, scale: 0.9}}
-                  animate={{opacity: 1, scale: 1}}
+                  initial={{opacity: 0, y: 10}}
+                  animate={{opacity: 1, y: 0}}
                   transition={{delay: index * 0.05}}
-                  className="relative aspect-square bg-gray-200 dark:bg-surface-800 overflow-hidden group cursor-pointer"
+                  className="bg-white dark:bg-[#111111] rounded-2xl border border-slate-200/50 dark:border-slate-800/80 overflow-hidden hover:shadow-lg transition-shadow group flex flex-col"
                 >
                   {item.image_url ? (
-                    <img src={item.image_url} className="w-full h-full object-cover group-hover:opacity-75 transition-opacity" alt="post" />
+                    <div className="h-48 w-full bg-slate-100 dark:bg-slate-800 overflow-hidden relative">
+                      <img src={item.image_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="post" />
+                    </div>
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600 font-bold p-4 text-center text-xs">
-                      {item.title || item.certificate_name}
+                    <div className="h-32 w-full bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-800/50 flex items-center justify-center p-6 border-b border-slate-100 dark:border-slate-800">
+                      <p className="text-slate-400 dark:text-slate-500 font-medium text-sm text-center italic line-clamp-3">
+                        {item.content || item.title || item.certificate_name || "Text post"}
+                      </p>
                     </div>
                   )}
-                  {/* Hover effect */}
-                  <div className="absolute inset-0 bg-black/30 items-center justify-center gap-6 text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity hidden sm:flex">
-                    <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
-                      <span>{Math.floor(Math.random() * 50) + 10}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z" /></svg>
-                      <span>{Math.floor(Math.random() * 10) + 2}</span>
+                  <div className="p-5 flex flex-col flex-1">
+                    <h3 className="font-bold text-slate-900 dark:text-white text-lg mb-1 leading-tight line-clamp-1">
+                      {item.title || item.certificate_name || (item.content ? item.content.split('\n')[0] : 'Untitled')}
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-4">
+                      {new Date(item.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                    </p>
+                    <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-4">
+                      <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                        <span className="text-xs font-bold">{item.likes_count || 0}</span>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
               ))}
             </div>
           )}
-        </div>
 
-        {/* Empty state */}
-        {(activeTab === 'posts' ? projects : certificates).length === 0 && (
-          <div className="py-20 flex flex-col items-center justify-center">
-            <div className="w-20 h-20 rounded-full border-2 border-black dark:border-white mb-6 flex items-center justify-center">
-              <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          {/* Empty state */}
+          {activeTab !== 'learning' && (activeTab === 'posts' ? projects : certificates).length === 0 && (
+            <div className="py-20 flex flex-col items-center justify-center bg-white dark:bg-[#111111] rounded-3xl border border-slate-200/50 dark:border-slate-800/80 border-dashed mt-4">
+              <div className="w-16 h-16 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center mb-4">
+                <svg className="w-8 h-8 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300">Nothing here yet</h3>
+              <p className="text-sm text-slate-500 mt-1">This section is currently empty.</p>
             </div>
-            <h3 className="text-3xl font-light mb-2 dark:text-white">No Posts Yet</h3>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
 }
+

@@ -71,4 +71,42 @@ async def add_comment(post_id: str, comment: dict):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.put("/{post_id}")
+async def update_post(post_id: str, data: dict):
+    try:
+        user_id = data.get("user_id")
+        content = data.get("content")
+        
+        # Verify ownership
+        post = supabase.table("posts").select("user_id").eq("id", post_id).execute()
+        if not post.data or post.data[0]["user_id"] != user_id:
+            raise HTTPException(status_code=403, detail="Not authorized to edit this post")
+            
+        res = supabase.table("posts").update({"content": content}).eq("id", post_id).execute()
+        return res.data[0]
+    except HTTPException:
+        raise
+    except Exception as e:
+        print("Error updating post", str(e))
+        raise HTTPException(status_code=500, detail="Failed to update post")
 
+@router.delete("/{post_id}")
+async def delete_post(post_id: str, user_id: str):
+    try:
+        # Verify ownership
+        post = supabase.table("posts").select("user_id").eq("id", post_id).execute()
+        if not post.data or post.data[0]["user_id"] != user_id:
+            raise HTTPException(status_code=403, detail="Not authorized to delete this post")
+            
+        # Supabase will handle cascading deletes for likes and comments if foreign keys are set correctly.
+        # Otherwise, we might need to delete them manually:
+        supabase.table("post_comments").delete().eq("post_id", post_id).execute()
+        supabase.table("post_likes").delete().eq("post_id", post_id).execute()
+        
+        res = supabase.table("posts").delete().eq("id", post_id).execute()
+        return {"status": "deleted"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        print("Error deleting post", str(e))
+        raise HTTPException(status_code=500, detail="Failed to delete post")

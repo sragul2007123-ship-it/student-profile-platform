@@ -25,6 +25,11 @@ export default function Posts() {
   const [showComments, setShowComments] = useState({}) // postId -> boolean
   const [newComment, setNewComment] = useState({}) // postId -> string
 
+  // Edit/Delete State
+  const [editingPostId, setEditingPostId] = useState(null)
+  const [editContent, setEditContent] = useState('')
+  const [dropdownOpen, setDropdownOpen] = useState(null)
+
   useEffect(() => {
     loadPostsAndFriends()
   }, [user])
@@ -124,6 +129,35 @@ export default function Posts() {
     } finally {
       setUploading(false)
     }
+  }
+
+  const handleDeletePost = async (postId) => {
+    if (!window.confirm('Are you sure you want to delete this post?')) return
+    try {
+      await api.deletePost(postId, user.id)
+      setPosts(prev => prev.filter(p => p.id !== postId))
+    } catch (err) {
+      console.error('Error deleting post:', err)
+      alert('Failed to delete post')
+    }
+  }
+
+  const handleUpdatePost = async (postId) => {
+    if (!editContent.trim()) return
+    try {
+      await api.updatePost(postId, { user_id: user.id, content: editContent })
+      setPosts(prev => prev.map(p => p.id === postId ? { ...p, content: editContent } : p))
+      setEditingPostId(null)
+    } catch (err) {
+      console.error('Error updating post:', err)
+      alert('Failed to update post')
+    }
+  }
+
+  const startEdit = (post) => {
+    setEditingPostId(post.id)
+    setEditContent(post.content)
+    setDropdownOpen(null)
   }
 
   const handleLike = async (postId) => {
@@ -296,6 +330,19 @@ export default function Posts() {
                   </div>
                 </Link>
                 <span className="text-[10px] text-gray-400 font-medium">{new Date(post.created_at).toLocaleDateString()}</span>
+                {user && user.id === post.user_id && (
+                  <div className="relative">
+                    <button onClick={() => setDropdownOpen(dropdownOpen === post.id ? null : post.id)} className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" /></svg>
+                    </button>
+                    {dropdownOpen === post.id && (
+                      <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-surface-800 rounded-xl shadow-lg border border-gray-100 dark:border-surface-700 z-50 overflow-hidden">
+                        <button onClick={() => startEdit(post)} className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-surface-700 transition-colors">Edit</button>
+                        <button onClick={() => handleDeletePost(post.id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">Delete</button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {post.image_url && (
@@ -305,9 +352,23 @@ export default function Posts() {
               )}
 
               <div className="p-6">
-                <div className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
-                  {renderContent(post.content)}
-                </div>
+                {editingPostId === post.id ? (
+                  <div className="mb-4">
+                    <textarea 
+                      value={editContent} 
+                      onChange={e => setEditContent(e.target.value)} 
+                      className="w-full bg-gray-50/50 dark:bg-surface-700/50 rounded-xl p-3 border border-primary-500 focus:outline-none resize-none h-24 text-sm"
+                    />
+                    <div className="flex gap-2 mt-2 justify-end">
+                      <button onClick={() => setEditingPostId(null)} className="px-3 py-1 text-xs font-bold text-gray-500 hover:text-gray-700">Cancel</button>
+                      <button onClick={() => handleUpdatePost(post.id)} className="px-3 py-1 text-xs font-bold bg-primary-600 text-white rounded-lg">Save</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
+                    {renderContent(post.content)}
+                  </div>
+                )}
 
                 <div className="mt-6 flex items-center gap-6 pt-4 border-t border-gray-100 dark:border-surface-700">
                   <button onClick={() => handleLike(post.id)} className="flex items-center gap-2 group transition-all">
