@@ -56,6 +56,10 @@ async def get_leaderboard():
         enriched = []
         
         for user in users:
+            # Skip users who haven't completed/set their username
+            if not user.get("username"):
+                continue
+
             skills_data = user.get("skills", [])
             skill_count = skills_data[0]["count"] if skills_data else 0
             
@@ -147,6 +151,10 @@ async def get_friends_leaderboard(user_id: str):
         enriched = []
 
         for user in users:
+            # Skip users who haven't completed/set their username
+            if not user.get("username"):
+                continue
+
             skills_data = user.get("skills", [])
             skill_count = skills_data[0]["count"] if skills_data else 0
             
