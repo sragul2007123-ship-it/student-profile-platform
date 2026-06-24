@@ -1,3 +1,24 @@
+:root{
+  --bg-900: #020617;
+  --aurora-1: rgba(0,255,198,0.12);
+  --aurora-2: rgba(0,212,255,0.08);
+  --glass: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.06);
+  --accent: #00ffd6;
+}
+html,body,#root{height:100%;}
+body{background: radial-gradient(1200px 600px at 10% 20%, rgba(0,212,255,0.03), transparent), var(--bg-900); color:#e6f8f5; font-family:Inter, ui-sans-serif, system-ui;}
+.aurora-bg{position:fixed; inset:0; pointer-events:none; z-index:0}
+.aurora-layer{position:absolute; filter:blur(80px); transform:translate3d(0,0,0); opacity:0.9}
+.aurora-1{left:-10%; top:10%; width:600px; height:300px; background:linear-gradient(135deg,var(--aurora-1),transparent)}
+.aurora-2{right:-5%; top:30%; width:800px; height:400px; background:linear-gradient(135deg,var(--aurora-2),transparent)}
+.aurora-3{left:30%; bottom:-10%; width:700px; height:420px; background:linear-gradient(135deg, rgba(255,200,80,0.06), transparent)}
+.glass-card{backdrop-filter: blur(8px) saturate(1.1); background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid var(--glass-border); border-radius:14px; padding:18px;}
+.floating-navbar{position:fixed; top:24px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:24px; padding:10px 18px; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid var(--glass-border); z-index:20}
+.magnetic-btn{padding:10px 16px; border-radius:10px; background:linear-gradient(90deg,var(--accent), rgba(0,200,255,0.2)); border:none; color:#002; cursor:pointer}
+.spotlight-cursor{position:fixed; pointer-events:none; transform:translate(-50%,-50%); mix-blend-mode:screen; z-index:40}
+.animated-counter{font-variant-numeric: tabular-nums; font-weight:700}
+.hall-of-fame{display:flex; gap:12px}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

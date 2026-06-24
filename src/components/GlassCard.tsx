@@ -1,9 +1,13 @@
-type Props = {title:string; value?:string}
-export default function GlassCard({title,value}:Props){
+import { ReactNode } from 'react'
+
+type Props = {children: ReactNode, className?: string}
+
+export default function GlassCard({children, className = ''}:Props){
   return (
-    <div className="glass p-4 shadow-sm">
-      <div className="text-sm text-muted" style={{color:'var(--muted)'}}>{title}</div>
-      <div className="mt-2 text-2xl font-semibold" style={{color:'var(--text)'}}>{value ?? '—'}</div>
+    <div className={`glass-card ${className}`}>
+      <div className="glass-inner">
+        {children}
+      </div>
     </div>
   )
 }

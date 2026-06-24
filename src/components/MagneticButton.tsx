@@ -1,10 +1,28 @@
-import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { useRef, useEffect, ReactNode } from 'react'
 
-export default function MagneticButton({children, href, primary}:{children:any; href:string; primary?:boolean}){
+export default function MagneticButton({children}:{children:ReactNode}){
+  const ref = useRef<HTMLButtonElement|null>(null)
+  useEffect(()=>{
+    const el = ref.current
+    if(!el) return
+    const onMove = (e:MouseEvent)=>{
+      const rect = el.getBoundingClientRect()
+      const dx = e.clientX - (rect.left + rect.width/2)
+      const dy = e.clientY - (rect.top + rect.height/2)
+      el.style.transform = `translate(${dx*0.08}px, ${dy*0.08}px)`
+    }
+    const onLeave = ()=> { if(ref.current) ref.current.style.transform = '' }
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseleave', onLeave)
+    return ()=>{
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseleave', onLeave)
+    }
+  },[])
+
   return (
-    <motion.div whileHover={{ scale:1.02 }} whileTap={{ scale:0.98 }}>
-      <Link href={href}><a className="inline-flex items-center px-5 py-3 rounded-md" style={{background:primary? 'linear-gradient(90deg,var(--emerald),var(--cyan))':'transparent', color: primary? 'black' : 'var(--text)', boxShadow: primary? '0 6px 30px rgba(0,212,255,0.08)':'none'}}>{children}</a></Link>
-    </motion.div>
+    <button ref={ref} className="magnetic-btn">
+      {children}
+    </button>
   )
 }

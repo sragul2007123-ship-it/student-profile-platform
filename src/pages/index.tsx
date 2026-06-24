@@ -1,43 +1,47 @@
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
-import Link from 'next/link'
-
-const HeroSphere = dynamic(()=>import('../components/HeroSphere'),{ssr:false})
+import React from 'react'
+import './styles/globals.css'
+import AuroraBackground from '../components/AuroraBackground'
+import FloatingNavbar from '../components/FloatingNavbar'
 import GlassCard from '../components/GlassCard'
 import MagneticButton from '../components/MagneticButton'
+import AnimatedCounter from '../components/AnimatedCounter'
+import HallOfFame from '../components/HallOfFame'
+import SpotlightCursor from '../components/SpotlightCursor'
 
 export default function Home(){
   return (
-    <>
-      <Head>
-        <title>academicos — Become Impossible To Ignore</title>
-        <meta name="description" content="academicos — premium student identity platform" />
-      </Head>
-      <main className="min-h-screen flex items-center justify-center p-8" style={{backgroundColor:'var(--bg)'}}>
-        <div className="max-w-6xl w-full grid grid-cols-12 gap-6">
-          <section className="col-span-7 p-8">
-            <h1 className="h-hero text-6xl md:text-8xl leading-tight">Become Impossible To Ignore.</h1>
-            <p className="mt-6 text-muted text-lg text-muted" style={{color:'var(--muted)'}}>Transform your achievements, skills, certifications, projects, internships, and learning journey into a powerful digital identity.</p>
+    <div>
+      <AuroraBackground />
+      <FloatingNavbar />
+      <SpotlightCursor />
+      <main style={{padding:48, zIndex:10, position:'relative'}}>
+        <h1 style={{fontSize:48}}>ACADEMICOS — Mission Control</h1>
+        <div style={{display:'flex', gap:20, marginTop:24}}>
+          <div style={{width:320}}>
+            <GlassCard>
+              <h3>Identity Hub</h3>
+              <p>Curate your academic identity</p>
+              <MagneticButton>Open</MagneticButton>
+            </GlassCard>
+          </div>
 
-            <div className="mt-8 flex gap-4">
-              <MagneticButton href="#" primary>Start Building Your Identity</MagneticButton>
-              <Link href="#"><a className="text-sm text-muted self-center" style={{color:'var(--muted)'}}>Explore Demo</a></Link>
-            </div>
-
-            <div className="mt-12 grid grid-cols-3 gap-4">
-              <GlassCard title="Academic Identity Score" value="84" />
-              <GlassCard title="Placement Readiness" value="72%" />
-              <GlassCard title="Skill Growth" value="+18%" />
-            </div>
-          </section>
-
-          <aside className="col-span-5 flex items-center justify-center">
-            <div className="w-full h-96 glass p-4 flex items-center justify-center">
-              <HeroSphere />
-            </div>
-          </aside>
+          <div style={{width:320}}>
+            <GlassCard>
+              <h3>Achievement Stream</h3>
+              <p>Track accomplishments</p>
+              <AnimatedCounter to={420} />
+            </GlassCard>
+          </div>
         </div>
+
+        <section style={{marginTop:40}}>
+          <h2>Hall Of Fame</h2>
+          <HallOfFame />
+        </section>
       </main>
-    </>
+    </div>
   )
+}
 }
