@@ -23,6 +23,7 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const fileInputRef = useRef(null)
   const [activeTab, setActiveTab] = useState('profile')
+  const [showAnalysisModal, setShowAnalysisModal] = useState(false)
   const [insights, setInsights] = useState([
     { text: 'Loading AI insights...', color: 'emerald', highlight: 'AI insights' },
     { text: 'Analyzing your profile...', color: 'gold', highlight: 'profile' }
@@ -106,38 +107,227 @@ export default function Dashboard() {
 
   useEffect(() => {
     const generateInsights = () => {
-      const newInsights = [];
-      if (!user) {
-         const generalNews = [
-           { text: 'AI Engineering roles are up 40% this month. Start building a portfolio to stand out.', color: 'emerald', highlight: 'AI Engineering' },
-           { text: 'Top recruiters are actively looking for Next.js and Tailwind experience.', color: 'cyan', highlight: 'Next.js' },
-           { text: 'Students with verified certifications are 3x more likely to be contacted by recruiters.', color: 'gold', highlight: 'certifications' },
-           { text: 'Showcasing open-source contributions can boost your Placement Readiness to High.', color: 'emerald', highlight: 'open-source' },
-           { text: 'Tech companies value problem-solving skills; make sure your projects highlight the problems you solved.', color: 'cyan', highlight: 'problem-solving' }
-         ];
-         const shuffled = generalNews.sort(() => 0.5 - Math.random());
-         newInsights.push(...shuffled.slice(0, 2));
-      } else {
-         if (skills.length > 0) {
-            const topSkill = skills[0].skill_name;
-            newInsights.push({ text: `Your ${topSkill} skills are in high demand right now. Consider adding a ${topSkill} project to boost visibility.`, color: 'emerald', highlight: topSkill });
-         } else {
-            newInsights.push({ text: 'Add at least 3 technical skills to help Mellow AI recommend the best roles for you.', color: 'cyan', highlight: '3 technical skills' });
-         }
-         
-         if (projects.length === 0) {
-            newInsights.push({ text: 'Building your first project? Start small with a React or Python app to get on recruiters radars.', color: 'gold', highlight: 'first project' });
-         } else {
-            newInsights.push({ text: `You have ${projects.length} solid projects! Consider writing a technical blog post about your favorite one.`, color: 'emerald', highlight: 'technical blog post' });
-         }
+      const pool = [];
+
+      // Always show generic industry insights
+      pool.push(
+        { 
+          text: 'AI Engineering roles are up 40% this month. Start building a portfolio to stand out.', 
+          color: 'emerald', 
+          highlight: 'AI Engineering',
+          title: 'AI Engineering Market Boom',
+          detail: 'Global hiring for artificial intelligence and machine learning engineering has spiked by 40% this month. Recruiters are aggressively filtering for candidates with hands-on experience using LLMs, prompt engineering, and fine-tuning. Showcasing a project with real API integration is the best way to stand out.',
+          actionLabel: 'Add AI Project',
+          actionTab: 'projects'
+        },
+        { 
+          text: 'Top recruiters are actively looking for Next.js and Tailwind experience.', 
+          color: 'cyan', 
+          highlight: 'Next.js',
+          title: 'High Demand for Next.js developers',
+          detail: 'Next.js is currently the leading React framework chosen by companies for building production-ready apps. Understanding server components, route optimization, and Tailwind CSS layouts makes you highly attractive for modern frontend roles.',
+          actionLabel: 'Add Frontend Skill',
+          actionTab: 'skills'
+        },
+        { 
+          text: 'Students with verified certifications are 3x more likely to be contacted by recruiters.', 
+          color: 'gold', 
+          highlight: 'certifications',
+          title: 'Boost Visibility via Certifications',
+          detail: 'Adding industry-recognized certifications (AWS, GCP, Scrum, freeCodeCamp) proves to recruiters that you have gone through external screening. Verified profiles get contacted up to 3 times more often than unverified profiles.',
+          actionLabel: 'Upload Certification',
+          actionTab: 'certificates'
+        },
+        { 
+          text: 'Tech companies value problem-solving skills; make sure your projects highlight the problems you solved.', 
+          color: 'cyan', 
+          highlight: 'problem-solving',
+          title: 'Problem-Solving Focus',
+          detail: 'Recruiters and hiring managers spend less than 30 seconds reading about a project. If your description does not highlight the specific problem you solved and the technical hurdles you overcame, it looks like a generic tutorial project.',
+          actionLabel: 'Refine Projects',
+          actionTab: 'projects'
+        },
+        { 
+          text: 'Strong communication skills and soft skills are top qualities valued by tech team leads.', 
+          color: 'emerald', 
+          highlight: 'soft skills',
+          title: 'The Value of Soft Skills',
+          detail: 'While technical skills get you the interview, soft skills get you the job. Tech team leads prioritize candidates who can communicate ideas clearly, work well in collaborative structures, and show empathy. Write an engaging bio to showcase these traits.',
+          actionLabel: 'Refine Bio',
+          actionTab: 'profile'
+        },
+        { 
+          text: 'Writing technical articles on Dev.to or Medium establishes your domain expertise.', 
+          color: 'gold', 
+          highlight: 'technical articles',
+          title: 'Publish Technical Articles',
+          detail: 'Blogging about your technical challenges, coding solutions, and general learning paths demonstrates that you understand the code at a foundational level. Linking your technical blog posts inside your bio is a major hiring signal.',
+          actionLabel: 'Edit Profile Bio',
+          actionTab: 'profile'
+        }
+      );
+
+      if (user) {
+        // User-specific insights based on profile completeness
+        if (!profile.username) {
+          pool.push({ 
+            text: 'Claim your custom username in profile settings to share your portfolio link.', 
+            color: 'gold', 
+            highlight: 'custom username',
+            title: 'Set Your Custom Username',
+            detail: 'Your custom username creates a direct portfolio link (like academicos.hub/sragul). Without it, recruiters cannot access your public profile and your projects cannot be shared.',
+            actionLabel: 'Claim Username Now',
+            actionTab: 'profile'
+          });
+        }
+        if (!profile.profile_photo) {
+          pool.push({ 
+            text: 'Profiles with a professional photo receive 5x more clicks from recruiters.', 
+            color: 'cyan', 
+            highlight: 'professional photo',
+            title: 'Upload Profile Avatar',
+            detail: 'Humanizing your command center starts with a profile photo. A high-quality professional photo or personalized avatar immediately builds credibility and increases search clicks by 500%.',
+            actionLabel: 'Upload Photo',
+            actionTab: 'profile'
+          });
+        }
+        if (!profile.about) {
+          pool.push({ 
+            text: 'Write a brief summary in your about section to pitch your skills to recruiters.', 
+            color: 'emerald', 
+            highlight: 'about section',
+            title: 'Create Your Elevator Pitch',
+            detail: 'Your bio summary is the first thing recruiters and peers see. Use it to detail what you specialize in, what you are currently learning, and what roles you are seeking.',
+            actionLabel: 'Write Bio Summary',
+            actionTab: 'profile'
+          });
+        }
+        if (!profile.github) {
+          pool.push({ 
+            text: 'Connect your GitHub profile so recruiters can check your repositories.', 
+            color: 'cyan', 
+            highlight: 'GitHub profile',
+            title: 'Link GitHub Account',
+            detail: 'GitHub is the ultimate proof of work. Connecting your profile allows peers and tech recruiters to explore your public codebases, code style, and active commit stats.',
+            actionLabel: 'Link GitHub URL',
+            actionTab: 'profile'
+          });
+        }
+        if (!profile.linkedin) {
+          pool.push({ 
+            text: 'Link your LinkedIn profile to expand your network in the tech community.', 
+            color: 'gold', 
+            highlight: 'LinkedIn profile',
+            title: 'Link LinkedIn Account',
+            detail: 'LinkedIn is critical for placements and building a professional network. Make sure visitors can view your full professional network and connect with you.',
+            actionLabel: 'Link LinkedIn URL',
+            actionTab: 'profile'
+          });
+        }
+        if (!profile.college || !profile.degree) {
+          pool.push({ 
+            text: 'Complete your education details to match with campus placement pipelines.', 
+            color: 'emerald', 
+            highlight: 'education details',
+            title: 'Complete Education Profile',
+            detail: 'Companies running placement drives filter candidates by their university, graduation year, and degree major. Complete these details to join those pipelines.',
+            actionLabel: 'Add Education Detail',
+            actionTab: 'education'
+          });
+        }
+
+        // Skills-based insights
+        if (skills.length > 0) {
+          const topSkill = skills[0].skill_name;
+          pool.push(
+            { 
+              text: `Your ${topSkill} skills are in high demand right now. Consider adding a ${topSkill} project to boost visibility.`, 
+              color: 'emerald', 
+              highlight: topSkill,
+              title: `Demand for ${topSkill} Experts`,
+              detail: `You've added ${topSkill} to your skills! To make it count, add a project that actively implements ${topSkill} concepts. It proves to hiring managers you can deliver production-level code.`,
+              actionLabel: `Add ${topSkill} Project`,
+              actionTab: 'projects'
+            },
+            { 
+              text: `Recruiters search for candidates with verified ${topSkill} capabilities. Earn a badge in ${topSkill}!`, 
+              color: 'gold', 
+              highlight: topSkill,
+              title: `Verify Your ${topSkill} Skills`,
+              detail: `Show recruiters you are an expert in ${topSkill} by completing skills modules and obtaining a validated badge. Verified skills stand out on search indexes.`,
+              actionLabel: "Verify Skills",
+              actionTab: 'skills'
+            }
+          );
+        } else {
+          pool.push({ 
+            text: 'Add at least 3 technical skills to help Mellow AI recommend the best career tracks for you.', 
+            color: 'cyan', 
+            highlight: '3 technical skills',
+            title: 'Add Skill Tags',
+            detail: 'Skills tags act as search filters. Recruiters search by key tags like React, Python, or SQL. Add at least 3 skills to make your profile search-discoverable.',
+            actionLabel: 'Add Skills',
+            actionTab: 'skills'
+          });
+        }
+
+        // Projects-based insights
+        if (projects.length === 0) {
+          pool.push({ 
+            text: 'Building your first project? Start small with a React or Python app to get on recruiters radars.', 
+            color: 'gold', 
+            highlight: 'first project',
+            title: 'Launch Your First Project',
+            detail: 'Do not wait until you know everything. A simple, working task manager, calculator, or basic script shows you know how to build, test, and host code.',
+            actionLabel: 'Add First Project',
+            actionTab: 'projects'
+          });
+        } else {
+          pool.push(
+            { 
+              text: `You have ${projects.length} solid projects! Live demo links increase recruiter engagement by 400%.`, 
+              color: 'emerald', 
+              highlight: 'live demo links',
+              title: 'Provide Project Demos',
+              detail: 'Most recruiters do not pull and build code locally. Add a live demo link (Vercel, Netlify, Github Pages) so they can click and interact with your app instantly.',
+              actionLabel: 'Add Demo Link',
+              actionTab: 'projects'
+            },
+            { 
+              text: `Make sure your projects list your core stack in the description so you show up in filtering search.`, 
+              color: 'cyan', 
+              highlight: 'core stack',
+              title: 'List Tech Stacks in Projects',
+              detail: 'Specify the technologies you used (e.g. React, Node, Express, MongoDB) inside each project description. Mellow AI indexes these keywords for placement recommendations.',
+              actionLabel: 'Update Project Specs',
+              actionTab: 'projects'
+            }
+          );
+        }
+
+        // Certificates-based insights
+        if (certificates.length === 0) {
+          pool.push({ 
+            text: 'Add verified certifications to bypass initial technical screenings at major firms.', 
+            color: 'gold', 
+            highlight: 'certifications',
+            title: 'Add Certifications',
+            detail: 'Certifications act as third-party validation of your skills. Adding credentials in AWS, Google Cloud, or development bootcamps helps skip basic screeners.',
+            actionLabel: 'Add Certificate',
+            actionTab: 'certificates'
+          });
+        }
       }
-      setInsights(newInsights);
+
+      // Shuffle pool and select 2 distinct insights
+      const shuffled = [...pool].sort(() => 0.5 - Math.random());
+      setInsights(shuffled.slice(0, 2));
     };
 
     generateInsights();
     const interval = setInterval(generateInsights, 10000);
     return () => clearInterval(interval);
-  }, [user, skills, projects]);
+  }, [user, skills, projects, certificates, profile.username, profile.profile_photo, profile.github, profile.linkedin, profile.college, profile.about, profile.role]);
 
   const showMessage = (type, text) => {
     setMessage({ type, text })
@@ -497,15 +687,37 @@ export default function Dashboard() {
 
   const calculateCompletion = () => {
     let score = 0;
-    let total = 7;
-    if (profile.name) score++;
-    if (profile.username) score++;
-    if (profile.about) score++;
-    if (profile.profile_photo) score++;
-    if (skills.length > 0) score++;
-    if (projects.length > 0) score++;
-    if (certificates.length > 0) score++;
-    return Math.round((score / total) * 100);
+    
+    // Core Profile fields (40% total)
+    if (profile.name) score += 5;
+    if (profile.username) score += 5;
+    if (profile.role) score += 5;
+    if (profile.about) score += 5;
+    if (profile.profile_photo) score += 10;
+    if (profile.github) score += 5;
+    if (profile.linkedin) score += 5;
+    
+    // Education details (15% total)
+    if (profile.college) score += 5;
+    if (profile.degree) score += 5;
+    if (profile.year) score += 5;
+    
+    // Skill items (15% total: 3% per skill up to 5)
+    if (skills && skills.length > 0) {
+      score += Math.min(15, skills.length * 3);
+    }
+    
+    // Project items (20% total: 10% per project up to 2)
+    if (projects && projects.length > 0) {
+      score += Math.min(20, projects.length * 10);
+    }
+    
+    // Certificates items (10% total: 5% per certificate up to 2)
+    if (certificates && certificates.length > 0) {
+      score += Math.min(10, certificates.length * 5);
+    }
+    
+    return Math.min(100, Math.round(score));
   };
 
   const completionPercent = calculateCompletion();
@@ -692,7 +904,11 @@ export default function Dashboard() {
                 </div>
                 
                 <button 
-                  onClick={(e) => requireAuth(e)}
+                  onClick={(e) => {
+                    if (requireAuth(e)) {
+                      setShowAnalysisModal(true);
+                    }
+                  }}
                   className="w-full mt-6 py-3 rounded-xl font-bold text-sm text-white bg-white/5 hover:bg-white/10 transition-colors">
                   View Full Analysis
                 </button>
@@ -1512,6 +1728,237 @@ export default function Dashboard() {
           </div>
         </div>
       )}
+
+      {/* Full Analysis Modal */}
+      <AnimatePresence>
+        {showAnalysisModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="glass-card w-full max-w-2xl p-6 md:p-8 max-h-[85vh] overflow-y-auto relative border border-white/20 shadow-2xl flex flex-col justify-between"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setShowAnalysisModal(false)}
+                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+
+              {/* Header */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white shadow-lg">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </div>
+                <div>
+                  <h2 className="text-xl font-display font-black text-white">Mellow AI Career Analysis</h2>
+                  <p className="text-xs text-gray-400 font-medium">Detailed breakdown of your placement readiness & digital profile score</p>
+                </div>
+              </div>
+
+              {/* Score Summary Section */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 rounded-2xl bg-[var(--surface-2)]/50 border border-white/5 mb-6">
+                {/* Gauge */}
+                <div className="flex flex-col items-center justify-center md:border-r border-white/10 md:pr-6">
+                  <div className="relative w-28 h-28 flex items-center justify-center">
+                    <svg className="w-full h-full transform -rotate-90">
+                      <circle cx="56" cy="56" r="48" className="stroke-[var(--surface-2)]" strokeWidth="8" fill="none" />
+                      <circle cx="56" cy="56" r="48" className="stroke-primary-500 transition-all duration-1000" strokeWidth="8" fill="none" strokeLinecap="round" strokeDasharray="301.6" strokeDashoffset={301.6 - (301.6 * completionPercent) / 100} />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-2xl font-display font-black text-white">{completionPercent}</span>
+                      <span className="text-[10px] font-bold text-primary-400">/ 100</span>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-gray-300 mt-2">Academic Score</span>
+                </div>
+
+                {/* Score breakdown metrics list */}
+                <div className="md:col-span-2 space-y-3">
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Score Breakdown</h4>
+                  
+                  <div className="space-y-2 text-xs">
+                    {/* Metric 1: Core profile */}
+                    <div className="flex justify-between items-center text-gray-300">
+                      <span>Profile Basic Info (Name, Photo, Bio, Username):</span>
+                      <span className="font-bold text-white">
+                        {((profile.name ? 5 : 0) + (profile.username ? 5 : 0) + (profile.role ? 5 : 0) + (profile.about ? 5 : 0) + (profile.profile_photo ? 10 : 0) + (profile.github ? 5 : 0) + (profile.linkedin ? 5 : 0))} / 40 pts
+                      </span>
+                    </div>
+                    
+                    {/* Metric 2: Education */}
+                    <div className="flex justify-between items-center text-gray-300">
+                      <span>Education Details:</span>
+                      <span className="font-bold text-white">
+                        {((profile.college ? 5 : 0) + (profile.degree ? 5 : 0) + (profile.year ? 5 : 0))} / 15 pts
+                      </span>
+                    </div>
+
+                    {/* Metric 3: Skills */}
+                    <div className="flex justify-between items-center text-gray-300">
+                      <span>Verified Skills (up to 5):</span>
+                      <span className="font-bold text-white">
+                        {Math.min(15, (skills || []).length * 3)} / 15 pts
+                      </span>
+                    </div>
+
+                    {/* Metric 4: Projects & Certifications */}
+                    <div className="flex justify-between items-center text-gray-300">
+                      <span>Projects & Certs (up to 2 each):</span>
+                      <span className="font-bold text-white">
+                        {(Math.min(20, (projects || []).length * 10) + Math.min(10, (certificates || []).length * 5))} / 30 pts
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Active Insights Analysis */}
+              <div className="space-y-4 mb-6">
+                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Active Insights Analysis</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {insights.map((insight, idx) => (
+                    <div key={idx} className="p-4 rounded-xl bg-[var(--surface-2)] border border-white/5 relative overflow-hidden flex flex-col justify-between min-h-[160px]">
+                      <div className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary-500 to-accent-500`}></div>
+                      <div>
+                        <h5 className="font-bold text-white text-sm mb-1">{insight.title || "Career Insight"}</h5>
+                        <p className="text-[11px] text-gray-400 leading-relaxed mb-4">{insight.detail || insight.text}</p>
+                      </div>
+                      {insight.actionLabel && (
+                        <div>
+                          <button
+                            onClick={() => {
+                              setShowAnalysisModal(false);
+                              setIsEditing(true);
+                              if (insight.actionTab) {
+                                setActiveTab(insight.actionTab);
+                              }
+                            }}
+                            className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-primary-400 hover:text-primary-300 font-bold text-xs rounded-lg transition-colors border border-white/5"
+                          >
+                            {insight.actionLabel} &rarr;
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recommendations List */}
+              <div className="space-y-4 mb-6">
+                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Recommended Actions</h4>
+                
+                <div className="space-y-2.5 max-h-[30vh] overflow-y-auto pr-2">
+                  {/* Username Check */}
+                  {!profile.username && (
+                    <div className="flex items-start gap-3 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs leading-relaxed">
+                      <span className="text-base leading-none">⚠️</span>
+                      <div>
+                        <p className="font-bold mb-0.5">Set a custom username</p>
+                        <p className="text-amber-400/80 font-medium">Crucial for claiming your public URL and sharing your profile with recruiters.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Photo Check */}
+                  {!profile.profile_photo && (
+                    <div className="flex items-start gap-3 p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-300 text-xs leading-relaxed">
+                      <span className="text-base leading-none">📸</span>
+                      <div>
+                        <p className="font-bold mb-0.5">Upload a profile photo</p>
+                        <p className="text-sky-400/80 font-medium">Adding a face to your digital resume increases hiring views by over 500%.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* About Check */}
+                  {!profile.about && (
+                    <div className="flex items-start gap-3 p-3.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs leading-relaxed">
+                      <span className="text-base leading-none">✍️</span>
+                      <div>
+                        <p className="font-bold mb-0.5">Write your bio</p>
+                        <p className="text-purple-400/80 font-medium">Tell recruiters your career goals and what technologies you are passionate about.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* GitHub/LinkedIn Check */}
+                  {(!profile.github || !profile.linkedin) && (
+                    <div className="flex items-start gap-3 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs leading-relaxed">
+                      <span className="text-base leading-none">🔗</span>
+                      <div>
+                        <p className="font-bold mb-0.5">Link professional accounts</p>
+                        <p className="text-emerald-400/80 font-medium">Connecting GitHub or LinkedIn allows direct code & resume vetting.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Skills check */}
+                  {(skills || []).length < 3 && (
+                    <div className="flex items-start gap-3 p-3.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs leading-relaxed">
+                      <span className="text-base leading-none">⚡</span>
+                      <div>
+                        <p className="font-bold mb-0.5">Add more skills (Goal: 3+)</p>
+                        <p className="text-indigo-400/80 font-medium">Include technical tags (React, Node, SQL) to show up in recruiter keyword search triggers.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Projects check */}
+                  {(projects || []).length === 0 && (
+                    <div className="flex items-start gap-3 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs leading-relaxed">
+                      <span className="text-base leading-none">🚀</span>
+                      <div>
+                        <p className="font-bold mb-0.5">Add a project showpiece</p>
+                        <p className="text-rose-400/80 font-medium">Recruiters focus heavily on projects. Add a description and code repository link.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Certificates check */}
+                  {(certificates || []).length === 0 && (
+                    <div className="flex items-start gap-3 p-3.5 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-300 text-xs leading-relaxed">
+                      <span className="text-base leading-none">📜</span>
+                      <div>
+                        <p className="font-bold mb-0.5">Add verified certifications</p>
+                        <p className="text-yellow-400/80 font-medium">Upload certificates to provide third-party validation of your skills.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Perfect score case */}
+                  {profile.username && profile.profile_photo && profile.about && profile.github && profile.linkedin && (skills || []).length >= 3 && (projects || []).length > 0 && (certificates || []).length > 0 && (
+                    <div className="flex items-center justify-center p-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs text-center font-bold">
+                      🎉 Awesome job! Your profile meets all our AI readiness requirements. You are fully optimized for recruiter visibility!
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Footer Action */}
+              <button
+                onClick={() => {
+                  setShowAnalysisModal(false);
+                  setIsEditing(true);
+                }}
+                className="w-full py-3.5 bg-gradient-to-r from-primary-500 to-accent-500 text-white font-bold rounded-xl text-sm shadow-lg hover:brightness-110 active:scale-98 transition-all"
+              >
+                Edit Profile to Increase Score
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       </div>
     </div>
   )
