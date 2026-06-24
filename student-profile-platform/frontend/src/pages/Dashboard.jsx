@@ -740,7 +740,6 @@ export default function Dashboard() {
     { id: 'skills', label: 'Skills', icon: '⚡' },
     { id: 'projects', label: 'Projects', icon: '🚀' },
     { id: 'certificates', label: 'Certificates', icon: '📜' },
-    { id: 'customization', label: 'Customize', icon: '🎨' },
     { id: 'badges', label: 'Badges', icon: '⭐' },
     { id: 'friends', label: 'Friends', icon: '🤝' },
   ]
@@ -1574,111 +1573,7 @@ export default function Dashboard() {
                 </div>
               )}
 
-              {/* Customization Tab */}
-              {activeTab === 'customization' && (
-                <div className="animate-fade-in">
-                  <h2 className="text-2xl font-display font-bold mb-6 text-[var(--text)]">🎨 Profile Customization</h2>
-                  <p className="text-[var(--muted)] mb-8">Make your profile unique with custom themes, layouts, and media.</p>
 
-                  {/* Theme Color */}
-                  <div className="mb-8">
-                    <h3 className="text-lg font-semibold mb-4 text-[var(--text)]">Theme Color</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {[
-                        { id: 'primary', name: 'Neo Aurora (Cyan/Green)', color: 'from-[#00FFC6] to-[#00D4FF]' },
-                        { id: 'emerald', name: 'Emerald', color: 'from-emerald-500 to-teal-600' },
-                        { id: 'rose', name: 'Rose', color: 'from-rose-500 to-pink-600' },
-                        { id: 'amber', name: 'Amber', color: 'from-amber-500 to-orange-600' },
-                        { id: 'violet', name: 'Violet', color: 'from-violet-500 to-purple-600' },
-                        { id: 'cyan', name: 'Cyan', color: 'from-cyan-500 to-blue-600' },
-                        { id: 'lime', name: 'Lime', color: 'from-lime-500 to-green-600' },
-                        { id: 'indigo', name: 'Indigo', color: 'from-indigo-500 to-blue-600' }
-                      ].map(theme => (
-                        <button
-                          key={theme.id}
-                          type="button"
-                          onClick={() => setThemeColor(theme.id)}
-                          className={`p-4 rounded-xl border-2 transition-all ${
-                            themeColor === theme.id
-                              ? 'border-[var(--cyan)] bg-[var(--surface-hover)] shadow-lg shadow-[var(--cyan)]/25'
-                              : 'border-[var(--border)] hover:border-[var(--cyan)]/50 bg-[var(--surface)]'
-                          }`}
-                        >
-                          <div className={`w-full h-8 rounded-lg bg-gradient-to-r ${theme.color} mb-2`}></div>
-                          <p className="text-sm font-medium text-[var(--text)]">{theme.name}</p>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Layout Style */}
-                  <div className="mb-8">
-                    <h3 className="text-lg font-semibold mb-4 text-[var(--text)]">Layout Style</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {[
-                        { id: 'default', name: 'Default', description: 'Clean, modern glassmorphism with floating backdrops' },
-                        { id: 'minimal', name: 'Minimal', description: 'Compact centered layout, simple headers, clean borders' },
-                        { id: 'creative', name: 'Creative', description: 'Vibrant, high-contrast, interactive tilted cards' },
-                        { id: 'professional', name: 'Professional', description: 'Solid slate background, structured layout, clean alignment' }
-                      ].map(layout => (
-                        <button
-                          key={layout.id}
-                          type="button"
-                          onClick={() => setLayoutStyle(layout.id)}
-                          className={`p-6 rounded-xl border-2 text-left transition-all ${
-                            layoutStyle === layout.id
-                              ? 'border-[var(--cyan)] bg-[var(--surface-hover)] shadow-lg shadow-[var(--cyan)]/25'
-                              : 'border-[var(--border)] hover:border-[var(--cyan)]/50 bg-[var(--surface)]'
-                          }`}
-                        >
-                          <h4 className="font-semibold text-[var(--text)] mb-1">{layout.name}</h4>
-                          <p className="text-sm text-[var(--muted)]">{layout.description}</p>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Gallery Images */}
-                  <div className="mb-8">
-                    <h3 className="text-lg font-semibold mb-4 text-[var(--text)]">Gallery Images</h3>
-                    <p className="text-sm text-[var(--muted)] mb-4">Add up to 6 images to showcase your work or personality</p>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                      {galleryImages.map((image, index) => (
-                        <div key={index} className="relative group">
-                          <div className="aspect-square rounded-xl overflow-hidden border border-[var(--border)]">
-                            <img src={image} alt={`Gallery ${index + 1}`} className="w-full h-full object-cover" />
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setGalleryImages(prev => prev.filter((_, i) => i !== index))}
-                            className="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                      {galleryImages.length < 6 && (
-                        <div className="aspect-square rounded-xl border-2 border-dashed border-[var(--border)] flex items-center justify-center cursor-pointer hover:border-[var(--cyan)] transition-colors"
-                             onClick={() => {
-                               const url = prompt('Enter image URL:');
-                               if (url) setGalleryImages(prev => [...prev, url]);
-                             }}>
-                          <div className="text-center">
-                            <svg className="w-8 h-8 text-[var(--muted)] mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                            <p className="text-xs text-[var(--muted)]">Add Image</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <button onClick={saveProfile} disabled={saving} className="btn-primary w-full shadow-lg shadow-[var(--cyan)]/20">
-                    {saving ? 'Saving...' : 'Save Customization'}
-                  </button>
-                </div>
-              )}
 
 
 
