@@ -1,4 +1,4 @@
--- Supabase Schema for Student Digital Profile Platform
+-- Supabase Schema for AcademicOS
 -- Run this SQL in the Supabase SQL Editor
 
 -- Enable UUID extension

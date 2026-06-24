@@ -1,14 +1,14 @@
-# 🎓 Student Digital Profile Platform
+# 🎓 AcademicOS
 
 > A modern, full-stack application for students to showcase their skills, manage professional portfolios, and compete on a global leaderboard.
 
-![Platform Banner](./student_profile_banner.png)
+![AcademicOS Banner](./academic_os_banner.png)
 
 ---
 
 ## 🚀 Overview
 
-The **Student Digital Profile Platform** is designed to bridge the gap between students and opportunities. It provides a centralized hub where students can build comprehensive digital identities, showcase their best projects, and gain visibility through a gamified leaderboard system.
+The **AcademicOS** platform is designed to bridge the gap between students and opportunities. It provides a centralized hub where students can build comprehensive digital identities, showcase their best projects, and gain visibility through a gamified leaderboard system.
 
 ### Key Features
 - **✨ Professional Profiles:** Custom digital portfolio pages with sections for skills, projects, education, and certificates.
