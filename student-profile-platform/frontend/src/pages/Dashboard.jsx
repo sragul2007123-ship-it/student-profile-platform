@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
 import { api } from '../services/api'
 import { supabase } from '../services/supabaseClient'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -55,7 +56,7 @@ export default function Dashboard() {
   const [badgeVisibility, setBadgeVisibility] = useState(true)
   // Profile customization state
   const [bannerImage, setBannerImage] = useState('')
-  const [themeColor, setThemeColor] = useState('primary')
+  const { themeColor, setThemeColor } = useTheme()
   const [layoutStyle, setLayoutStyle] = useState('default')
   const [galleryImages, setGalleryImages] = useState([])
   const [profileLayout, setProfileLayout] = useState({ sections: ['about', 'skills', 'projects', 'certificates'] })

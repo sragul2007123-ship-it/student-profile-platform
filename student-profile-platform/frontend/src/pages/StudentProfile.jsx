@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
 import { useAuth } from '../context/AuthContext'
+import { useTheme } from '../context/ThemeContext'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../services/supabaseClient'
 import LearningHub from './LearningHub'
@@ -23,6 +24,7 @@ export default function StudentProfile() {
   const { username } = useParams()
   const { user } = useAuth()
   const navigate = useNavigate()
+  const { setThemeColor } = useTheme()
 
   const requireAuth = () => {
     if (!user) {
@@ -48,6 +50,7 @@ export default function StudentProfile() {
   useEffect(() => {
     loadProfile()
     window.scrollTo(0, 0)
+    return () => setThemeColor('primary')
   }, [username])
 
   useEffect(() => {
@@ -62,6 +65,7 @@ export default function StudentProfile() {
     try {
       const data = await api.getPublicProfile(username)
       setProfileData({ ...data.user, ...data.profile })
+      setThemeColor(data.profile.theme_color || 'primary')
       setSkills(data.skills || [])
       setProjects(data.projects || [])
       setCertificates(data.certificates || [])
